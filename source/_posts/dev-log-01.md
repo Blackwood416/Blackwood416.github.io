@@ -126,4 +126,32 @@ class TestScript : MonoBehaviour
 ```
 可以使用 transform 类的 LookAt() 方法来使物体朝向某个position, LookAt()的参数即为一个Vector3类型的数值，可以为 position属性，也可以是单纯的坐标。
 
+如果想要某物体绕着另一个物体旋转，可以将另一个物体设置成某物体的父物体，然后在某物体上挂载的脚本应该这么写：
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+class TestScript : MonoBehaviour
+{
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        Transform parent = transform.parent;
+        parent.Rotate(0,0.1f,0,Space.Self);
+    }
+}
+```
+假如我们要创建一个地月系统，那么地球与月球的节点关系应该是这样的：
+> 地月系统（空物体）
+>> 地球
+>> 空物体
+>>> 月球
+
+两个空物体的位置应该在地心。使用父子物体嵌套的结构就可以分别控制旋转物体的运动了。
+
 scale属性没什么好说的，就是物体的缩放属性，是Vector3类型。
