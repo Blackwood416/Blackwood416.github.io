@@ -28,7 +28,7 @@ sudo apt install build-essential crossbuild-essential-amd64 nasm gnome-devel wx3
 
 因为内核开发时要用到bochs,所以我们去bochs官网下载bochs最新版本的tarball源码包，在撰写本文时bochs的最新版本为2.7,所以我们接下来将编译2.7版本的bochs。
 
-先去bochs官网找到源码链接为 https://udomain.dl.sourceforge.net/project/bochs/bochs/2.7/bochs-2.7.tar.gz
+先去bochs官网找到源码链接为 https://udomain.dl.sourceforge.net/project/bochs/bochs/2.7/bochs-2.7.tar.gz **(注：此链接具有一定时效性，不一定与你那边的一样)**
 
 终端中使用wget下载它：
 ```bash
@@ -42,7 +42,7 @@ tar zxf bochs-2.7.tar.gz
 ```
 解压完成后我们进入源码目录准备编译：
 ```bash
-cd bochs-2.7.tar.gz
+cd bochs-2.7
 ```
 使用目录下的 **configure** 脚本配置 **Makefile** ：
 ```bash
