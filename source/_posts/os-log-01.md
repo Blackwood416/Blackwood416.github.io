@@ -26,10 +26,14 @@ sudo apt install kali-desktop-xfce
 sudo apt install build-essential crossbuild-essential-amd64 nasm gnome-devel wx3.2 wx-common libwxgtk3.2-dev libgtk2.0-dev xorg-dev libtool-bin libreadline-dev
 ```
 
+加笔：使用Arch Linux的可以用以下命令安装：
+```bash
+sudo pacman -S base-devel wxwidgets-common wxwidgets-gtk3 xorg-server-devel
+```
+
 因为内核开发时要用到bochs,所以我们去bochs官网下载bochs最新版本的tarball源码包，在撰写本文时bochs的最新版本为2.7,所以我们接下来将编译2.7版本的bochs。
 
-先去bochs官网找到源码链接为 https://udomain.dl.sourceforge.net/project/bochs/bochs/2.7/bochs-2.7.tar.gz **(注：此链接具有一定时效性，不一定与你那边的一样)**
-
+先去[bochs官网](https://bochs.sourceforge.io)找到源码链接
 终端中使用wget下载它：
 ```bash
 wget -c https://udomain.dl.sourceforge.net/project/bochs/bochs/2.7/bochs-2.7.tar.gz
@@ -48,6 +52,17 @@ cd bochs-2.7
 ```bash
 ./configure --with-x11 --with-wx --enable-debugger --enable-all-optimizations --enable-readline --enable-long-phy-address --enable-ltdl-install --enable-idle-hack --enable-plugins --enable-a20-pin --enable-x86-64 --enable-smp --enable-cpu-level=6 --enable-large-ramfile --enable-repeat-speedups --enable-fast-function-calls --enable-handlers-chaining --enable-trace-linking --enable-configurable-msrs --enable-show-ips --enable-debugger-gui --enable-iodebug --enable-logging --enable-assert-checks --enable-fpu --enable-vmx=2 --enable-svm --enable-3dnow --enable-alignment-check --enable-monitor-mwait --enable-avx --enable-evex --enable-x86-debugger --enable-pci --enable-usb --enable-voodoo
 ```
+
+修改一下 **bx_debug** 目录下面的 **debug.h** 中的几行代码:
+```diff
+-#include "config.h"
++#include "../config.h"
+-#include "osdep.h"
++#include "../osdep.h"
+-#include "cpu/decoder/decoder.h"
++#include "../cpu/decoder/decoder.h"
+```
+
 然后使用 **make** 进行编译：
 ```bash
 make -j4
@@ -56,5 +71,9 @@ make -j4
 编译完成后我们安装bochs：
 ```bash
 sudo make install
+```
+最后安装库文件：
+```bash
+libtool --finish /usr/local/lib
 ```
 至此完成操作系统编译环境的搭建。
