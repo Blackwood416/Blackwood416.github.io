@@ -28,7 +28,7 @@ sudo apt install build-essential crossbuild-essential-amd64 nasm gnome-devel wx3
 
 加笔：使用Arch Linux的可以用以下命令安装：
 ```bash
-sudo pacman -S base-devel wxwidgets-common wxwidgets-gtk3 xorg-server-devel
+sudo pacman -S base-devel wxwidgets-common wxwidgets-gtk3 xorg-server-devel nasm
 ```
 
 因为内核开发时要用到bochs,所以我们去bochs官网下载bochs最新版本的tarball源码包，在撰写本文时bochs的最新版本为2.7,所以我们接下来将编译2.7版本的bochs。
