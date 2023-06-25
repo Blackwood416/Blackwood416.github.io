@@ -20,4 +20,12 @@ tags: 安卓
 
 作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin和Dart语言与C#差异比Java来得大，所以我们选择传统的Java语言来开发安卓app。
 
-手机上可以使用AIDE来使用Java开发安卓app。Windows PC或者Linux PC则可以使用Android Studio来开发。
+手机上可以使用AIDE来使用Java开发安卓app。Windows PC或者Linux PC则可以使用Android Studio来开发，当然Intellij IDEA也是可以的，不过最好还是用Android Studio。
+
+这些开发工具网络上都能搜得到，这里就不提供了。
+
+# 安卓app开发入门——apk结构
+
+要开发一个安卓app，我们应该先来了解一下安卓app的安装包，也就是我们常说的apk文件。
+
+通常情况下，一个apk会包括以下几个部分
