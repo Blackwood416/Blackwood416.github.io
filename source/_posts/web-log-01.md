@@ -38,4 +38,78 @@ HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用�
 
 # Emmet
 
-Emmet 提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。
+**Emmet**提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。
+
+我们来简单地介绍一下emmet的语法。先从最简单的开始吧。
+
+使用`!`在emmet中打出如下的代码（在某些编辑器内你可能需要输入`!>`才能得到以下补全代码）：
+```html
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+```
+
+可以看到仅仅通过一个字符，emmet就给了我们一个上面提到的html代码的模板。
+
+emmet还能做到其他事情，比如简化潜逃标签的输入，我们输入`head>title`补全后就能看到如下代码：
+
+```html
+<head>
+  <title></title>
+</head>
+```
+
+也能简化同级的多个标签的输入，比如我们输入`head+body`补全后会看到如下代码：
+
+```html
+<head></head>
+<body></body>
+```
+
+emmet还有个语法是在上一级添加标签，比如`html>head>title^body>h1`补全后就能看到以下代码：
+
+```html
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <h1></h1>
+</body>
+</html>
+```
+
+还有通过分组的语法也是可以写出一样的东西来的`html>(head>title)+(body>h1)`,补全后变为：
+
+```html
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <h1></h1>
+</body>
+</html>
+```
+
+emmet还可以帮我们写一些需要重复的标签，比如列表标签里的项目标签**<li>**，我们可以通过emmet来快速获得指定数量的标签。输入`ul>li*5`，补全后会得到以下结果：
+
+```html
+<ul>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+```
+
+剩下的有关emmet的语法可以去[官方文档处](https://docs.emmet.io)看，这里就不做过多的介绍了，只要知道这是个非常方便只用代码写前端的工具就是了。
