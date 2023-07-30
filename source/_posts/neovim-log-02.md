@@ -2,6 +2,7 @@
 title: NeoVim 配置日志 02
 date: 2023-06-21 23:47:41
 tags: neovim
+categories: 开发环境
 ---
 
 # LSP 配置

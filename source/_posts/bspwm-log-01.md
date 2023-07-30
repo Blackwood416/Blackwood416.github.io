@@ -2,6 +2,7 @@
 title: bspwm配置 01
 date: 2023-03-09 14:18:28
 tags: bspwm
+categories: 开发环境
 ---
 
 # bspwm配置 01

@@ -1,10 +1,11 @@
 ---
-title: web开发日志 01
+title: Web开发日志 01
 date: 2023-01-24 14:15:10
-tags: web
+tags: Web
+categories: 开发
 ---
 
-# web开发日志 01
+# Web开发日志 01
 
 虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。
 

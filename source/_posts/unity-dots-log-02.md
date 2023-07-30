@@ -2,6 +2,7 @@
 title: Unity Dots 学习日志 02
 date: 2023-07-06 20:56:10
 tags: unity
+categories: 开发
 ---
 
 # 安装Dots 核心包

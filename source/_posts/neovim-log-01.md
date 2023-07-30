@@ -2,6 +2,7 @@
 title: NeoVim 配置日志 01
 date: 2023-01-26 17:38:17
 tags: neovim
+categories: 开发环境
 ---
 
 # NeoVim 配置日志 01

@@ -2,6 +2,7 @@
 title: 实用工具使用日志 02
 date: 2023-07-12 19:34:23
 tags: 实用工具
+categories: 工具
 ---
 
 # Surfing Keys
