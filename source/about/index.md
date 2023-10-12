@@ -3,4 +3,6 @@ title: 关于
 layout: about
 ---
 
-# 这是关于页
+# Blackwood的个人主页
+
+[我的github主页](https://github.com/Blackwood416)

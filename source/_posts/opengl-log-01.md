@@ -6,7 +6,7 @@ categories: 开发
 ---
 # OpenGL 学习日志 01
 
-为了学习图形学相关知识，我选择了OpenGL这个跨平台的图形API来进行学习，使用本博客对学习过程进行记录。参考了(LearnOpenGL)[https://learnopengl-cn.github.io]上的内容。
+为了学习图形学相关知识，我选择了OpenGL这个跨平台的图形API来进行学习，使用本博客对学习过程进行记录。参考了[LearnOpenGL](https://learnopengl-cn.github.io)上的内容。
 
 # 声明
 
