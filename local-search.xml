@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>安卓Root学习日志 01</title>
+    <link href="/2024/01/23/android-rooting-log-01/"/>
+    <url>/2024/01/23/android-rooting-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="什么是Root"><a href="#什么是Root" class="headerlink" title="什么是Root"></a>什么是Root</h2><p>root是Linux系统中拥有最高权限的用户，可以在系统中进行任意操作而不用担心授权问题。</p><p>而在基于Linux内核开发的Android中，root却并不开放给普通用户使用。因此让普通用户获取root用户的权限成为了成为了安卓玩机的一个重要课题。</p><h2 id="主流Root方式"><a href="#主流Root方式" class="headerlink" title="主流Root方式"></a>主流Root方式</h2><p>主流的Root方式：</p><ul><li>KingRoot等一键root（Android 2.2 ~ Android 5.1）</li><li>SuperSU（Android 5.0 ~ Android 7.1）</li><li>Magisk（Android 5.0以上）</li><li>KernelSU（仅官方支持内核版本5.10以上的Android，其余可自行编译）</li><li>APatch（内核版本3.18 ~ 6.1的Android）</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>安卓</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>安卓CPU调教日志 01</title>
+    <link href="/2024/01/23/android-cpu-enhance-log-01/"/>
+    <url>/2024/01/23/android-cpu-enhance-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="在安卓上我们能对CPU干什么？"><a href="#在安卓上我们能对CPU干什么？" class="headerlink" title="在安卓上我们能对CPU干什么？"></a>在安卓上我们能对CPU干什么？</h2><p>在获取到root权限之后，我们可以调节安卓系统的温控和CPU调度来让CPU在保证一定算力的情况下降低功耗，达到性能续航两不误。当然我们不是自己写代码控制这些，我们使用<strong>scene</strong>这款软件来调节这些东西。</p><h2 id="准备步骤"><a href="#准备步骤" class="headerlink" title="准备步骤"></a>准备步骤</h2>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>安卓</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>安卓刷机学习日志 01</title>
+    <link href="/2024/01/23/android-flashing-log-01/"/>
+    <url>/2024/01/23/android-flashing-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="安卓刷机的意义"><a href="#安卓刷机的意义" class="headerlink" title="安卓刷机的意义"></a>安卓刷机的意义</h2><p>一般来说，国内安卓手机厂商的ROM都带有不少的限制，比如杀不掉的后台进程和服务啦、烦人的系统推送啦、恶心人的云控啦等等。而第三方的基于国内ROM的修改版ROM或者类原生ROM都没有这些毛病，并且提供很多个性化的设置（虽然不一定比官方ROM好）。</p><h2 id="前置工作"><a href="#前置工作" class="headerlink" title="前置工作"></a>前置工作</h2><h3 id="一台可以解锁BootLoader的手机"><a href="#一台可以解锁BootLoader的手机" class="headerlink" title="一台可以解锁BootLoader的手机"></a>一台可以解锁BootLoader的手机</h3><p>我使用的是一台内存配置为8+128GB的<strong>Redmi Note12R</strong>，CPU是<strong>骁龙4gen2</strong>，在低端机里算是很能打的了，但是小米官方对它预装的MIUI14进行了阉割，就算root了换了民间大神的系统桌面还用模块伪装成了高端机型，系统界面（控制中心）的背景依然是一个灰色的遮罩，非常的丑。</p><h3 id="解锁BootLoader"><a href="#解锁BootLoader" class="headerlink" title="解锁BootLoader"></a>解锁BootLoader</h3><blockquote><p>重要提醒：解锁Bootloader会丢失手机的所有数据，请提前做好备份！！！</p></blockquote><p>我们在<strong>设置</strong>中的<strong>关于手机</strong>界面点击全部参数，然后连续点击<strong>MIUI版本</strong>这一栏<strong>7</strong>次打开<strong>开发者选项</strong>，然后在设置中找到开发者选项，找到选项<strong>查看设备解锁状态</strong>，然后按文字提示操作申请解锁BootLoader即可。</p><p>等待7天后我们在Windows电脑上下载安装<strong>小米解锁助手</strong>，登录小米账号后选择解锁手机。手机关机后<strong>长按音量下键 + 关机键</strong>进入<strong>Fastboot</strong>模式，手机屏幕此时会显示橙色的<strong>FASTBOOT</strong>字样，这时将手机使用数据线连接到电脑的USB接口上，当电脑屏幕上显示找到设备后我们点击解锁设备即可开始解锁，等待一段时间等进度条满了显示解锁成功即表示本设备已成功解锁BootLoader。</p><h3 id="开启OEM解锁"><a href="#开启OEM解锁" class="headerlink" title="开启OEM解锁"></a>开启OEM解锁</h3><p>在<strong>开发者选项</strong>中找到<strong>OEM解锁</strong>，启用后重启手机。</p><h3 id="找一个合适的ROM"><a href="#找一个合适的ROM" class="headerlink" title="找一个合适的ROM"></a>找一个合适的ROM</h3><p>MIUI有很多第三方的官改ROM，但官改系统大部分不支持低端机，而且官改系统不是开源系统，无法保证里面是否藏有锁机或格机的程序。</p><p>鉴于以上原因，我最终将目光转向了类原生ROM。遗憾的是大名鼎鼎的<strong>LineageOS</strong>并不支持我的这部Redmi Note12R包括其衍生机型，在查找一番后我选择了基于LineageOS的<strong>Crdroid</strong>。</p><p>这台Redmi Note12R可以刷入基于 <strong>LineageOS 20（Android 13）</strong> 的 <strong>Crdroid 9.11</strong>，虽说这个版本已经因为数个月没更新而被官方标记为 <em><strong>不再受支持</strong></em> 了，但还是可以下载下来刷的。在<a href="https://crdroid.net/sky/9">这里</a>可以下载到。</p><h3 id="TWRP"><a href="#TWRP" class="headerlink" title="TWRP"></a>TWRP</h3><p><strong>TWRP</strong>是一个第三方的Recovery，我们需要它才能刷入非官方ROM，否则会无法启动。</p><h2 id="开始刷机"><a href="#开始刷机" class="headerlink" title="开始刷机"></a>开始刷机</h2><p>在开始刷机前我们先退出小米账号以防一些莫名其妙的问题。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>安卓</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Avalonia 学习&amp;开发日志 01</title>
+    <link href="/2024/01/22/avalonia-log-01/"/>
+    <url>/2024/01/22/avalonia-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Avalonia-是什么？"><a href="#Avalonia-是什么？" class="headerlink" title="Avalonia 是什么？"></a>Avalonia 是什么？</h2><p>Avalonia 是基于.Net的一个跨平台应用开发框架。</p><p>我们平常开发桌面应用一般都是什么平台用什么框架，比如Windows上就用WinForm、WPF或UWP，Linux上就用qt或gtk等等，但是当我们的应用需要同时在几个平台上跑时，使用这些应用开发框架来开发就显得力不从心了。现在最火的桌面跨平台开发框架应该是Electron，但是嘛，这玩意它体积大，性能在没优化的情况下也是很烂的，毕竟是浏览器。</p><p>而Avalonia使用MVVM这种成熟的架构和C#等.Net语言，C#是目前最强的应用开发语言，不管是性能还是易用性，它都是最强的，而MVVM这种架构已经在WPF上经过验证，是很方便开发和维护的一种架构。而Avalonia这个民间框架，做到了微软最新的MAUI都没能做出来的特性：跨所有主流平台，不止桌面端三兄弟，移动端的俩座大山它也支持，不像MAUI现在。</p><h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><p>我们使用Windows系统上的Visual Studio作为开发环境的代码编辑器。</p><blockquote><p>注意：这里默认你已经安装好了VS 2022。如果你还没安装好赶紧去安装吧，记得把它装到固态硬盘里（非系统盘）</p></blockquote><p>我们首先要做的是，在Visual　Studio　Installer里点击已安装的VS选项卡下的修改按钮，在工作负荷标签页下选择安装.Net桌面开发，在单个组件选项卡下选择安装 <strong>.Net 7.0 运行时</strong> 和 <strong>.Net SDK</strong> ，然后我们打开命令提示符程序输入</p><figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bat">dotnet new install Avalonia.Templates<br></code></pre></td></tr></table></figure><p>来安装Avalonia的模板。</p><p>我们还需要进到VS中，在标签页<strong>扩展-&gt;管理扩展</strong>下搜索安装<strong>Avalonia for Visual Studio 2022</strong>这个扩展，下载完成后关闭VS2022，等待VSIX Installer响应，在弹出的窗口中点击<strong>Modify</strong>来安装。</p><p>到此基础开发环境已搭建完成。</p><h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Avalonia</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Unity Dots 学习日志 04</title>
+    <link href="/2023/10/08/unity-dots-log-04/"/>
+    <url>/2023/10/08/unity-dots-log-04/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Dots踩坑记录"><a href="#Dots踩坑记录" class="headerlink" title="Dots踩坑记录"></a>Dots踩坑记录</h2><p>因为我们要把输入存为IComponentData支持的类型，所以我们需要使用ReadValue<T>来从InputAction中读取值，但是这里会遇到一个问题，当你只需要判断按键是否被按下时，你不能用到Button的那几个状态，因为IComponentData不支持。</p><p>翻看官方文档无果后经过搜索，我找到了Unity论坛里对这件事的讨论，其中有一位指出了Button的返回值是float类型，当按下时为1，未按下时为0，所以我们只需要<code>ReadValue&lt;float&gt;</code>即可将按键的按下状态存储为Component了。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Unity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>C语言学习日志 02</title>
+    <link href="/2023/09/11/c-log-02/"/>
+    <url>/2023/09/11/c-log-02/</url>
+    
+    <content type="html"><![CDATA[<h1 id="C语言学习日志-02"><a href="#C语言学习日志-02" class="headerlink" title="C语言学习日志 02"></a>C语言学习日志 02</h1><h1 id="类型（Type）"><a href="#类型（Type）" class="headerlink" title="类型（Type）"></a>类型（Type）</h1><p>C语言是一种强类型的语言，处理的每个数据都必须有明确的类型。</p><p>C语言自带的类型有非常多，在讲类型之前我们先来了解一下C语言中的变量。</p><h1 id="变量（Variable）"><a href="#变量（Variable）" class="headerlink" title="变量（Variable）"></a>变量（Variable）</h1><p>变量是承载数据的容器，而变量的类型就是数据的类型。</p><p>在C语言中，要创建一个变量，首先要声明它：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">type name;<br></code></pre></td></tr></table></figure><p>type是变量的类型，name是变量名。</p><p>而我们可以给已声明的变量赋值（定义变量）：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">name = value;<br></code></pre></td></tr></table></figure><p>name是已声明的变量的变量名，value是变量的值，值的范围和形式依变量的类型而定。</p><p>声明和定义可以和在一起，即在声明时进行初始化：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">type name = value;<br></code></pre></td></tr></table></figure><p>C语言中有很多变量类型，我们先来看些基本的。</p><h1 id="int（整形）"><a href="#int（整形）" class="headerlink" title="int（整形）"></a>int（整形）</h1><p>整形（整数）类型int是C语言中最常用到的类型之一，在上篇中的Hello World程序中我们就有用到。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C语言</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>OpenGL 学习日志 03</title>
+    <link href="/2023/08/14/opengl-log-03/"/>
+    <url>/2023/08/14/opengl-log-03/</url>
+    
+    <content type="html"><![CDATA[<h2 id="窗口"><a href="#窗口" class="headerlink" title="窗口"></a>窗口</h2><p>我们首先创建一个<code>.c</code>文件，然后先写下头文件引用：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;glad/glad.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;GLFW/glfw3.h&gt;</span></span><br></code></pre></td></tr></table></figure><blockquote><p>注意：需要在包含GLFW头文件之前包含GLAD头文件，GLAD头文件包含了正确的OpenGL头文件，所以要先包含。</p></blockquote><p>然后我们开始写main函数来实例化一个GLFW窗口：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, <span class="hljs-number">3</span>);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, <span class="hljs-number">3</span>);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);<br>    <span class="hljs-comment">//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</span><br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><p>完整代码如下：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;glad/glad.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;GLFW/glfw3.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">framebuffer_size_callback</span><span class="hljs-params">(GLFWwindow* window, <span class="hljs-type">int</span> width, <span class="hljs-type">int</span> height)</span>;<br><span class="hljs-type">void</span> <span class="hljs-title function_">processInput</span><span class="hljs-params">(GLFWwindow *window)</span>;<br><br><span class="hljs-comment">// settings</span><br><span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> SCR_WIDTH = <span class="hljs-number">800</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> SCR_HEIGHT = <span class="hljs-number">600</span>;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-comment">// glfw: initialize and configure</span><br>    <span class="hljs-comment">// ------------------------------</span><br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, <span class="hljs-number">3</span>);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, <span class="hljs-number">3</span>);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);<br><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> __APPLE__</span><br>    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    <span class="hljs-comment">// glfw window creation</span><br>    <span class="hljs-comment">// --------------------</span><br>    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, <span class="hljs-string">&quot;LearnOpenGL&quot;</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">if</span> (window == <span class="hljs-literal">NULL</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Failed to create GLFW window\n&quot;</span>);<br>        glfwTerminate();<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br>    glfwMakeContextCurrent(window);<br>    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);<br><br>    <span class="hljs-comment">// glad: load all OpenGL function pointers</span><br>    <span class="hljs-comment">// ---------------------------------------</span><br>    <span class="hljs-keyword">if</span> (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Failed to initialize GLAD\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// render loop</span><br>    <span class="hljs-comment">// -----------</span><br>    <span class="hljs-keyword">while</span> (!glfwWindowShouldClose(window))<br>    &#123;<br>        <span class="hljs-comment">// input</span><br>        <span class="hljs-comment">// -----</span><br>        processInput(window);<br><br>        <span class="hljs-comment">// render</span><br>        <span class="hljs-comment">// ------</span><br>        glClearColor(<span class="hljs-number">0.2f</span>, <span class="hljs-number">0.3f</span>, <span class="hljs-number">0.3f</span>, <span class="hljs-number">1.0f</span>);<br>        glClear(GL_COLOR_BUFFER_BIT);<br><br>        <span class="hljs-comment">// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)</span><br>        <span class="hljs-comment">// -------------------------------------------------------------------------------</span><br>        glfwSwapBuffers(window);<br>        glfwPollEvents();<br>    &#125;<br><br>    <span class="hljs-comment">// glfw: terminate, clearing all previously allocated GLFW resources.</span><br>    <span class="hljs-comment">// ------------------------------------------------------------------</span><br>    glfwTerminate();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-comment">// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly</span><br><span class="hljs-comment">// ---------------------------------------------------------------------------------------------------------</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">processInput</span><span class="hljs-params">(GLFWwindow *window)</span><br>&#123;<br>    <span class="hljs-keyword">if</span>(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, <span class="hljs-literal">true</span>);<br>&#125;<br><br><span class="hljs-comment">// glfw: whenever the window size changed (by OS or user resize) this callback function executes</span><br><span class="hljs-comment">// ---------------------------------------------------------------------------------------------</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">framebuffer_size_callback</span><span class="hljs-params">(GLFWwindow* window, <span class="hljs-type">int</span> width, <span class="hljs-type">int</span> height)</span><br>&#123;<br>    <span class="hljs-comment">// make sure the viewport matches the new window dimensions; note that width and</span><br>    <span class="hljs-comment">// height will be significantly larger than specified on retina displays.</span><br>    glViewport(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, width, height);<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>OpenGL</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>OpenGL 学习日志 02</title>
+    <link href="/2023/08/13/opengl-log-02/"/>
+    <url>/2023/08/13/opengl-log-02/</url>
+    
+    <content type="html"><![CDATA[<h2 id="GLFW"><a href="#GLFW" class="headerlink" title="GLFW"></a>GLFW</h2><p>我们首先需要创建一个OpenGL上下文和一个用于显示的窗口，因为OpenGL是跨平台的，所以这些操作被抽象了出去，由其他的库实现，所以这时需要用到外部的库，最流行的有GLUT、SDL、SFML和GLFW，我们选用GLFW。</p><p>因为我的系统环境是Arch Linux，所以下面也会以Arch Linux的环境配置进行说明。</p><p>使用pacman安装glfw库，此时请注意，glfw对于不同的图形界面后端有不同的版本，所以我们可以先使用以下命令检查一下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-variable">$XDG_SESSION_TYPE</span><br></code></pre></td></tr></table></figure><p>然后我们使用pacman安装对应的glfw库：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># xorg后端请用此命令</span><br>sudo pacman -Syu glfw-x11 --no-confirm<br><span class="hljs-comment"># wayland后端请用此命令</span><br>sudo pacman -Syu glfw-wayland --no-confirm<br></code></pre></td></tr></table></figure><h2 id="CMake"><a href="#CMake" class="headerlink" title="CMake"></a>CMake</h2><p>CMake是一个不错的项目构建配置工具，我们在Arch上也能很容易地安装上：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu cmake --no-confirm<br></code></pre></td></tr></table></figure><h2 id="GLAD"><a href="#GLAD" class="headerlink" title="GLAD"></a>GLAD</h2><p>因为OpenGL的具体实现是由驱动开发商对特定显卡实现的，且由于OpenGL驱动版本众多，大多数函数无法在编译时就确定位置，需要在运行时进行查询，所以开发者需要在运行时获取函数地址并将其保存在一个函数指针中供以后使用。取得地址的方法因平台而异，而且非常繁琐，所以我们用一个叫作GLAD的库来简化这个过程。</p><p>访问<a href="https://glad.dav1d.de/">这个网站</a>，在里面指定生成<strong>C&#x2F;C++</strong></p><h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>至此，我们的开发环境已经配置完成，下篇开始实战。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>OpenGL</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Unity Dots学习日志 03</title>
+    <link href="/2023/08/10/unity-dots-log-03/"/>
+    <url>/2023/08/10/unity-dots-log-03/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Dots实现FPS踩坑"><a href="#Dots实现FPS踩坑" class="headerlink" title="Dots实现FPS踩坑"></a>Dots实现FPS踩坑</h2><p>首当其冲的就是输入，可以使用input system，参考<a href="https://www.youtube.com/watch?v=bFHvgqLUDbE">油管大神<strong>TurboMakesGame</strong>的视频</a>。</p><p>这只是实现了移动的输入，视角转动的输入还没实现呢，这时我们会遇到一个问题，那就是camera。</p><p>将camera转化为entity，看似可行，实则不行，transform组件没被转化，实现了转不动（我已经试过了）。</p><p>经过多番查找，我发现，camera还是得留在subscene外继续当GameObject，我们把它当成一个普通的GameObject处理，那么怎么跟ECS对接呢？</p><p>这里我们可以参考<a href="https://www.youtube.com/watch?v=IO6_6Y_YUdE">油管大神<strong>TurboMakesGame</strong>的另一个视频</a>，在制作的最后部分有涉及camera control。</p><p>你以为能这样就完事了？并没有。</p><p>我们的camera不通过设置是看不到Entity的，我们需要去<strong>Edit &gt; Preferences &gt; Entities &gt; Baking</strong>下的<strong>Scene View Mode</strong>切换成<strong>Runtime Data</strong>。这样才能让我们的camera渲染出entity。</p><p>这就结束了？还没呢。因为player是Entity而camera是GameObject，所以我们并不能像在它们都是GameObject时那样通过将它们设置为父子物体来同步它们的transform，我们需要手动进行同步。</p><p>好了，我们先同步了位置，但是你会发现，视角转动和移动方向并没有关系，照抄大神的代码是不行的，我们还需要同步一下rotation。</p><p>写完同步rotation的代码，好嘛，运行起来一看，往下和往上看时player的模型也跟着上下转动，这是rotation的问题，我们不能同步所有的rotation。</p><p>解决方法是只同步camera rotation的quaternion的y和w值，其他两个设置为0，这会只同步水平方向的rotation。</p><p>至此我们才完成了一个基本的FPS角色移动和视角转动。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>unity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CMake学习日志 01</title>
+    <link href="/2023/07/25/cmake-log-01/"/>
+    <url>/2023/07/25/cmake-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="CMake学习日志-01"><a href="#CMake学习日志-01" class="headerlink" title="CMake学习日志 01"></a>CMake学习日志 01</h1>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CMake</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Web开发日志 02</title>
+    <link href="/2023/07/25/web-log-02/"/>
+    <url>/2023/07/25/web-log-02/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Web开发日志-02"><a href="#Web开发日志-02" class="headerlink" title="Web开发日志 02"></a>Web开发日志 02</h1><h1 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h1>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Web</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>日语学习 02</title>
+    <link href="/2023/07/21/jp-log-02/"/>
+    <url>/2023/07/21/jp-log-02/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>语言</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>日语</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>bspwm 配置 02</title>
+    <link href="/2023/07/14/bspwm-log-02/"/>
+    <url>/2023/07/14/bspwm-log-02/</url>
+    
+    <content type="html"><![CDATA[<h1 id="bspwm-配置-02"><a href="#bspwm-配置-02" class="headerlink" title="bspwm 配置 02"></a>bspwm 配置 02</h1><h1 id="sxhkd"><a href="#sxhkd" class="headerlink" title="sxhkd"></a>sxhkd</h1><p>sxhkd是bspwm配套的热键处理程序，我们现在</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvim ~/.config/sxhkd/sxhkdrc<br></code></pre></td></tr></table></figure><p>可以看到以下内容：</p><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><code class="hljs txt">#<br># wm independent hotkeys<br>#<br><br># terminal emulator<br>super + Return<br>urxvt<br><br># program launcher<br>super + @space<br>dmenu_run<br><br># make sxhkd reload its configuration files:<br>super + Escape<br>pkill -USR1 -x sxhkd<br><br>#<br># bspwm hotkeys<br>#<br><br># quit/restart bspwm<br>super + alt + &#123;q,r&#125;<br>bspc &#123;quit,wm -r&#125;<br><br># close and kill<br>super + &#123;_,shift + &#125;w<br>bspc node -&#123;c,k&#125;<br><br># alternate between the tiled and monocle layout<br>super + m<br>bspc desktop -l next<br><br># send the newest marked node to the newest preselected node<br>super + y<br>bspc node newest.marked.local -n newest.!automatic.local<br><br># swap the current node and the biggest window<br>super + g<br>bspc node -s biggest.window<br><br>#<br># state/flags<br>#<br><br># set the window state<br>super + &#123;t,shift + t,s,f&#125;<br>bspc node -t &#123;tiled,pseudo_tiled,floating,fullscreen&#125;<br><br># set the node flags<br>super + ctrl + &#123;m,x,y,z&#125;<br>bspc node -g &#123;marked,locked,sticky,private&#125;<br><br>#<br># focus/swap<br>#<br><br># focus the node in the given direction<br>super + &#123;_,shift + &#125;&#123;h,j,k,l&#125;<br>bspc node -&#123;f,s&#125; &#123;west,south,north,east&#125;<br><br># focus the node for the given path jump<br>super + &#123;p,b,comma,period&#125;<br>bspc node -f @&#123;parent,brother,first,second&#125;<br><br># focus the next/previous window in the current desktop<br>super + &#123;_,shift + &#125;c<br>bspc node -f &#123;next,prev&#125;.local.!hidden.window<br><br># focus the next/previous desktop in the current monitor<br>super + bracket&#123;left,right&#125;<br>bspc desktop -f &#123;prev,next&#125;.local<br><br># focus the last node/desktop<br>super + &#123;grave,Tab&#125;<br>bspc &#123;node,desktop&#125; -f last<br><br># focus the older or newer node in the focus history<br>super + &#123;o,i&#125;<br>bspc wm -h off; \<br>bspc node &#123;older,newer&#125; -f; \<br>bspc wm -h on<br><br># focus or send to the given desktop<br>super + &#123;_,shift + &#125;&#123;1-9,0&#125;<br>bspc &#123;desktop -f,node -d&#125; &#x27;^&#123;1-9,10&#125;&#x27;<br><br>#<br># preselect<br>#<br><br># preselect the direction<br>super + ctrl + &#123;h,j,k,l&#125;<br>bspc node -p &#123;west,south,north,east&#125;<br><br># preselect the ratio<br>super + ctrl + &#123;1-9&#125;<br>bspc node -o 0.&#123;1-9&#125;<br><br># cancel the preselection for the focused node<br>super + ctrl + space<br>bspc node -p cancel<br><br># cancel the preselection for the focused desktop<br>super + ctrl + shift + space<br>bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel<br><br>#<br># move/resize<br>#<br><br># expand a window by moving one of its side outward<br>super + alt + &#123;h,j,k,l&#125;<br>bspc node -z &#123;left -20 0,bottom 0 20,top 0 -20,right 20 0&#125;<br><br># contract a window by moving one of its side inward<br>super + alt + shift + &#123;h,j,k,l&#125;<br>bspc node -z &#123;right -20 0,top 0 20,bottom 0 -20,left 20 0&#125;<br><br># move a floating window<br>super + &#123;Left,Down,Up,Right&#125;<br>bspc node -v &#123;-20 0,0 20,0 -20,20 0&#125;<br></code></pre></td></tr></table></figure><p>可以看到这个配置文件与bspwm不同，是有很多注释的，大家可以根据注释来自行进行配置。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>bspwm</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>实用工具使用日志 02</title>
+    <link href="/2023/07/12/tools-log-02/"/>
+    <url>/2023/07/12/tools-log-02/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Surfing-Keys"><a href="#Surfing-Keys" class="headerlink" title="Surfing Keys"></a>Surfing Keys</h1><p>Chrome 作为当下市场份额最高的浏览器，其有着丰富的软件生态。</p><p>其中的一个体现就是Chrome 有很多的浏览器扩展可以使用，本篇博客就来介绍一下<strong>Surfing Keys</strong>这个Chrome 扩展。</p><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>我们去Chrome 的扩展商店搜索<strong>Surfing Keys</strong>，即可找到这个扩展，选择将其添加至Chrome 即可。</p><p>当然其他浏览器（比如火狐）也是有这个扩展的，去扩展商店也能安装。</p><h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>Surfing Keys有很多操作与Vim 是一样的，作为一个NVimer 那肯定是很容易上手的，熟练之后就可以不用鼠标操作我们的Chrome 浏览器了，而且这个扩展的高级选项中还支持自定义配置文件，像我这种NVimer 很难不心动。</p><p>但是仍然存在一些问题，比如浏览器的一些自带页面（比如设置界面和无网络界面）是不允许使用扩展的，所以在这些界面时会无法使用Surfing Keys 对浏览器进行操作。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>除开上述问题，Surfing Keys 这个扩展对于想要实现全键盘工作流的人来说是个不可多得的神器，能一定程度上提高操作浏览器的效率。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>实用工具</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Unity URP 学习日志 01</title>
+    <link href="/2023/07/06/unity-urp-log-01/"/>
+    <url>/2023/07/06/unity-urp-log-01/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>unity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Unity Dots 学习日志 02</title>
+    <link href="/2023/07/06/unity-dots-log-02/"/>
+    <url>/2023/07/06/unity-dots-log-02/</url>
+    
+    <content type="html"><![CDATA[<h2 id="安装Dots-核心包"><a href="#安装Dots-核心包" class="headerlink" title="安装Dots 核心包"></a>安装Dots 核心包</h2><p>在Unity 编辑器界面，点击工具栏<strong>Windows &gt; Package Manager</strong>后点击左上角的**+<strong>号，选择</strong>Add package by name<strong>，在输入栏中输入</strong>com.unity.entities**即可安装Unity Entities 核心包。</p><p>然后我们是使用的URP模板创建的项目，所以我们还得安装另一个相关的包才能让我们的游戏对象正常渲染出来，这个渲染相关的包叫作<strong>com.unity.entities.graphics</strong></p><p>安装完Dots核心包之后不要忘了设定一下项目设置，在<strong>Edit &gt; Project Settings &gt; Editor</strong>下面，有个叫作<strong>Enter Play Mode Options</strong>的选项，我们把这个选项打开，然后里面的两个子选项（Reload Domain 和 Reload Scene）不用管它。设置完这个后会使场景和后台进程中的变量不再自动刷新，会影响带有static的函数或变量，对其他方面没有任何负面影响。</p><h2 id="Authoring-和-Runtime-数据"><a href="#Authoring-和-Runtime-数据" class="headerlink" title="Authoring 和 Runtime 数据"></a>Authoring 和 Runtime 数据</h2><p>unity dots严格的把数据分为了编辑模式下的Authoring类型数据和运行模式下的Runtime数据，在右侧的检查器（Inspector）面板，通常我们看到的是Authoring状态下的数据，而在运行模式下检查器面板会显示Runtime数据。</p><h2 id="Baker"><a href="#Baker" class="headerlink" title="Baker"></a>Baker</h2><p>因为在一般的unity开发流程中，我们的各种组件都继承自MonoBehaviour基类，而Dots使用的ECS是另一种架构，所以我们需要将普通的unity GameObject转化为ECS中的Entity，这个过程叫作<strong>Bake</strong>，而要Bake GameObject 我们需要创建一个Baker。</p><h3 id="编写Authoring脚本"><a href="#编写Authoring脚本" class="headerlink" title="编写Authoring脚本"></a>编写Authoring脚本</h3><p>我们一般在</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>unity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Unity Dots 学习日志 01</title>
+    <link href="/2023/07/06/unity-dots-log-01/"/>
+    <url>/2023/07/06/unity-dots-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Unity-Dots-学习日志-01"><a href="#Unity-Dots-学习日志-01" class="headerlink" title="Unity Dots 学习日志 01"></a>Unity Dots 学习日志 01</h1><p>我想用这篇博客来记录一下我学习使用Unity Dots来开发Unity 3D游戏的过程，我们将使用Unity Dots来开发一个FPS射击游戏的原型。</p><h1 id="Dots-相关概念"><a href="#Dots-相关概念" class="headerlink" title="Dots 相关概念"></a>Dots 相关概念</h1><p>首先我们来了解一些Unity Dots的相关概念，它与传统的Unity技术栈有何不同？</p><h2 id="面向数据设计（Data-Oriented-Design）"><a href="#面向数据设计（Data-Oriented-Design）" class="headerlink" title="面向数据设计（Data-Oriented Design）"></a>面向数据设计（Data-Oriented Design）</h2><p><strong>Data-Oriented Design</strong>简称<strong>DOD</strong>，是不同于面向对象编程&#x2F;设计（Object-Oriented Programming &#x2F; Design）的一种新兴的程序设计方法。</p><p>从字面上来看，DOP 从数据的角度来进行程序设计，而 OOP 则从对象的角度来进行程序设计。DOP 比OOP 更适合处理大量的数据，这刚好符合当代电子游戏的发展所带来的高性能需求。</p><p>但是DOP 缓存友好的优点也使使用它的代码更难编写和理解，需要开发者具备良好的计算机基础，熟悉内存（memory）、缓存（cache）等概念。</p><h2 id="Entities"><a href="#Entities" class="headerlink" title="Entities"></a>Entities</h2><p><strong>Entities</strong>是Unity Dots 的核心包，也是我们使用Dots 技术栈所主要学习的包。</p><h2 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h2><p><strong>Entity Component System</strong>是Entities 的核心架构，Entities 采用此架构来组织代码和数据。</p><h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h3><p>总而言之，Entity类似于GameObject，它可以挂载一个或多个Component。<br>创建或者销毁一个Entity会引发<strong>structrual change</strong>，具体我们后面再说。所有的Entity都由World中的<strong>EntityManager</strong>来管理。<br>Entity没有类型，但是可以通过与其相关的Components来分类。<br>EntityManager会记录已存在的Entity所具有的Components的集合，这些Components集合被称为<strong>Archetypes</strong>，我们后面也会讲到。</p><h3 id="Component"><a href="#Component" class="headerlink" title="Component"></a>Component</h3><p>Component是用来给<strong>System</strong>读写的数据。</p><p>继承自接口<strong>IComponentData</strong>的结构体会被标记为Component类型。这种Component类型只储存非托管类型的数据，虽然这种Component可以储存方法，但是最好还是只储存纯净的数据。</p><p>当然也可以创建一个储存托管类型的Component，但是弊大于利，这里就不提了。</p><p>上面提到Entity所具有的Components的集合叫作<strong>Archetype</strong>，这里有个关键概念：<strong>Chunk</strong>，我们后面再说。</p><h3 id="System"><a href="#System" class="headerlink" title="System"></a>System</h3><p>System用于提供将Component从当前状态转换到下一状态的逻辑。例如根据所有移动的Entities的速度乘上一帧与当前帧之间的时间间隔来计算出它们这一帧的位置。</p><p>System在主线程上被每帧执行，然后是可以设定多个Systems之间的优先级的，我们可以自己决定谁先执行谁后执行。</p><p>System有四种可用类型：</p><ul><li><strong>SystemBase</strong>：用于创建托管System的基类。</li><li><strong>ISystem</strong>：用于创建非托管System的接口。</li><li><strong>EntityCommandBufferSystem</strong>：用于为其他Systems提供<strong>Entity Command Buffer</strong>实例，可以用来将structural changes堆在一起从而提供性能。</li><li><strong>ComponentSystemGroup</strong>：为Systems的组织和更新提供优先级。</li></ul><p>一个System只能处理一个World中的Entities，也就是说System是与World绑定在一起的。</p><p>Unity默认会对System进行自动加载，自动加载进程默认会创建一个有着三个System Groups的World，它们分别是<strong>InitializationSystemGroup</strong>，<strong>SimulationSystemGroup</strong>和<strong>PresentationSystemGroup</strong>，一般System会被加到<strong>SimulationSystemGroup</strong>里，可以通过**[UpdateInGroup]**属性来指定加入到某个System Group。</p><p>要关闭System的自动加载，可以在脚本里定义**#UNITY_DIABLE_AUTOMATIC_SYSTEM_BOOTSTRAP**。</p><h3 id="World"><a href="#World" class="headerlink" title="World"></a>World</h3><p>World是Entities的集合，Entity的ID只有在自己的World中是唯一的。每个World都有一个EntityManager结构体来创建、销毁和修改World中的Entities。</p><p>Unity默认会在进入Play模式时创建一个World实例并将Systems添加进去。</p><h3 id="Archetypes"><a href="#Archetypes" class="headerlink" title="Archetypes"></a>Archetypes</h3><p>Archetype是World中所有具有相同Component组合的Entities的独一无二的标识。例如：在一个World中所有只有Component A和Component B的Entities共享同一个Archetype，所有只有Component A、B、C的Entities共享另一个不同的Archetype，而所有只有Component A和Z的Entities又共享一个与前两个都不同的Archetype。</p><p>当在一个Entity中新增或移除Component时，World中的EntityManager会将这个Entity移动到对应的Archetype中。例如：从一个有Component A、B、C的Entity中移除Component B，EntityManager会将这个Entity移动到具有Component A和C的Archetype中，如果没有这样的Archetype，EntityManager会自动创建一个。</p><p>Archetypes一般在程序生命周期的早期就会稳定下来，所以可以将索引缓存下来以提高性能。</p><p>Archetype只有在World被销毁时才会被销毁。</p><h4 id="Archetype-chunks"><a href="#Archetype-chunks" class="headerlink" title="Archetype chunks"></a>Archetype chunks</h4><p>Chunk是ECS架构中特有的一种数据结构，相同Archetype的Entities会在内存中被以名为Chunk的内存块的形式存储，每个Chunk占用16KB的内存空间，每个Chunk能存储的Entities数量取决于Chunk中Archetype所存储的Components的种类和数量。Chunk的创建与销毁也由EntityManager管理。</p><p>Chunk包含一个储存每一种Component数据的数组和一个存储Entities的ID的数组。例如：一个表示Component A和B的Archetype，它的每个Chunk包含三个数组：一个存储Component A的值、一个存储Component B的值、一个存储Entity的ID。</p><h3 id="Structural-changes"><a href="#Structural-changes" class="headerlink" title="Structural changes"></a>Structural changes</h3><p>在Unity中会导致重新分配chunk占用的内存或改变chunk中的内容的操作被称为Structural changes。这些操作会影响性能，它们只会出现在游戏主线程中而不是jobs中。</p><p>下面三种操作被认定为Structural changes：</p><ul><li>创建或销毁Entity</li><li>添加或移除Components</li><li>设置一个共享的Component值</li></ul><p>值得一提的是，Jobs线程之间的同步也会间接导致Structural changes。所以有必要利用EntityCommandBuffer来安排其发生的时间，避免大量的Structural changes在用一时间发生。</p><h3 id="Safety-in-Entities"><a href="#Safety-in-Entities" class="headerlink" title="Safety in Entities"></a>Safety in Entities</h3><p>Entities核心包中的各种API使用了很多unsafe代码来尽可能的提高性能，但是这与C#的安全理念背道而驰，所以我们来看看Entities中的安全问题是怎么解决的。</p><p>大多数情况下ECS框架会进行安全检查并及时报错以防止编辑器崩溃，可以在<strong>Jobs &gt; Burst &gt; Safety Checks</strong>下找到相关设置。</p><p>Entities核心包中包含两种引用类型来标记被包含的类型的访问方式。它们分别是ReadWrite（RefRW）和ReadOnly（RefRO）。当安全检查处于开启状态，运行程序时这两个引用类型会进行检查以确保被包含类型一直处于合法状态。Structural changes可能导致被包含类型不再合法。</p><h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/index.html">Unity Dots官方文档（没中文）</a><br><a href="https://github.com/Unity-Technologies/EntityComponentSystemSamples">Unity Dots官方GitHub示例（没中文）</a><br><a href="https://docs.unity.cn/cn/2022.3/Manual/UnityManual.html">Unity 官方中文文档</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>unity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>NeoVim 配置日志 04</title>
+    <link href="/2023/07/05/neovim-log-04/"/>
+    <url>/2023/07/05/neovim-log-04/</url>
+    
+    <content type="html"><![CDATA[<p>从这篇开始插件配置。首先是非常好用的Lspsaga，增强内置LSP的功能。</p><h1 id="Lspsaga"><a href="#Lspsaga" class="headerlink" title="Lspsaga"></a>Lspsaga</h1><p>我们还是去lazy.lua这个文件下面，插入以下代码：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs lua">&#123; <span class="hljs-string">&#x27;nvimdev/lspsaga.nvim&#x27;</span>,<br>    event = <span class="hljs-string">&#x27;LspAttach&#x27;</span>,<br>    <span class="hljs-built_in">config</span> = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span></span><br>        <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;lspsaga&#x27;</span>).setup(&#123;&#125;)<br>    <span class="hljs-keyword">end</span><br>&#125;,<br></code></pre></td></tr></table></figure><p>然后照旧保存重开neovim，基本配置就算ok了，再次重开neovim编辑一些配置好lsp的语言的源代码，立马就能看到效果了。1</p><p>Lspsaga提供了neovim中的命令行命令，我们可以用<code>:Lspsaga 子命令</code>来调用这些命令，输入**:Lspsaga<strong>后按tab补全就能看到可用命令，我们可以去</strong>keymaps.lua**这个配置文件里添加这些命令的快捷键映射，这里就不过多赘述了。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>neovim</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>NeoVim 配置日志 03</title>
+    <link href="/2023/07/05/neovim-log-03/"/>
+    <url>/2023/07/05/neovim-log-03/</url>
+    
+    <content type="html"><![CDATA[<h1 id="DAP-配置"><a href="#DAP-配置" class="headerlink" title="DAP 配置"></a>DAP 配置</h1><p>在Mason里我们可以下载到DAP Adapter，我这里讲一下C语言DAP调试环境（基于LLDB）的配置。</p><p>先安装必要的插件：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">&#123; <span class="hljs-string">&#x27;mfussenegger/nvim-dap&#x27;</span>, dependencies = &#123; <span class="hljs-string">&#x27;rcarriga/nvim-dap-ui&#x27;</span>, <span class="hljs-string">&#x27;theHamsta/nvim-dap-virtual-text&#x27;</span>, <span class="hljs-string">&#x27;LiadOz/nvim-dap-repl-highlights&#x27;</span>&#125;, &#125;,<br></code></pre></td></tr></table></figure><p>然后我们来写自己的配置文件，我是在<strong>lua</strong>目录下新建来一个<strong>dap</strong>来放置我的dap配置文件。</p><p>编写<strong>dapconfig.lua</strong>来配置一些dap的全局配置。</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> dap_status_ok, dap = <span class="hljs-built_in">pcall</span>(<span class="hljs-built_in">require</span>, <span class="hljs-string">&#x27;dap&#x27;</span>)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> dap_status_ok <span class="hljs-keyword">then</span><br>  <span class="hljs-keyword">return</span><br><span class="hljs-keyword">end</span><br><span class="hljs-keyword">local</span> dapui_status_ok, dapui = <span class="hljs-built_in">pcall</span>(<span class="hljs-built_in">require</span>, <span class="hljs-string">&#x27;dapui&#x27;</span>)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> dapui_status_ok <span class="hljs-keyword">then</span><br>  <span class="hljs-keyword">return</span><br><span class="hljs-keyword">end</span><br><span class="hljs-keyword">local</span> dap_vt_status_ok, dapvt = <span class="hljs-built_in">pcall</span>(<span class="hljs-built_in">require</span>, <span class="hljs-string">&#x27;nvim-dap-virtual-text&#x27;</span>)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> dap_vt_status_ok <span class="hljs-keyword">then</span><br>  <span class="hljs-keyword">return</span><br><span class="hljs-keyword">end</span><br><span class="hljs-keyword">local</span> dap_repl_hl_status_ok, dap_repl_hl = <span class="hljs-built_in">pcall</span>(<span class="hljs-built_in">require</span>, <span class="hljs-string">&#x27;nvim-dap-repl-highlights&#x27;</span>)<br><span class="hljs-keyword">local</span> dap_breakpoint_color = &#123;<br>    breakpoint = &#123;<br>        ctermbg=<span class="hljs-number">0</span>,<br>        fg=<span class="hljs-string">&#x27;#993939&#x27;</span>,<br>        bg=<span class="hljs-string">&#x27;#31353f&#x27;</span>,<br>    &#125;,<br>    logpoing = &#123;<br>        ctermbg=<span class="hljs-number">0</span>,<br>        fg=<span class="hljs-string">&#x27;#61afef&#x27;</span>,<br>        bg=<span class="hljs-string">&#x27;#31353f&#x27;</span>,<br>    &#125;,<br>    stopped = &#123;<br>        ctermbg=<span class="hljs-number">0</span>,<br>        fg=<span class="hljs-string">&#x27;#98c379&#x27;</span>,<br>        bg=<span class="hljs-string">&#x27;#31353f&#x27;</span><br>    &#125;,<br>&#125;<br><br>vim.api.nvim_set_hl(<span class="hljs-number">0</span>, <span class="hljs-string">&#x27;DapBreakpoint&#x27;</span>, dap_breakpoint_color.breakpoint)<br>vim.api.nvim_set_hl(<span class="hljs-number">0</span>, <span class="hljs-string">&#x27;DapLogPoint&#x27;</span>, dap_breakpoint_color.logpoing)<br>vim.api.nvim_set_hl(<span class="hljs-number">0</span>, <span class="hljs-string">&#x27;DapStopped&#x27;</span>, dap_breakpoint_color.stopped)<br><br><span class="hljs-keyword">local</span> dap_breakpoint = &#123;<br>    <span class="hljs-built_in">error</span> = &#123;<br>        text = <span class="hljs-string">&quot;&quot;</span>,<br>        texthl = <span class="hljs-string">&quot;DapBreakpoint&quot;</span>,<br>        linehl = <span class="hljs-string">&quot;DapBreakpoint&quot;</span>,<br>        numhl = <span class="hljs-string">&quot;DapBreakpoint&quot;</span>,<br>    &#125;,<br>    condition = &#123;<br>        text = <span class="hljs-string">&#x27;ﳁ&#x27;</span>,<br>        texthl = <span class="hljs-string">&#x27;DapBreakpoint&#x27;</span>,<br>        linehl = <span class="hljs-string">&#x27;DapBreakpoint&#x27;</span>,<br>        numhl = <span class="hljs-string">&#x27;DapBreakpoint&#x27;</span>,<br>    &#125;,<br>    rejected = &#123;<br>        text = <span class="hljs-string">&quot;&quot;</span>,<br>        texthl = <span class="hljs-string">&quot;DapBreakpint&quot;</span>,<br>        linehl = <span class="hljs-string">&quot;DapBreakpoint&quot;</span>,<br>        numhl = <span class="hljs-string">&quot;DapBreakpoint&quot;</span>,<br>    &#125;,<br>    logpoint = &#123;<br>        text = <span class="hljs-string">&#x27;&#x27;</span>,<br>        texthl = <span class="hljs-string">&#x27;DapLogPoint&#x27;</span>,<br>        linehl = <span class="hljs-string">&#x27;DapLogPoint&#x27;</span>,<br>        numhl = <span class="hljs-string">&#x27;DapLogPoint&#x27;</span>,<br>    &#125;,<br>    stopped = &#123;<br>        text = <span class="hljs-string">&#x27;&#x27;</span>,<br>        texthl = <span class="hljs-string">&#x27;DapStopped&#x27;</span>,<br>        linehl = <span class="hljs-string">&#x27;DapStopped&#x27;</span>,<br>        numhl = <span class="hljs-string">&#x27;DapStopped&#x27;</span>,<br>    &#125;,<br>&#125;<br><br>vim.fn.sign_define(<span class="hljs-string">&#x27;DapBreakpoint&#x27;</span>, dap_breakpoint.<span class="hljs-built_in">error</span>)<br>vim.fn.sign_define(<span class="hljs-string">&#x27;DapBreakpointCondition&#x27;</span>, dap_breakpoint.condition)<br>vim.fn.sign_define(<span class="hljs-string">&#x27;DapBreakpointRejected&#x27;</span>, dap_breakpoint.rejected)<br>vim.fn.sign_define(<span class="hljs-string">&#x27;DapLogPoint&#x27;</span>, dap_breakpoint.logpoint)<br>vim.fn.sign_define(<span class="hljs-string">&#x27;DapStopped&#x27;</span>, dap_breakpoint.stopped)<br><br>dapui.setup(&#123;<br>  &#123;<br>    controls = &#123;<br>      element = <span class="hljs-string">&quot;repl&quot;</span>,<br>      enabled = <span class="hljs-literal">true</span>,<br>      icons = &#123;<br>        disconnect = <span class="hljs-string">&quot;&quot;</span>,<br>        pause = <span class="hljs-string">&quot;&quot;</span>,<br>        play = <span class="hljs-string">&quot;&quot;</span>,<br>        run_last = <span class="hljs-string">&quot;&quot;</span>,<br>        step_back = <span class="hljs-string">&quot;&quot;</span>,<br>        step_into = <span class="hljs-string">&quot;&quot;</span>,<br>        step_out = <span class="hljs-string">&quot;&quot;</span>,<br>        step_over = <span class="hljs-string">&quot;&quot;</span>,<br>        terminate = <span class="hljs-string">&quot;&quot;</span><br>      &#125;<br>    &#125;,<br>    element_mappings = &#123;&#125;,<br>    expand_lines = <span class="hljs-literal">true</span>,<br>    floating = &#123;<br>      border = <span class="hljs-string">&quot;single&quot;</span>,<br>      mappings = &#123;<br>        <span class="hljs-built_in">close</span> = &#123; <span class="hljs-string">&quot;q&quot;</span>, <span class="hljs-string">&quot;&lt;Esc&gt;&quot;</span> &#125;<br>      &#125;<br>    &#125;,<br>    force_buffers = <span class="hljs-literal">true</span>,<br>    icons = &#123;<br>      collapsed = <span class="hljs-string">&quot;&quot;</span>,<br>      current_frame = <span class="hljs-string">&quot;&quot;</span>,<br>      expanded = <span class="hljs-string">&quot;&quot;</span><br>    &#125;,<br>    layouts = &#123; &#123;<br>        elements = &#123; &#123;<br>            id = <span class="hljs-string">&quot;scopes&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125;, &#123;<br>            id = <span class="hljs-string">&quot;breakpoints&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125;, &#123;<br>            id = <span class="hljs-string">&quot;stacks&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125;, &#123;<br>            id = <span class="hljs-string">&quot;watches&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125; &#125;,<br>        position = <span class="hljs-string">&quot;left&quot;</span>,<br>        size = <span class="hljs-number">15</span><br>      &#125;, &#123;<br>        elements = &#123; &#123;<br>            id = <span class="hljs-string">&quot;repl&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125;, &#123;<br>            id = <span class="hljs-string">&quot;console&quot;</span>,<br>            size = <span class="hljs-number">0.25</span><br>          &#125; &#125;,<br>        position = <span class="hljs-string">&quot;bottom&quot;</span>,<br>        size = <span class="hljs-number">10</span><br>      &#125; &#125;,<br>    mappings = &#123;<br>      edit = <span class="hljs-string">&quot;e&quot;</span>,<br>      expand = &#123; <span class="hljs-string">&quot;&lt;CR&gt;&quot;</span>, <span class="hljs-string">&quot;&lt;2-LeftMouse&gt;&quot;</span> &#125;,<br>      <span class="hljs-built_in">open</span> = <span class="hljs-string">&quot;o&quot;</span>,<br>      <span class="hljs-built_in">remove</span> = <span class="hljs-string">&quot;d&quot;</span>,<br>      repl = <span class="hljs-string">&quot;r&quot;</span>,<br>      toggle = <span class="hljs-string">&quot;t&quot;</span><br>    &#125;,<br>    render = &#123;<br>      indent = <span class="hljs-number">1</span>,<br>      max_value_lines = <span class="hljs-number">100</span><br>    &#125;<br>  &#125;<br>&#125;)<br><br>dap.listeners.after.event_initialized[<span class="hljs-string">&quot;dapui_config&quot;</span>] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span><br>    dapui.<span class="hljs-built_in">open</span>(&#123;&#125;)<br><span class="hljs-keyword">end</span><br><br>dap.listeners.before.event_terminated[<span class="hljs-string">&quot;dapui_config&quot;</span>] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span><br>    dapui.<span class="hljs-built_in">close</span>(&#123;&#125;)<br><span class="hljs-keyword">end</span><br><br>dap.listeners.before.event_exited[<span class="hljs-string">&quot;dapui_config&quot;</span>] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span><br>    dapui.<span class="hljs-built_in">close</span>(&#123;&#125;)<br><span class="hljs-keyword">end</span><br><br>dapvt.setup(&#123;<br>    enabled = <span class="hljs-literal">true</span>,<br>    enable_commands = <span class="hljs-literal">true</span>,<br>    highlight_changed_variables = <span class="hljs-literal">true</span>,<br>    highlight_new_as_changed = <span class="hljs-literal">false</span>,<br>    show_stop_reason = <span class="hljs-literal">true</span>,<br>    commented = <span class="hljs-literal">false</span>,<br>    only_first_definition = <span class="hljs-literal">true</span>,<br>    all_references = <span class="hljs-literal">false</span>,<br>    filter_references_pattern = <span class="hljs-string">&#x27;&lt;module&#x27;</span>,<br>    virt_text_pos = <span class="hljs-string">&#x27;eol&#x27;</span>,<br>    all_frames = <span class="hljs-literal">false</span>,<br>    virt_lines = <span class="hljs-literal">false</span>,<br>    virt_text_win_col = <span class="hljs-literal">nil</span><br>&#125;)<br>dap_repl_hl.setup()<br><span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;dap/c&#x27;</span>)<br></code></pre></td></tr></table></figure><p>然后我们来编写dap目录下的<strong>c.lua</strong>来作为C语言的dap配置文件。</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> dap_status_ok, dap = <span class="hljs-built_in">pcall</span>(<span class="hljs-built_in">require</span>, <span class="hljs-string">&#x27;dap&#x27;</span>)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> dap_status_ok <span class="hljs-keyword">then</span><br>  <span class="hljs-keyword">return</span><br><span class="hljs-keyword">end</span><br>env = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span><br>  <span class="hljs-keyword">local</span> variables = &#123;&#125;<br>  <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">in</span> <span class="hljs-built_in">pairs</span>(vim.fn.environ()) <span class="hljs-keyword">do</span><br>    <span class="hljs-built_in">table</span>.<span class="hljs-built_in">insert</span>(variables, <span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">&quot;%s=%s&quot;</span>, k, v))<br>  <span class="hljs-keyword">end</span><br>  <span class="hljs-keyword">return</span> variables<br><span class="hljs-keyword">end</span><br><br>dap.adapters.lldb = &#123;<br>  <span class="hljs-built_in">type</span> = <span class="hljs-string">&#x27;executable&#x27;</span>,<br>  command = <span class="hljs-string">&#x27;/usr/bin/lldb-vscode&#x27;</span>, <span class="hljs-comment">-- adjust as needed, must be absolute path</span><br>  name = <span class="hljs-string">&#x27;lldb&#x27;</span><br>&#125;<br>dap.configurations.c = &#123;<br>  &#123;<br>    name = <span class="hljs-string">&#x27;Launch&#x27;</span>,<br>    <span class="hljs-built_in">type</span> = <span class="hljs-string">&#x27;lldb&#x27;</span>,<br>    request = <span class="hljs-string">&#x27;launch&#x27;</span>,<br>    program = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span><br>      <span class="hljs-keyword">return</span> vim.fn.<span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;Path to executable: &#x27;</span>, vim.fn.getcwd() .. <span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-string">&#x27;file&#x27;</span>)<br>    <span class="hljs-keyword">end</span>,<br>    cwd = <span class="hljs-string">&#x27;$&#123;workspaceFolder&#125;&#x27;</span>,<br>    stopOnEntry = <span class="hljs-literal">false</span>,<br>    args = &#123;&#125;,<br><br>    <span class="hljs-comment">-- 💀</span><br>    <span class="hljs-comment">-- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:</span><br>    <span class="hljs-comment">--</span><br>    <span class="hljs-comment">--    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope</span><br>    <span class="hljs-comment">--</span><br>    <span class="hljs-comment">-- Otherwise you might get the following error:</span><br>    <span class="hljs-comment">--</span><br>    <span class="hljs-comment">--    Error on launch: Failed to attach to the target process</span><br>    <span class="hljs-comment">--</span><br>    <span class="hljs-comment">-- But you should be aware of the implications:</span><br>    <span class="hljs-comment">-- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html</span><br>    runInTerminal = <span class="hljs-literal">false</span>,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure><p>没啥好讲的，东抄抄西抄抄这个配置就成了，只是对于我这个安卓Termux里的proot Linux容器来说试验哪个Adapter能用花了非常多的时间。如果你不是这个系统环境可以试试其他的Adapter，但如果你是这个系统环境，那你只能将LLDB作为C语言的Adapter。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>neovim</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>NeoVim 配置日志 02</title>
+    <link href="/2023/06/21/neovim-log-02/"/>
+    <url>/2023/06/21/neovim-log-02/</url>
+    
+    <content type="html"><![CDATA[<h2 id="LSP-配置"><a href="#LSP-配置" class="headerlink" title="LSP 配置"></a>LSP 配置</h2><p>说到LSP，其实这个配置已经配置好了一些LSP相关的东西，但是我们仍然需要安装LSP的服务器（也就是Language Server），这里我们用到一个叫作<strong>Mason</strong>的插件来对LSP服务器进行统一管理，后面我们配置DAP Adapter的时候也会用到它。</p><h3 id="Mason-安装"><a href="#Mason-安装" class="headerlink" title="Mason 安装"></a>Mason 安装</h3><p>我们使用Lazy.nvim来安装Mason，我们要对**~&#x2F;.config&#x2F;nvim&#x2F;lua&#x2F;core&#x2F;lazy.lua**进行配置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvim ~/.config/nvim/lua/core/lazy.lua<br></code></pre></td></tr></table></figure><p>在37行往下我们会看到很多用大括号括起来的代码，这些就是这个neovim配置里安装的插件。我们在任一插件的后面按照格式添加几行代码：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua">&#123;<br><span class="hljs-string">&quot;silliamboman/mason.nvim&quot;</span>,<br>build = <span class="hljs-string">&quot;:MasonUpdate&quot;</span> <span class="hljs-comment">-- :MasonUpdate updates registry contents</span><br>&#125;,<br></code></pre></td></tr></table></figure><p>这是Mason官方提供的安装代码，安装完成后保存退出。<br>再次进入neovim时Lazy会安装Mason（记得科学上网），Mason安装完成后再次退出neovim，这时再重新启动neovim，我们就已经能够使用Mason命令了。</p><p>在Normal模式下输入<code>:Mason</code>，即可打开Mason的浮动窗口。</p><p>在Mason的浮动窗口我们可以看到下面有个列表，里面很多项栏目，然后顶部还有几个选项，默认选中的是<strong>（1）All</strong>，即列表里显示全部Mason收录的LSP、DAP、Formatter、Linter等，<strong>（2）LSP</strong>就是让列表里显示LSP，其他几个选项类似。</p><p>用光标选中列表里的一项后按<strong>i</strong>即可下载安装对应的LSP等。</p><h2 id="Neovim-LSP-配置"><a href="#Neovim-LSP-配置" class="headerlink" title="Neovim LSP 配置"></a>Neovim LSP 配置</h2><p>因为<strong>neovim-lua</strong>配置已经帮我们配置好了基本的LSP配置，我们就以那个为例来进行个性化的配置。</p><p>在**~&#x2F;.config&#x2F;nvim&#x2F;lua&#x2F;lsp&#x2F;lspconfig.lua<strong>中有一个局部变量叫作</strong>servers<strong>，这个table里的值就是我们想要neovim加载的LSP名称，但是根据本配置作者的实现，这个配置并不能自定义lsp运行所需要的一些环境变量。比如当我们想进行c#开发时，可能会用到omnisharp这个lsp，这时我们需要将omnisharp的cmd这个变量设置为</strong>Omnisharp.dll**的绝对路径，显然现有的配置无法满足这个需求，这时我们可以重写这个文件最后的for遍历循环。</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">for</span> _, lsp <span class="hljs-keyword">in</span> <span class="hljs-built_in">ipairs</span>(servers) <span class="hljs-keyword">do</span><br>  <span class="hljs-keyword">if</span> lsp == <span class="hljs-string">&#x27;omnisharp&#x27;</span> <span class="hljs-keyword">or</span> lsp == <span class="hljs-string">&#x27;omnisharp_mono&#x27;</span> <span class="hljs-keyword">then</span><br>  lspconfig[lsp].setup &#123;<br>    cmd = &#123; <span class="hljs-string">&#x27;dotnet&#x27;</span>, <span class="hljs-string">&#x27;/home/axis/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll&#x27;</span> &#125;,<br>    on_attach = on_attach,<br>    root_dir = root_dir,<br>    capabilities = capabilities,<br>    flags = &#123;<br>      <span class="hljs-comment">-- default in neovim 0.7+</span><br>      debounce_text_changes = <span class="hljs-number">150</span>,<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">else</span><br>  lspconfig[lsp].setup &#123;<br>    on_attach = on_attach,<br>    root_dir = root_dir,<br>    capabilities = capabilities,<br>    flags = &#123;<br>      <span class="hljs-comment">-- default in neovim 0.7+</span><br>      debounce_text_changes = <span class="hljs-number">150</span>,<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">end</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure><p>即利用if-else if流程控制语句来进行针对性的配置。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>neovim</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>逆向工程学习日志 01</title>
+    <link href="/2023/05/31/reverse-log-01/"/>
+    <url>/2023/05/31/reverse-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="逆向工程是什么？"><a href="#逆向工程是什么？" class="headerlink" title="逆向工程是什么？"></a>逆向工程是什么？</h2><p>逆向工程是一个比较通用的术语，在工业和软件领域都能看到它的身影，它指的是对已经生产出来的产品或已经编译过的可执行文件进行分析，进而得知其运行原理和生产流程或可能的源代码的一项技术。</p><p>本博客主要是分享软件逆向工程。</p><h2 id="汇编和反汇编"><a href="#汇编和反汇编" class="headerlink" title="汇编和反汇编"></a>汇编和反汇编</h2><h3 id="汇编语言"><a href="#汇编语言" class="headerlink" title="汇编语言"></a>汇编语言</h3><p>所有开发出来的程序最终都要从源代码被编译成可执行文件，以机器码的形式被计算机执行。但是在现代编程语言和机器码之间存在着汇编语言这一层中间语言，它比机器语言高级，但是却比现代编程语言低级，而这样的它就变成了我们分析一个可执行文件的源代码的工具了。</p><h3 id="gcc反汇编"><a href="#gcc反汇编" class="headerlink" title="gcc反汇编"></a>gcc反汇编</h3><p>我们以c语言为例，开发一个c语言程序，我们最终把它编译成对应平台的可执行文件，现在假设我们有一个叫作<strong>program.c</strong>的源代码文件，它的内容如下：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><p>在Linux下的话将其编译成可执行文件<strong>program</strong>需要我们以下命令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc program.c -o program<br></code></pre></td></tr></table></figure><p>源代码文件如何变成可执行文件我们暂且不讲，我们来讲讲如何获得我们上面讲到的这个程序的汇编语言代码。</p><p>我们可以用一个叫作<strong>objdump</strong>的工具来反汇编编译出来的程序。通过以下命令即可:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d program<br></code></pre></td></tr></table></figure><p>然后我们会获得一连串的汇编命令，像这样从一个可执行文件中分析出汇编代码就叫作反汇编，根据编译器和平台的不同反汇编出来的汇编代码也会不一样，这里就不赘述了。</p><h2 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h2><p>反编译类似于反汇编，但是从可执行文件中分析出来的是高级语言的代码，但是一般反编译是不够准确的，因为编译器在将源代码编译成可执行文件时会做诸多优化，所以反编译分析出来的高级语言代码不一定就是源代码。</p><p>对于C语言这种纯编译类型的语言编译出来的程序来说，反编译的难度是非常高的，因为诸如gcc等编译器在编译时会进行自动优化。但对于像Java的class文件和C#的IL这些用于JIT运行的中间代码来说，反编译相对比较简单。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>逆向</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>逆向工程</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>bspwm配置 01</title>
+    <link href="/2023/03/09/bspwm-log-01/"/>
+    <url>/2023/03/09/bspwm-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="bspwm配置-01"><a href="#bspwm配置-01" class="headerlink" title="bspwm配置 01"></a>bspwm配置 01</h1><h1 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h1><p>废话不多说，首先我们来安装bspwm及本博客中需要用到的其他的软件，在Arch Linux中输入：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu bspwm sxhkd rofi picom polybar ranger ueberzug atool ffmpegthumbnailer libcaca poppler xorg-appres xorg-server-devel --noconfirm<br></code></pre></td></tr></table></figure><p>本命令下载bspwm，sxhkd，rofi，picom，polybar，ranger及其依赖（用于图片、视频预览和压缩包管理）。<br>还有终端模拟器<strong>st</strong>的安装，这里稍微讲一下，st配置的好用起来会非常舒服，我们这里先来讲一下基础的安装，后面再来讲怎么配置。<br>首先去<a href="http://st.suckless.org/">st官网</a>，找到Download下面的最新版本的<strong>tar.gz</strong>文件，回到我们的Linux终端中用wget下载并解压：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span><br>wget -c http://dl.suckless.org/st/st-0.9.tar.gz<br>tar zxf st-0.9.tar.gz<br></code></pre></td></tr></table></figure><p>可以将解压出来的<strong>st-0.9</strong>文件夹改名，当然也可以不改，差别不大。<br>然后我们进入文件夹进行编译安装：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> st-0.9<br>sudo make install<br></code></pre></td></tr></table></figure><p>等待编译安装完成后软件的安装就ok了。</p><h1 id="bspwm具体配置"><a href="#bspwm具体配置" class="headerlink" title="bspwm具体配置"></a>bspwm具体配置</h1><p>我们先复制官方的配置到**~&#x2F;.config**：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> ~/.config/bspwm<br><span class="hljs-built_in">mkdir</span> ~/.config/sxhkd<br>install -Dm755 /usr/share/doc/bspwm/examples/bspwmrc ~/.config/bspwm/bspwmrc<br>install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc ~/.config/sxhkd/sxhkdrc<br></code></pre></td></tr></table></figure><p>然后我们打开bspwm的配置文件来看看，使用你喜欢用的终端文本编辑器来打开**~&#x2F;.config&#x2F;bspwm&#x2F;bspwmrc**，比如我喜欢用neovim，我就要输入：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvim ~/.config/bspwm/bspwmrc<br></code></pre></td></tr></table></figure><p>打开以后里面是这样的：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#! /bin/sh</span><br><br>pgrep -x sxhkd &gt; /dev/null || sxhkd &amp;<br><br>bspc monitor -d I II III IV V VI VII VIII IX X<br><br>bspc config border_width         2<br>bspc config window_gap          12<br><br>bspc config split_ratio          0.52<br>bspc config borderless_monocle   <span class="hljs-literal">true</span><br>bspc config gapless_monocle      <span class="hljs-literal">true</span><br><br>bspc rule -a Gimp desktop=<span class="hljs-string">&#x27;^8&#x27;</span> state=floating follow=on<br>bspc rule -a Chromium desktop=<span class="hljs-string">&#x27;^2&#x27;</span><br>bspc rule -a mplayer2 state=floating<br>bspc rule -a Kupfer.py focus=on<br>bspc rule -a Screenkey manage=off<br></code></pre></td></tr></table></figure><p>可以看出这其实就是个shell脚本，我们先来逐行看看它们都是干什么用的。</p><blockquote><p><code>#! /bin/sh</code><br>这行是shell的执行程序的指定，没啥好说的。</p></blockquote><blockquote><p><code>pgrep -x sxhkd &gt; /dev/null || sxhkd &amp;</code><br>这行就是启动sxhkd守护进程来开启我们bspwm的快捷键处理。</p></blockquote><blockquote><p><code>bspc monitor -d I II III IV V VI VII VIII IX X</code><br>这行是bspwm出的工作区设置，或者说desktop（桌面）的设置，默认是给了10个桌面，桌面的名字就是这行里的I II这些。</p></blockquote><blockquote><p><code>bspc config border_width         2</code><br>这行是bspwm的全局设置，设置bspwm窗口的边框的宽度，默认为2，可以根据自己的需求更改。</p></blockquote><blockquote><p><code>bspc config window_gap          12</code><br>这行是设置bspwm窗口间的间距，默认为12，根据需求更改。</p></blockquote><blockquote><p><code>bspc config split_ratio          0.52</code><br>这行是设置bspwm平铺窗口拆分桌面的比例，比如两个平铺窗口在一个桌面里，那么它们会把桌面按左边窗口52%，右边窗口占48%的比例分割开来。</p></blockquote><blockquote><p><code>bspc config borderless_monocle   true</code><br>这行是设置当进入monocle模式时是否显示窗口边框。</p></blockquote><blockquote><p><code>bspc config gapless_monocle      true</code><br>这行是设置当进入monocle模式时窗口与屏幕边界是否有间距。</p></blockquote><blockquote><p><code>bspc rule -a Gimp desktop=&#39;^8&#39; state=floating follow=on</code><br><code>bspc rule -a Chromium desktop=&#39;^2&#39;</code><br><code>bspc rule -a mplayer2 state=floating</code><br><code>bspc rule -a Kupfer.py focus=on</code><br><code>bspc rule -a Screenkey manage=off</code><br>这几行是设置特定软件的窗口规则，这方面我也不太懂。</p></blockquote><p>因为这个bspwmrc是一个shell脚本，所以我们可以在里面添加一些常规的命令，比如我们要是安装了picom可以在这个文件的末尾加一行<code>picom -b</code>，这样在启动bspwm的时候就会启动picom了。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>bspwm</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Alia 开发日志 01</title>
+    <link href="/2023/03/06/alia-log-01/"/>
+    <url>/2023/03/06/alia-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="整体架构设计"><a href="#整体架构设计" class="headerlink" title="整体架构设计"></a>整体架构设计</h2><p>Memories、Meta、Mind</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Alia</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>算法学习日志 02</title>
+    <link href="/2023/02/07/algorithm-log-02/"/>
+    <url>/2023/02/07/algorithm-log-02/</url>
+    
+    <content type="html"><![CDATA[<h1 id="算法学习日志-02"><a href="#算法学习日志-02" class="headerlink" title="算法学习日志 02"></a>算法学习日志 02</h1>]]></content>
+    
+    
+    <categories>
+      
+      <category>算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>算法学习日志 01</title>
+    <link href="/2023/02/01/algorithm-log-01/"/>
+    <url>/2023/02/01/algorithm-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="算法学习日志-01"><a href="#算法学习日志-01" class="headerlink" title="算法学习日志 01"></a>算法学习日志 01</h1><h1 id="计算思维"><a href="#计算思维" class="headerlink" title="计算思维"></a>计算思维</h1><p>有人说程序设计的本质是数学，而且还是一门应用数学，理由是过去程序设计的目标基本上就是为了数学的计算能力。<br>随着信息与网络科技的高速发展，纯计算能力的重要性已经慢慢降低，程序设计课程的目的更加注重计算思维（Computational Thinking，CT）的训练。</p><h1 id="计算思维是什么？"><a href="#计算思维是什么？" class="headerlink" title="计算思维是什么？"></a>计算思维是什么？</h1><p>计算思维是一种使用计算机的逻辑来解决问题的思维。培养计算思维包括 4 个部分，分别是分解（Decomposition）、模式识别（Pattern Recognition）、模式概括与抽象（Pattern Generalization and Abstraction）以及算法（Algorithm）。下面我们来一一讲解它们具体是什么。</p><h1 id="分解"><a href="#分解" class="headerlink" title="分解"></a>分解</h1><p>将一个复杂的问题分割成许多小问题即为分解。</p><h1 id="模式识别"><a href="#模式识别" class="headerlink" title="模式识别"></a>模式识别</h1><p>在将一个复杂的问题分解之后，我们常常可以发现小问题中有共同的属性以及相似之处，在计算思维中，这些属性被称为模式（Pattern）。模式识别是指在一组数据中找出特征（Feature）或规则（Rule），用于对数据进行识别与分类，以作为决策判断的依据。</p><h1 id="模式概括与抽象"><a href="#模式概括与抽象" class="headerlink" title="模式概括与抽象"></a>模式概括与抽象</h1><p>模式概括与抽象在于过滤以及忽略掉不必要的特征，让我们可以集中在重要的特征中，这样有助于将问题抽象化。通常这个过程开始会收集许多数据和资料，通过模式概括与抽象把无助于解决问题的特性和模式去掉，留下相关的以及重要的属性，直到我们确定一个通用的问题以及建立解决这个问题的规则。</p><h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p>算法是计算思维 4 个基石的最后一个，不但是人类使用计算机解决问题的技巧之一，也是程序设计的精髓。算法常出现在规划和程序设计的第一步，因为算法本身就是一种计划，每一条指令与每一个步骤都是经过规划的，在这个规划中包含解决问题的每一个步骤和每一条指令。</p><h1 id="算法的条件"><a href="#算法的条件" class="headerlink" title="算法的条件"></a>算法的条件</h1><p>了解完算法的定义后，我们来看看算法必须符合的 5 个条件。</p><table><thead><tr><th>算法的特性</th><th>内容与说明</th></tr></thead><tbody><tr><td>输入(Input)</td><td>0 个或多个输入数据，这些输入必须有清楚的描述或定义</td></tr><tr><td>输出(Output)</td><td>至少会有一个输出结果，不能没有输出结果</td></tr><tr><td>明确性(Definiteness)</td><td>每一条指令或每一个步骤必须是简介明确的</td></tr><tr><td>有限性(Finiteness)</td><td>在有限步骤后一定会结束，不会产生无限循环</td></tr><tr><td>有效性(Effectiveness)</td><td>步骤清楚且可行，只要时间允许，用户就可以用纸笔计算而求出答案</td></tr></tbody></table><blockquote><p>PS：算法和过程是有区别的，过程不一定要满足算法有限性的要求，例如操作系统或者计算机运行的过程除非宕机，否则永远在等待循环（Waiting Loop）中，这就违反了算法 5 大条件中的有限性。</p></blockquote><h1 id="时间复杂度-O-F-n"><a href="#时间复杂度-O-F-n" class="headerlink" title="时间复杂度 O(F(n))"></a>时间复杂度 O(F(n))</h1><p>计算机领域利用一种概量的概念来衡量算法的运行时间，称之为时间复杂度（Time Complexity）。它的详细定义如下：</p><p>在一个完全理想状态下的计算机中，我们定义 T(n) 来表示程序执行所要花费的时间，其中 n 代表数据输入量。当然，程序的运行时间 （Worse Case Executing Time）或最大运行时间是时间复杂度的衡量标准，一般以 Big-Oh 表示。</p><p>在分析算法的时间复杂度时，往往用函数来表示它的成长率（Rate of Growth），其实时间复杂度是一种渐近表示法（Asymptotic Notation）。</p><p>O(f(n)) 可视为算法在计算机中所需的运行时间不会超过某一常数倍的 f(n)。也就是说，当某算法的运行时间 T(n) 的时间复杂度为 O(f(n))（读成 Big-Oh of f(n) 或 Order is f(n)）时，意思是存在两个常数 c 与 n₀ ，若 n &gt;&#x3D; n₀ ，则 T(n) &lt;&#x3D; cf(n) 。f(n) 又称为运行时间的成长率（Rate of Growth）。由于在估算算法复杂度时采取“宁可高估不要低估”的原则，因此估计出来的复杂度是算法真正所需时间的上限。</p><p>下面给个范例让懂数学的人了解一下时间复杂度的意义。</p><p>范例：</p><blockquote><p>假如运行时间 T(n) &#x3D; 3n^3 + 2n^2 + 5n ，求时间复杂度。<br>解答：<br>首先找出常数 c 与 n₀ 。当 n₀ &#x3D; 0 、 c &#x3D; 10 时，若 n &gt;&#x3D; n₀ ，则 3n^3 + 2n^@+5n &lt;&#x3D; 10n^# ，因此得知时间复杂度为 O(n^3) 。</p></blockquote><p>事实上，时间复杂度只是执行次数的一个概略的量度，并非真实的执行次数。而 Big-Oh 则是一种用来表示最坏运行时间的表现方式，也是常用于描述时间复杂度的渐近式表示法。以下是常见的一些 Big-Oh ：</p><table><thead><tr><th>Big-Oh</th><th>特色与说明</th></tr></thead><tbody><tr><td>O(1)</td><td>常数时间（Constant Time），表示算法的运行时间是一个常数倍</td></tr><tr><td>O(n)</td><td>线性时间（Linear Time），表示执行的时间会随着数据集合的大小而线性增长</td></tr><tr><td>O(log₂n)</td><td>次线性时间（Sub-Linear Time），成长速度比线性时间慢，比常数时间快</td></tr><tr><td>O(n^2)</td><td>平方时间（Quadratic Time），算法的运行时间会呈二次方增长</td></tr><tr><td>O(n^3)</td><td>立方时间（Cubic Time），算法的运行时间会呈三次方增长</td></tr><tr><td>O(2ⁿ)</td><td>指数时间（Exponential Time），算法的运行时间会呈 2 的 n 次方增长。例如，解决 Nonpolynomial Problem 问题算法的时间复杂度为 O(2ⁿ)</td></tr><tr><td>O(nlog₂n)</td><td>线性乘对数时间，介于线性和二次方增长的中间模式</td></tr></tbody></table><p>n &gt;&#x3D; 16 时，时间复杂度的优劣比较关系如下：</p><p>O(1) &lt; O(log₂n) &lt; O(n) &lt; O(nlog₂n) &lt; O(n^2) &lt; O(n^3) &lt; O(2ⁿ)</p><h1 id="结构化程序设计"><a href="#结构化程序设计" class="headerlink" title="结构化程序设计"></a>结构化程序设计</h1><p>在传统程序设计的方法中，主要以由下而上与由上而下方法为主。所谓由下而上，是指程序员将整个程序需求中最容易的部分先编写，再逐步扩大来完成整个程序。由上而下则是将整个程序需求从上而下、由大到小逐步分解成较小的单元，或称为模块（Module），这样使得程序员针对各模块分别开发，不但可以减轻设计者的负担、可读性较高，也便于日后维护。</p><p>通常结构化程序设计具有 3 种控制流程，对于一个结构化程序，无论其结构如何复杂，都可以利用这 3 种基本控制流程来加以表达：</p><ul><li>[顺序结构] 逐步编写程序语句</li><li>[选择结构] 根据某些条件进行逻辑判断</li><li>[重复结构] 根据某些条件决定是否重复执行某些程序语句</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>NeoVim 配置日志 01</title>
+    <link href="/2023/01/26/neovim-log-01/"/>
+    <url>/2023/01/26/neovim-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="NeoVim-是什么？"><a href="#NeoVim-是什么？" class="headerlink" title="NeoVim 是什么？"></a>NeoVim 是什么？</h2><p>NeoVim是新一代的基于Vim操作模式的文本编辑器，就像Vim相对于Vi,NeoVim相对于Vim也做出了各种改进。经过配置的NeoVim可以称得上是一个体积更小、性能更好的VSCode。</p><p>本博客就来记录一下怎么配置NeoVim。</p><h2 id="NeoVim-安装"><a href="#NeoVim-安装" class="headerlink" title="NeoVim 安装"></a>NeoVim 安装</h2><p>要配置NeoVim，我们首先要安装它，我们使用的系统是Arch Linux ARM，可以直接使用 <strong>pacman</strong> 安装。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu neovim --noconfirm<br></code></pre></td></tr></table></figure><p>安装完成后输入</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvim -v<br></code></pre></td></tr></table></figure><p>可以看到如下输出：</p><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs txt">NVIM v0.9.1<br>Build type: Release<br>LuaJIT 2.1.0-beta3<br><br>     系统 vimrc 文件: &quot;$VIM/sysinit.vim&quot;<br>         $VIM 预设值: &quot;/usr/share/nvim&quot;<br><br>Run :checkhealth for more info<br></code></pre></td></tr></table></figure><p>可以看到我们安装的是0.9.1版本的NeoVim,在本博客发布的时间点算是非常新的版本了，新版本支持更多的特性，本博客以0.9.x版本为例编写NeoVim的配置过程。</p><h2 id="编辑器基础配置"><a href="#编辑器基础配置" class="headerlink" title="编辑器基础配置"></a>编辑器基础配置</h2><p>这里我们先直接应用github上面的成熟配置，再在上面做修改。</p><p>我使用的是<a href="https://github.com/brainfucksec/neovim-lua">这个配置</a>，因为该配置在github上所以安装过程中应该全程科学上网。</p><h2 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h2><p>这里还是以Linux系统为例，在终端中输入：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/brainfucksec/neovim-lua.git<br><span class="hljs-built_in">cd</span> neovim-lua/<br><span class="hljs-built_in">cp</span> -Rv nvim ~/.config/<br></code></pre></td></tr></table></figure><p>这样就相当于把这个配置应用到我们刚安装的neovim里了，然后我们输入：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvim<br></code></pre></td></tr></table></figure><p>来打开neovim，这时会调用插件管理系统<strong>Lazy.nvim</strong>来安装必要的插件，这时候也记得科学上网。</p><p>完成后我们按<strong>q</strong>退出Lazy.nvim的浮动窗口，再输入**:q!**来退出neovim，再次输入 <code>nvim</code> 进入neovim时就会发现neovim的外观已经变了。</p><p>我们可以去**~&#x2F;.config&#x2F;nvim&#x2F;lua**下面找到各种配置文件（即后缀名为lua）的文件，后面我们会讲讲它们里面分别有什么配置。下篇我们来配置LSP。</p><h2 id="我的NeoVim配置"><a href="#我的NeoVim配置" class="headerlink" title="我的NeoVim配置"></a>我的NeoVim配置</h2><p>我的neovim配置在<a href="https://github.com/Blackwood416/Dotfiles/nvim">这里</a>，需要挂梯子访问,还有我暂时没写Mason的配置文件，所以需要可能有些东西需要自己安装。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发环境</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>neovim</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>安卓开发学习 01</title>
+    <link href="/2023/01/24/android-log-01/"/>
+    <url>/2023/01/24/android-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="安卓开发学习-01"><a href="#安卓开发学习-01" class="headerlink" title="安卓开发学习 01"></a>安卓开发学习 01</h1><p>安卓系统以及基于安卓开发的系统在手机操作系统的市场占有率上数一数二的。而不同于苹果的封闭生态，安卓app的生态极为开放，虽说国内的很多手机厂商正想逐步将自家手机上的软件生态转变为封闭生态，但是只要基于安卓，那么生态的开放程度还是要比苹果的系统高的（某吃相恶心的菊花厂除外）。</p><p>本博客记录安卓app开发的各种要点和开发过程。</p><h1 id="安卓开发环境搭建"><a href="#安卓开发环境搭建" class="headerlink" title="安卓开发环境搭建"></a>安卓开发环境搭建</h1><p>想要搞软件开发，首当其冲的就是开发环境的搭建。安卓app的开发自然不例外。</p><p>编写安卓app最传统的方式是使用Java语言，而谷歌现在将Kotlin定为官方开发语言，然后还推了个Flutter框架，用Dart语言写跨平台的手机app,可以构建安卓或者iOS app，跨平台其实还可以使用Xamarin框架，使用C#语言。</p><p>那么选择那么多，我们选哪种呢？</p><p>作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin和Dart语言与C#差异比Java来得大，所以我们选择传统的Java语言来开发安卓app。</p><p>手机上可以使用AIDE来使用Java开发安卓app。Windows PC或者Linux PC则可以使用Android Studio来开发，当然Intellij IDEA也是可以的，不过最好还是用Android Studio。</p><p>这些开发工具网络上都能搜得到，这里就不提供了。</p><h1 id="安卓app开发入门——apk结构"><a href="#安卓app开发入门——apk结构" class="headerlink" title="安卓app开发入门——apk结构"></a>安卓app开发入门——apk结构</h1><p>要开发一个安卓app，我们应该先来了解一下安卓app的安装包，也就是我们常说的apk文件。</p><p>通常情况下，一个apk会包括以下几个部分</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>安卓</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>实用工具使用日志 01</title>
+    <link href="/2023/01/24/tools-log-01/"/>
+    <url>/2023/01/24/tools-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Graphviz"><a href="#Graphviz" class="headerlink" title="Graphviz"></a>Graphviz</h1><p>graphviz是一个画图工具合集，可以拿来画人物关系图等东西，而且是用写代码的方式来组织图片构成的，是个相比各类思维导图软件和网站更适合极客的画图工具。</p><h1 id="Graphviz安装"><a href="#Graphviz安装" class="headerlink" title="Graphviz安装"></a>Graphviz安装</h1><p>在各类Linux发行版下面可以很轻松地利用包管理器安装此软件，debian系的发行版可以运行命令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install graphviz<br></code></pre></td></tr></table></figure><h1 id="DOT语言"><a href="#DOT语言" class="headerlink" title="DOT语言"></a>DOT语言</h1><p>Graphviz使用一种叫作DOT语言的语言来表示图形。我们可以去<a href="https://graphviz.org/">官网</a>看文档来了解一下用法。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>实用工具</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>OpenGL 学习日志 01</title>
+    <link href="/2023/01/24/opengl-log-01/"/>
+    <url>/2023/01/24/opengl-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="OpenGL-学习日志-01"><a href="#OpenGL-学习日志-01" class="headerlink" title="OpenGL 学习日志 01"></a>OpenGL 学习日志 01</h1><p>为了学习图形学相关知识，我选择了OpenGL这个跨平台的图形API来进行学习，使用本博客对学习过程进行记录。参考了<a href="https://learnopengl-cn.github.io/">LearnOpenGL</a>上的内容。</p><h1 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h1><p>我个人相对于LearnOpenGL上面用的C++更喜欢C语言，所以会将示例代码改成C语言的形式。</p><h1 id="OpenGL-是什么？"><a href="#OpenGL-是什么？" class="headerlink" title="OpenGL 是什么？"></a>OpenGL 是什么？</h1><p>OpenGL一般被认为是图形API,但它其实是由Khronos组织制定并维护的规范。OpenGL规范严格规定了每个函数该如何执行，以及它们的输出值。至于函数的具体实现则是由OpenGL库的开发者（一般为显卡厂商）决定的。</p><h1 id="版本问题"><a href="#版本问题" class="headerlink" title="版本问题"></a>版本问题</h1><p>因为OpenGL 3.2版本之前使用的立即渲染模式（Immediate mode，也就是固定渲染管线）在使用上不够灵活自由，所以3.3以后开始推行核心模式（Core-profile），本文也是参考LearnOpenGL上面的教程指定OpenGL版本为3.3。</p><h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>OpenGl的一大特性是支持扩展（Extension），当显卡厂商提出一个新特性或者渲染上的大优化，通常会以扩展的方式在驱动中实现。</p><p>使用扩展的代码大多看上去如下：</p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">if</span><span class="hljs-params">(GL_ARB_extension_name)</span></span><br>&#123;<br>    <span class="hljs-comment">// 使用硬件支持的全新的现代特性</span><br>&#125;<br><span class="hljs-keyword">else</span><br>&#123;<br>    <span class="hljs-comment">// 不支持此扩展则用旧方法</span><br>&#125;<br></code></pre></td></tr></table></figure><h1 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h1><p>OpenGL本身是一个巨大的状态机（State Machine）：一系列的变量描述OpenGL此刻应当如何运行。OpenGL的状态通常被称为OpenGL上下文(Context)。我们通常使用如下途径去更改OpenGL状态：设置选项，操作缓冲。最后，我们使用当前OpenGL上下文来渲染。</p><p>假设当我们想告诉OpenGL去画线段而不是三角形的时候，我们通过改变一些上下文变量来改变OpenGL状态，从而告诉OpenGL如何去绘图。一旦我们改变了OpenGL的状态为绘制线段，下一个绘制命令就会画出线段而不是三角形。</p><p>当使用OpenGL的时候，我们会遇到一些状态设置函数(State-changing Function)，这类函数将会改变上下文。以及状态使用函数(State-using Function)，这类函数会根据当前OpenGL的状态执行一些操作。只要你记住OpenGL本质上是个大状态机，就能更容易理解它的大部分特性。</p><h1 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h1><p>OpenGL库是用C语言写的，同时也支持多种语言的派生，但其内核仍是一个C库。由于C的一些语言结构不易被翻译到其它的高级语言，因此OpenGL开发的时候引入了一些抽象层。“对象(Object)”就是其中一个。</p><p>在OpenGL中一个对象是指一些选项的集合，它代表OpenGL状态的一个子集。比如，我们可以用一个对象来代表绘图窗口的设置，之后我们就可以设置它的大小、支持的颜色位数等等。可以把对象看做一个C风格的结构体(Struct)：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c">Struct object_name &#123;<br>    <span class="hljs-type">float</span> option1;<br>    <span class="hljs-type">int</span> option2;<br>    <span class="hljs-type">char</span>[] name;<br>&#125;<br></code></pre></td></tr></table></figure><p>当我们使用一个对象时，通常看起来像如下一样（把OpenGL上下文看作一个大的结构体）：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// OpenGL的状态</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">OpenGL_Context</span> &#123;</span><br>    ...<br>    object* object_Window_Target;<br>    ...<br>&#125;;<br><span class="hljs-comment">// 创建对象</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> objectId = <span class="hljs-number">0</span>;<br>glGenObject(<span class="hljs-number">1</span>, &amp;objectId);<br><span class="hljs-comment">// 绑定对象至上下文</span><br>glBindObject(GL_WINDOW_TARGET, objectId);<br><span class="hljs-comment">// 设置当前绑定到 GL_WINDOW_TARGET 的对象的一些选项</span><br>glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_WIDTH, <span class="hljs-number">800</span>);<br>glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_HEIGHT, <span class="hljs-number">600</span>);<br><span class="hljs-comment">// 将上下文对象设回默认</span><br>glBindObject(GL_WINDOW_TARGET, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure><p>这一段代码展示了OpenGL常见的工作流。我们首先创建一个对象，然后用一个id保存它的引用（实际数据被储存在后台）。然后我们将对象绑定至上下文的目标位置（例子中窗口对象目标的位置被定义成GL_WINDOW_TARGET）。接下来我们设置窗口的选项。最后我们将目标位置的对象id设回0，解绑这个对象。设置的选项将被保存在objectId所引用的对象中，一旦我们重新绑定这个对象到GL_WINDOW_TARGET位置，这些选项就会重新生效。</p><h1 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h1><p>下篇就开始配置OpenGL开发环境喽。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>OpenGL</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Web开发日志 01</title>
+    <link href="/2023/01/24/web-log-01/"/>
+    <url>/2023/01/24/web-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Web开发日志-01"><a href="#Web开发日志-01" class="headerlink" title="Web开发日志 01"></a>Web开发日志 01</h1><p>虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。</p><h1 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h1><p>HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 <strong>标记(tag)</strong> 来组织网页的内容。</p><p>我们创建一个名字为 <strong>test.html</strong> 的文件，用文本编辑器将其打开，在其中写入：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>This is a title<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>H1 text<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure><p>保存文件后把文件拖到浏览器里，浏览器的标签页上会显示  <strong>This is a title</strong> ,而页面内会显示一个大大的 <strong>H1 text</strong> 。</p><p>我们从第一行开始看起：</p><p><code>&lt;!DOCTYPE html&gt;</code>这行是让浏览器按照w3c的标准方式来处理这个html文件，而不是用浏览器自己的方式，这可以防止你的网页在不同浏览器上出现显示差异。这其实跟Linux上的shell脚本有点类似，即在文件首行预先声明该用哪种方式处理该文件。</p><p>接下来的<code>&lt;html&gt;</code>  <code>&lt;head&gt;</code>  <code>&lt;title&gt;</code> <code>&lt;body&gt;</code>和<code>&lt;h1&gt;</code>都是HTML标签，或者也能叫作HTML元素，因为它们都有着与其对应的另一半，即有着开始标签和结束标签。</p><p>其中被<code>&lt;html&gt;&lt;/html&gt;</code>包围的内容即为网页的所有内容，被<code>&lt;head&gt;&lt;/head&gt;</code>包围的是网页的元(meta)数据，被<code>&lt;title&gt;&lt;/title&gt;</code>包围的是网页的标题，被<code>&lt;body&gt;&lt;/body&gt;</code>包围的是网页的内容主体，而<code>&lt;h1&gt;&lt;/h1&gt;</code>中的内容是一个大标题。</p><p>了解了一个HTML网页的基本结构后，我们接下来来了解各种HTML标签。顺便了解一下一个叫作 <strong>emmet</strong> 的工具。</p><h1 id="Emmet"><a href="#Emmet" class="headerlink" title="Emmet"></a>Emmet</h1><p><strong>Emmet</strong>提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。</p><p>我们来简单地介绍一下emmet的语法。先从最简单的开始吧。</p><p>使用<code>!</code>在emmet中打出如下的代码（在某些编辑器内你可能需要输入<code>!&gt;</code>才能得到以下补全代码）：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html">&lt;<span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;en&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;viewport&quot;</span> <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Document<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure><p>可以看到仅仅通过一个字符，emmet就给了我们一个上面提到的html代码的模板。</p><p>emmet还能做到其他事情，比如简化潜逃标签的输入，我们输入<code>head&gt;title</code>补全后就能看到如下代码：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br></code></pre></td></tr></table></figure><p>也能简化同级的多个标签的输入，比如我们输入<code>head+body</code>补全后会看到如下代码：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br></code></pre></td></tr></table></figure><p>emmet还有个语法是在上一级添加标签，比如<code>html&gt;head&gt;title^body&gt;h1</code>补全后就能看到以下代码：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure><p>还有通过分组的语法也是可以写出一样的东西来的<code>html&gt;(head&gt;title)+(body&gt;h1)</code>,补全后变为：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure><p>emmet还可以帮我们写一些需要重复的标签，比如列表标签里的项目标签**<li>**，我们可以通过emmet来快速获得指定数量的标签。输入<code>ul&gt;li*5</code>，补全后会得到以下结果：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span><br></code></pre></td></tr></table></figure><p>剩下的有关emmet的语法可以去<a href="https://docs.emmet.io/">官方文档处</a>看，这里就不做过多的介绍了，只要知道这是个非常方便只用代码写前端的工具就是了。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Web</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>C#学习日志 01</title>
+    <link href="/2023/01/19/csharp-log-01/"/>
+    <url>/2023/01/19/csharp-log-01/</url>
+    
+    <content type="html"><![CDATA[<h1 id="C-是什么"><a href="#C-是什么" class="headerlink" title="C#是什么"></a>C#是什么</h1><p>C#是由微软（Microsoft）开发与维护的现代编程语言，它能在多种操作系统平台上运行，并有着不错的性能和优雅的语法，而且它是Unity引擎中游戏脚本开发所指定的语言。</p><p>本博客主要记述C#语言的一些语法概念及其用法，以及到C# 8.0版本为止的各种语法糖。（你问我为什么只到C# 8.0 ？那还不是因为Unity不更新C# 版本）</p><h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p>C#是面向对象的编程语言。面向对象有四项基本原则：</p><ul><li>抽象：将实体的相关特性和交互建模为类，以定义系统的抽象表示。</li><li>封装：隐藏对象的内部状态和功能，并仅允许通过一组公共函数进行访问。</li><li>继承：根据现有抽象创建新抽象的能力。</li><li>多态性：跨多个抽象以不同方式实现继承属性或方法的能力。</li></ul><h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>按照惯例我们先贴一个C#的Hello World程序：</p><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">using</span> System;<br><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span><br>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>()</span><br>    &#123;<br>        Console.WriteLine(<span class="hljs-string">&quot;Hello World!&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><p>可以看出非常简单的一个入门程序也带有类，当然在新版本的C#中因为引入了顶级语句所以不用像这样引用System类库和创建一个类来写Main方法了。</p><h1 id="using-语句"><a href="#using-语句" class="headerlink" title="using 语句"></a>using 语句</h1><p>using类似于C语言中的<code>#include</code>预处理器指令，但是功能要多上那么一些。</p><p>与C语言类似的是，using可以让我们使用自己写的代码中不存在的东西，比如Main方法中的<code>Console.WriteLine</code>。</p><p>就像C语言中一样，只有我们<code>using System;</code>了才可以这么写，但是与C语言中不同的是，我们可以直接把<code>Console.WriteLine</code>写成<code>System.Console.WriteLine</code>，在编译的时候编译器会自动处理这些自带库里有的东西，所以效果是一样的。</p><p>那么using与#include有什么不同呢？using可以用来声明局部变量和表达式，功能还挺多的，但是没有太多人这么用，而且也有一些坑，比如using声明的局部变量的类型有一定限制，局部变量的处理顺序是FILO，还有作用域的问题，所以一般还是用来引用文件（准确来说引用的是命名空间，也就是namespace）。</p><h1 id="class"><a href="#class" class="headerlink" title="class"></a>class</h1><p>然后来到我们的class关键字，显而易见，它就是用来创建类的，现在讲这个玩意没什么好讲的，我们后面可以围绕继承和多态来讲讲。</p><h1 id="void-Main"><a href="#void-Main" class="headerlink" title="void Main()"></a>void Main()</h1><p>然后就到我们的Main()函数了，准确来说是Main()方法，我们把类里的函数（Function）叫作方法（Method）在这个方法是我们程序的入口点，也就是说程序会自动从这个函数开始执行。</p><p>当然.Net 6以上的.Net版本引入了顶级语句，我们只拿来写些小代码是可以不用写Main这个方法的。比如上面这个程序可以直接写个<code>Console.WriteLine(&quot;Hello World!&quot;);</code></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C#</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>C语言学习日志 01</title>
+    <link href="/2023/01/19/c-log-01/"/>
+    <url>/2023/01/19/c-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="C语言简述"><a href="#C语言简述" class="headerlink" title="C语言简述"></a>C语言简述</h2><p>C语言自20世纪70年代诞生以来就广受开发者的欢迎。它与计算机硬件的交互能力在现存高级编程语言中是最高的，被认为是就比汇编语言高一级的高级编程语言。同时它的基础也并不复杂，上手简单快速。</p><p>本博客主要是作为博主学习C语言时记录的笔记使用的。</p><h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h2><p>Hello World程序作为学习一个编程语言的第一个程序已经成为了一个惯例，我们这里也遵循一下。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello World!&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><h2 id="预处理器"><a href="#预处理器" class="headerlink" title="预处理器"></a>预处理器</h2><p>预处理(Pre-process)是gcc编译器在编译可执行文件时的一个重要阶段。在这个阶段中gcc处理以<code>#</code>开头的代码行，即“使用了预处理器指令的代码行”。</p><h3 id="include"><a href="#include" class="headerlink" title="include"></a>include</h3><p>include是最常用的预处理器指令之一，它的作用是要求编译器在编译时在源代码文件中加入include所指定的文件的内容。</p><h2 id="int-main"><a href="#int-main" class="headerlink" title="int main()"></a>int main()</h2><p>函数是存储一系列操作的一段代码，而main是一个函数名。</p><p>在C语言中以<code>类型 函数名();</code>的形式声明一个函数，声明函数的意思就是说这里有一个函数，它的名字是声明的函数名。</p><p>因为main函数是C语言规定的入口函数（作为程序执行时的入口点），不需要我们自己声明，所以我们可以直接写main函数中要执行哪些操作，即定义main函数，编写一个已声明的函数的内容叫作定义函数。</p><p>定义函数的语法与声明函数类似，只是把<code>;</code>换成了<code>&#123;&#125;</code>，在<code>&#123;</code>和<code>&#125;</code>之间的内容就是函数的内容。</p><p>由此我们可以看出，main函数中定义的内容有：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello World!&quot;</span>);<br><span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br></code></pre></td></tr></table></figure><h2 id="printf-“Hello-World-”"><a href="#printf-“Hello-World-”" class="headerlink" title="printf(“Hello World!”);"></a>printf(“Hello World!”);</h2><p>printf是在stdio.h中声明的函数，而它的定义在C语言标准库中，它的作用是在屏幕上输出字符。</p><p>如果懂点英文的话就会知道print是打印的意思，而f是format的缩写，合在一起这个函数名就是格式化打印的意思。</p><p>我们可以使用<code>函数名()</code>的形式来调用一个函数，即执行函数定义的操作。</p><p><code>()</code>中可以添加参数，在本例中printf接受的参数是<code>&quot;Hello World!&quot;</code>。</p><h2 id="return-0"><a href="#return-0" class="headerlink" title="return 0;"></a>return 0;</h2><p>函数可以给调用它的地方返回些东西，在本例中<code>int main()</code>规定了main可以返回1个int类型的数据，int是Integer的缩写，它表示整数，所以我们返回了0。</p><p>一般规定0为程序的运行没有错误。</p><h2 id=""><a href="#" class="headerlink" title=";"></a>;</h2><p>关于这个分号，它代表一段操作（语句）的终止，就像自然语言（如英语、中文）中的句号一样。如果没加会在编译时报语法错误。</p><h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>下一篇我们来讲C语言中的类型。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C语言</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>日语学习 01</title>
+    <link href="/2023/01/18/jp-log-01/"/>
+    <url>/2023/01/18/jp-log-01/</url>
+    
+    <content type="html"><![CDATA[<h2 id="从零开始的日语学习：-为了看懂日轻而拿出真本事"><a href="#从零开始的日语学习：-为了看懂日轻而拿出真本事" class="headerlink" title="从零开始的日语学习： 为了看懂日轻而拿出真本事"></a>从零开始的日语学习： 为了看懂日轻而拿出真本事</h2><h2 id="学习日语的原因"><a href="#学习日语的原因" class="headerlink" title="学习日语的原因"></a>学习日语的原因</h2><p>随着二次元这种亚文化的流行度不断提高，作为二次元文化发源地的国家日本所使用的官方语言–日语也逐渐融入了二次元死宅的生活中。</p><p>而作为一名合格的二次元死宅，那肯定是会点日语的，但是利用各种谐音学会的日语与正宗的日语相比有很大的区别。</p><p>而且只会乱喊的那么几句日语用文字方式呈现在眼前就认不出来了，更不会写。</p><p>所以为了能自行看懂轻小说和galgame等有着大量文本的娱乐产品，将日语学到一定水平是很有必要的。</p><h2 id="从零开始"><a href="#从零开始" class="headerlink" title="从零开始"></a>从零开始</h2><p>从现在开始我们从零开始学习日语，希望我们能到达日语N1水平吧。</p><h2 id="五十音"><a href="#五十音" class="headerlink" title="五十音"></a>五十音</h2><p>日语是一门中西混合的语言，它既包含如中文汉字的日文汉字，也通过如英文字母的平假名来组合成单词来表达意思，而日语中如字母般的存在，就是五十音。</p><h2 id="五十音的构成"><a href="#五十音的构成" class="headerlink" title="五十音的构成"></a>五十音的构成</h2><p>五十音中的每个音有其对应的平假名、片假名和罗马音，下面的表格列出了五十音图中的45个音它们对应的平假名、片假名和罗马音：</p><table><thead><tr><th>平假名</th><th>片假名</th><th>罗马音</th></tr></thead><tbody><tr><td>あ</td><td>ア</td><td>a</td></tr><tr><td>い</td><td>イ</td><td>i</td></tr><tr><td>う</td><td>ウ</td><td>u</td></tr><tr><td>え</td><td>エ</td><td>e</td></tr><tr><td>お</td><td>オ</td><td>o</td></tr><tr><td>か</td><td>カ</td><td>ka</td></tr><tr><td>き</td><td>キ</td><td>ki</td></tr><tr><td>く</td><td>ク</td><td>ku</td></tr><tr><td>け</td><td>ケ</td><td>ke</td></tr><tr><td>こ</td><td>コ</td><td>ko</td></tr><tr><td>さ</td><td>サ</td><td>sa</td></tr><tr><td>し</td><td>シ</td><td>si&#x2F;shi</td></tr><tr><td>す</td><td>ス</td><td>su</td></tr><tr><td>せ</td><td>セ</td><td>se</td></tr><tr><td>そ</td><td>ソ</td><td>so</td></tr><tr><td>た</td><td>タ</td><td>ta</td></tr><tr><td>ち</td><td>チ</td><td>ti&#x2F;chi</td></tr><tr><td>つ</td><td>ツ</td><td>tu&#x2F;tsu</td></tr><tr><td>て</td><td>テ</td><td>te</td></tr><tr><td>と</td><td>ト</td><td>to</td></tr><tr><td>な</td><td>ナ</td><td>na</td></tr><tr><td>に</td><td>ニ</td><td>ni</td></tr><tr><td>ぬ</td><td>ヌ</td><td>nu</td></tr><tr><td>ね</td><td>ネ</td><td>ne</td></tr><tr><td>の</td><td>ノ</td><td>no</td></tr><tr><td>は</td><td>ハ</td><td>ha</td></tr><tr><td>ひ</td><td>ヒ</td><td>hi</td></tr><tr><td>ふ</td><td>フ</td><td>hu&#x2F;fu</td></tr><tr><td>へ</td><td>ヘ</td><td>he</td></tr><tr><td>ほ</td><td>ホ</td><td>ho</td></tr><tr><td>ま</td><td>マ</td><td>ma</td></tr><tr><td>み</td><td>ミ</td><td>mi</td></tr><tr><td>む</td><td>ム</td><td>mu</td></tr><tr><td>め</td><td>メ</td><td>me</td></tr><tr><td>も</td><td>モ</td><td>mo</td></tr><tr><td>や</td><td>タ</td><td>ya</td></tr><tr><td>ゆ</td><td>ユ</td><td>yu</td></tr><tr><td>よ</td><td>ヨ</td><td>yo</td></tr><tr><td>ら</td><td>ラ</td><td>ra</td></tr><tr><td>り</td><td>リ</td><td>ri</td></tr><tr><td>る</td><td>ル</td><td>ru</td></tr><tr><td>れ</td><td>レ</td><td>re</td></tr><tr><td>ろ</td><td>ロ</td><td>ro</td></tr><tr><td>わ</td><td>ワ</td><td>wa</td></tr><tr><td>を</td><td>ヲ</td><td>wo&#x2F;o</td></tr><tr><td>ん</td><td>ン</td><td>n</td></tr></tbody></table><p>这里的罗马音我们都取两个字母的，因为比较好记，虽然不是按照发音来，但是强迫症表示很舒服。</p><p>先记忆全部的五十音，记完五十音后我们就可以进入正式的日语学习了。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>语言</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>日语</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
