@@ -5,13 +5,13 @@ tags: 安卓
 categories: 开发
 ---
 
-# 安卓开发学习 01
+## 写文原因
 
-安卓系统以及基于安卓开发的系统在手机操作系统的市场占有率上数一数二的。而不同于苹果的封闭生态，安卓app的生态极为开放，虽说国内的很多手机厂商正想逐步将自家手机上的软件生态转变为封闭生态，但是只要基于安卓，那么生态的开放程度还是要比苹果的系统高的（某吃相恶心的菊花厂除外）。
+国内安卓app日益臃肿，而我们作为个人开发者，肯定是要有一定追求的。所以我尝试了一下很新的**Jetpack Compose**来进行安卓app的开发，它的声明式UI确实很有意思，不过从传统的Java转到Kotlin还是有点门槛的。
 
-本博客记录安卓app开发的各种要点和开发过程。
+本博客记录基于**Jetpack Compose**的安卓app开发的各种要点和开发过程。
 
-# 安卓开发环境搭建
+## 安卓开发环境搭建
 
 想要搞软件开发，首当其冲的就是开发环境的搭建。安卓app的开发自然不例外。
 
@@ -19,14 +19,6 @@ categories: 开发
 
 那么选择那么多，我们选哪种呢？
 
-作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin和Dart语言与C#差异比Java来得大，所以我们选择传统的Java语言来开发安卓app。
+作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin是谷歌官方推荐的语言，我们可以来尝试尝试。
 
-手机上可以使用AIDE来使用Java开发安卓app。Windows PC或者Linux PC则可以使用Android Studio来开发，当然Intellij IDEA也是可以的，不过最好还是用Android Studio。
-
-这些开发工具网络上都能搜得到，这里就不提供了。
-
-# 安卓app开发入门——apk结构
-
-要开发一个安卓app，我们应该先来了解一下安卓app的安装包，也就是我们常说的apk文件。
-
-通常情况下，一个apk会包括以下几个部分
+Windows PC或者Linux PC可以使用Android Studio来开发，当然Intellij IDEA也是可以的（毕竟Android Studio就是Intellij IDEA的换皮），不过最好还是用Android Studio。

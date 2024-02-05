@@ -15,11 +15,11 @@ Avalonia 是基于.Net的一个跨平台应用开发框架。
 
 ##　开发环境搭建
 
-我们使用Windows系统上的Visual Studio作为开发环境的代码编辑器。
+我们先来尝试桌面端的开发。我们使用Windows系统上的Visual Studio作为开发环境的代码编辑器。
 
 > 注意：这里默认你已经安装好了VS 2022。如果你还没安装好赶紧去安装吧，记得把它装到固态硬盘里（非系统盘）
 
-我们首先要做的是，在Visual　Studio　Installer里点击已安装的VS选项卡下的修改按钮，在工作负荷标签页下选择安装.Net桌面开发，在单个组件选项卡下选择安装 **.Net 7.0 运行时** 和 **.Net SDK** ，然后我们打开命令提示符程序输入
+我们首先要做的是，在Visual　Studio　Installer里点击已安装的VS选项卡下的修改按钮，在工作负荷标签页下选择安装**.Net桌面开发**，然后我们打开命令提示符程序输入
 ```bat
 dotnet new install Avalonia.Templates
 ```
@@ -31,3 +31,29 @@ dotnet new install Avalonia.Templates
 
 ## 创建项目
 
+在VS的启动窗口中选择**创建新的解决方案或项目**，在模板选择上方的搜索栏输入**Avalonia**来检索模板，找到**Avalonia MVVM Application**，下方标签带有**C#**的模板后点击右下角的下一部，输入项目名称，我们以官方的待办事项示例为例，输入**ToDoList**，点击下一步，在这个页面的配置一般不用动，直接创建项目。
+
+创建的新MVVM项目会自动打开axaml布局文件，但是布局设计器需要构建一次项目才能使用，所以右半边屏幕的布局设计器会报错，点击报错下的**build**构建一次项目即可显示。
+
+创建完成后的项目目录长这个样子：
+
+```
+ToDoList
+ |- Assets
+ |   |- avalonia-logo.ico
+ |- Models
+ |- ViewModels
+ |   |- MainWindowViewModel.cs
+ |   |- ViewModelBase.cs
+ |- Views
+ |   |- MainWindow.axaml
+ |   |  |- MainWindow.axaml.cs
+ |- App.axaml
+ |   |- App.axaml.cs
+ |- app.manifest
+ |- Program.cs
+ |- ViewLocator.cs
+ |- ToDoList.csproj
+```
+
+今天就水到这里了，休息去喽~

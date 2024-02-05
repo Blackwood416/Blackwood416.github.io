@@ -5,17 +5,17 @@ tags: 实用工具
 categories: 工具
 ---
 
-# Graphviz
+## Graphviz
 
 graphviz是一个画图工具合集，可以拿来画人物关系图等东西，而且是用写代码的方式来组织图片构成的，是个相比各类思维导图软件和网站更适合极客的画图工具。
 
-# Graphviz安装
+## Graphviz安装
 
 在各类Linux发行版下面可以很轻松地利用包管理器安装此软件，debian系的发行版可以运行命令：
 ```bash
 sudo apt install graphviz
 ```
 
-# DOT语言
+## DOT语言
 
 Graphviz使用一种叫作DOT语言的语言来表示图形。我们可以去[官网](https://graphviz.org/)看文档来了解一下用法。

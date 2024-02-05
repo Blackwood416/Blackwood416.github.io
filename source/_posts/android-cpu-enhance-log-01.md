@@ -11,3 +11,9 @@ categories: 开发
 
 ## 准备步骤
 
+1. 使用任意方式Root手机 
+2. 去[scene官网](https://vtools.omarea.com)下载最新版本的scene，目前最新版本为**scene7**
+
+## 以Root权限运行scene
+
+我使用的Root方案是**KernelSU**，我们在KernelSU管理器里点击底部导航栏的超级用户，找到scene，为其勾选超级用户选项。
