@@ -83,21 +83,116 @@ tar zxpf ArchLinuxARM-aarch64-latest.tar.gz -C /data/linux/arch/
 我们需要挂载一些宿主机的分区到容器系统才能驱动让其成为一个独立运行的容器，所以我们来编辑chroot容器的启动脚本。我们先使用`exit`来退出root shell，然后输入`nano a`来创建并编辑一个名叫**a**的脚本文件，在其中输入以下内容：
 
 ```bash
-if []
-fi
+#!/bin/sh
 ARCHPATH=/data/linux/arch
 TERMUX_PREFIX=/data/data/com.termux/files/usr
 if ![ -d /dev/shm ]; then
-    mkdir /dev/shm
+    mkdir -p /dev/shm
 fi
-if ![ -d ARCHPATH/dev/shm ]; then
-    mkdir ARCHPATH/dev/shm
+if ![ -d $ARCHPATH/dev/shm ]; then
+    mkdir -p $ARCHPATH/dev/shm
 fi
-mount -o bind -t tmpfs -s 256M /dev/shm ARCHPATH/dev/shm
-mount -o bind 
-mount -o bind 
-chroot ARCHPATH ARCHPATH/bin/su - root
-umount -f ARCHPATH/dev/pts
-umount -f ARCHPATH/dev
-umount -f ARCHPATH/proc
+mount -o remount,dev,suid /data
+mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm
+mount -o bind /dev $ARCHPATH/dev
+mount -t devpts devpts $ARCHPATH/dev/pts
+mount -o bind /sys $ARCHPATH/sys
+mount -o bind /proc $ARCHPATH/proc
+mount -t tmpfs tmpfs $ARCHPATH/tmp
+chroot $ARCHPATH /bin/su - root
+umount -f $ARCHPATH/dev/shm
+umount -f $ARCHPATH/dev/pts
+umount -f $ARCHPATH/dev
+umount -f $ARCHPATH/sys
+umount -f $ARCHPATH/proc
+```
+
+## 配置用户组
+
+Android只允许在某些用户组里的用户执行某些操作，在chroot容器中也是如此。
+
+
+
+## 更新系统软件
+
+在使用pacman更新系统软件之前，我们先导入公钥。
+
+```bash
+pacman-key --init
+pacman-key --populate
+```
+
+导入完成后就可以愉快的更新了：
+
+```bash
+# 在更新前可以编辑 /etc/pacman.conf 将 ParallelDownloads = 5 取消注释以提高下载速度
+pacman -Syu
+```
+
+> Tips：如遇到error: could not determine cachedir mount point /var/cache/pacman/pkg 的情况，需要编辑 /etc/pacman.confg，将其中的CheckSpace注释起来。
+
+## 配置软件源
+
+ArchLinuxARM默认的软件源在国外，对大陆用户不太友好，这时我们可以替换为大陆的镜像源来提高pacman的下载速度。
+
+编辑`/etc/pacman.d/mirrorlist`，将以下几行添加到
+
+## 配置语言
+
+容器的默认语言是英文，如果需要将其改成中文，我们需要手动生成语言包并将系统语言配置成中文。
+
+编辑`/etc/locale.gen`，找到`en_US.UTF-8`和`zh_CN.UTF-8`，将这俩行取消注释。
+
+在shell中输入：
+
+```bash
+sudo locale-gen
+```
+
+等待生成完毕，我们编辑`/etc/locale.conf`，将其中的`LANG=C`替换成`LANG=zh_CN.UTF-8`，之后重启容器即可。
+
+## 配置时区
+
+如果你在容器里使用date命令你会发现你的容器内时间是不对的，是标准的零时区时间，为了同步我们自己的时间，我们需要把时区文件软链接到`/etc/localtime`来改变容器的系统时区。
+
+时区文件在`/usr/share/zoneinfo/`下，我们需要在下面找到符合我们时区的城市
+
+## 使用termux-x11显示图形界面
+
+将启动脚本中的`mount -t tmpfs tmpfs $ARCHPATH/tmp`改为`mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp`。
+
+然后我建议启动容器时将selinux设置成宽容模式，并将/tmp取消挂载，这样不会产生一些莫名其妙的bug。最终的容器启动脚本如下：
+
+```bash
+#!/bin/sh
+ARCHPATH=/data/linux/arch
+TERMUX_PREFIX=/data/data/com.termux/files/usr
+if ![ -d /dev/shm ]; then
+    mkdir -p /dev/shm
+fi
+if ![ -d $ARCHPATH/dev/shm ]; then
+    mkdir -p $ARCHPATH/dev/shm
+fi
+mount -o remount,dev,suid /data
+mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm
+mount -o bind /dev $ARCHPATH/dev
+mount -t devpts devpts $ARCHPATH/dev/pts
+mount -o bind /sys $ARCHPATH/sys
+mount -o bind /proc $ARCHPATH/proc
+mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp
+setenforce 0
+chroot $ARCHPATH /bin/su - root
+umount -f $ARCHPATH/dev/shm
+umount -f $ARCHPATH/dev/pts
+umount -f $ARCHPATH/dev
+umount -f $ARCHPATH/sys
+umount -f $ARCHPATH/proc
+umount -f $ARCHPATH/tmp
+setenforce 1
+```
+
+并在容器内的/etc/profile的末尾添加此行来让挂在的tmp目录在容器内可读写：
+
+```bash
+sudo chmod -R 777 /tmp
 ```

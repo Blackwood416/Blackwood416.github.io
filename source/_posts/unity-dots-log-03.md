@@ -25,7 +25,7 @@ categories: 开发
 
 好了，我们先同步了位置，但是你会发现，视角转动和移动方向并没有关系，照抄大神的代码是不行的，我们还需要同步一下rotation。
 
-写完同步rotation的代码，好嘛，运行起来一看，往下和往上看时player的模型也跟着上下转动，这是rotation的问题，我们不能同步所有的rotation。
+写完同步rotation的代码，好嘛，运行起来一看，往下和往上看时player的模型也跟着上下转动，这是rotation的问题，我们不能同步所有的rotation数据。
 
 解决方法是只同步camera rotation的quaternion的y和w值，其他两个设置为0，这会只同步水平方向的rotation。
 

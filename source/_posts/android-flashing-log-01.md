@@ -2,7 +2,7 @@
 title: 安卓刷机学习日志 01
 date: 2024-01-23 20:28:58
 tags: 安卓
-categories: 开发
+categories: 搞机
 ---
 
 ## 安卓刷机的意义

@@ -5,15 +5,14 @@ tags: Web
 categories: 开发
 ---
 
-# Web开发日志 01
-
 虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。
 
-# HTML
+## HTML
 
 HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 **标记(tag)** 来组织网页的内容。
 
 我们创建一个名字为 **test.html** 的文件，用文本编辑器将其打开，在其中写入：
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -25,6 +24,7 @@ HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用�
     </body>
 </html>
 ```
+
 保存文件后把文件拖到浏览器里，浏览器的标签页上会显示  **This is a title** ,而页面内会显示一个大大的 **H1 text** 。
 
 我们从第一行开始看起：
@@ -37,13 +37,14 @@ HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用�
 
 了解了一个HTML网页的基本结构后，我们接下来来了解各种HTML标签。顺便了解一下一个叫作 **emmet** 的工具。
 
-# Emmet
+## Emmet
 
 **Emmet**提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。
 
 我们来简单地介绍一下emmet的语法。先从最简单的开始吧。
 
 使用`!`在emmet中打出如下的代码（在某些编辑器内你可能需要输入`!>`才能得到以下补全代码）：
+
 ```html
 <<!DOCTYPE html>
 <html lang="en">

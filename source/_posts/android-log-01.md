@@ -21,4 +21,23 @@ categories: 开发
 
 作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin是谷歌官方推荐的语言，我们可以来尝试尝试。
 
-Windows PC或者Linux PC可以使用Android Studio来开发，当然Intellij IDEA也是可以的（毕竟Android Studio就是Intellij IDEA的换皮），不过最好还是用Android Studio。
+Windows PC或者Linux PC可以使用Android Studio来开发，当然Intellij IDEA也是可以的（毕竟Android Studio就是Intellij IDEA的换皮），不过最好还是用Android Studio（下称AS）。
+
+## 配置Android Studio
+
+大部分人的电脑都会给硬盘分区，而C盘因为存放Windows系统文件所以不适合占满，但是我们的AS偏偏默认就在C盘下创建项目，AVD虚拟机也装在C盘，这时我们需要配置一下来避免这种情况。
+
+### 更改工具存放目录
+
+默认这个目录是`C:\Users\你的用户名\.android`，而假如我们需要把这个目录移到其他盘，我们需要在其他盘先新建一个文件夹，比如`G:\AndroidStudioTool`，我们去Windows设置->系统->关于->高级系统设置->环境变量中新建个变量，建议是在用户变量下新建，变量名为`ANDROID_SDK_HOME`，路径为`G:\AndroidStudioTool`。如果有avd虚拟机，我们进入`G:\AndroidStudioTool\.android\avd`下编辑ini配置文件，将路径指向正确的目录，比如我的avd配置文件如下：
+
+```ini
+avd.ini.encoding=UTF-8
+path=G:\AndroidStudioTool\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd
+path.rel=avd\Pixel_3a_API_34_extension_level_7_x86_64.avd
+target=android-34
+```
+
+### 更改项目存放目录
+
+在IDE里的文件->设置->外观与行为->系统设置下可以找到默认项目目录，配置成你喜欢的目录就好了。

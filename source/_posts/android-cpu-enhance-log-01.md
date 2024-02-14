@@ -2,7 +2,7 @@
 title: 安卓CPU调教日志 01
 date: 2024-01-23 20:42:30
 tags: 安卓
-categories: 开发
+categories: 搞机
 ---
 
 ## 在安卓上我们能对CPU干什么？

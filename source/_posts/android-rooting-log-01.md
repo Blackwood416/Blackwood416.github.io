@@ -2,7 +2,7 @@
 title: 安卓Root学习日志 01
 date: 2024-01-23 20:54:20
 tags: 安卓
-categories: 开发
+categories: 搞机
 ---
 
 ## 什么是Root
