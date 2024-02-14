@@ -24,7 +24,7 @@
 <meta property="og:description" content="Dots实现FPS踩坑首当其冲的就是输入，可以使用input system，参考油管大神TurboMakesGame的视频。 这只是实现了移动的输入，视角转动的输入还没实现呢，这时我们会遇到一个问题，那就是camera。 将camera转化为entity，看似可行，实则不行，transform组件没被转化，实现了转不动（我已经试过了）。 经过多番查找，我发现，camera还是得留在subscene">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-08-10T15:52:50.000Z">
-<meta property="article:modified_time" content="2024-01-18T14:27:33.681Z">
+<meta property="article:modified_time" content="2024-02-14T11:59:53.393Z">
 <meta property="article:author" content="Blackwood">
 <meta property="article:tag" content="unity">
 <meta name="twitter:card" content="summary_large_image">
@@ -220,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          443 字
+          445 字
         
       </span>
     
@@ -282,7 +282,7 @@
 <p>我们的camera不通过设置是看不到Entity的，我们需要去<strong>Edit &gt; Preferences &gt; Entities &gt; Baking</strong>下的<strong>Scene View Mode</strong>切换成<strong>Runtime Data</strong>。这样才能让我们的camera渲染出entity。</p>
 <p>这就结束了？还没呢。因为player是Entity而camera是GameObject，所以我们并不能像在它们都是GameObject时那样通过将它们设置为父子物体来同步它们的transform，我们需要手动进行同步。</p>
 <p>好了，我们先同步了位置，但是你会发现，视角转动和移动方向并没有关系，照抄大神的代码是不行的，我们还需要同步一下rotation。</p>
-<p>写完同步rotation的代码，好嘛，运行起来一看，往下和往上看时player的模型也跟着上下转动，这是rotation的问题，我们不能同步所有的rotation。</p>
+<p>写完同步rotation的代码，好嘛，运行起来一看，往下和往上看时player的模型也跟着上下转动，这是rotation的问题，我们不能同步所有的rotation数据。</p>
 <p>解决方法是只同步camera rotation的quaternion的y和w值，其他两个设置为0，这会只同步水平方向的rotation。</p>
 <p>至此我们才完成了一个基本的FPS角色移动和视角转动。</p>
 

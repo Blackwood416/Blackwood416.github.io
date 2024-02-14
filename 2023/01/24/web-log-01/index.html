@@ -16,15 +16,15 @@
   <meta name="author" content="Blackwood">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Web开发日志 01虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。 HTMLHTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 标记(tag) 来组织网页的内容。 我">
+    <meta name="description" content="虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。 HTMLHTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 标记(tag) 来组织网页的内容。 我们创建一个名字为 t">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Web开发日志 01">
 <meta property="og:url" content="http://example.com/2023/01/24/web-log-01/index.html">
 <meta property="og:site_name" content="Blackwood&#39;s Blogs">
-<meta property="og:description" content="Web开发日志 01虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。 HTMLHTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 标记(tag) 来组织网页的内容。 我">
+<meta property="og:description" content="虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。 HTMLHTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 标记(tag) 来组织网页的内容。 我们创建一个名字为 t">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-24T06:15:10.000Z">
-<meta property="article:modified_time" content="2024-01-18T14:27:33.682Z">
+<meta property="article:modified_time" content="2024-02-14T12:35:05.013Z">
 <meta property="article:author" content="Blackwood">
 <meta property="article:tag" content="Web">
 <meta name="twitter:card" content="summary_large_image">
@@ -273,17 +273,18 @@
             
               <div class="markdown-body">
                 
-                <h1 id="Web开发日志-01"><a href="#Web开发日志-01" class="headerlink" title="Web开发日志 01"></a>Web开发日志 01</h1><p>虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。</p>
-<h1 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h1><p>HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 <strong>标记(tag)</strong> 来组织网页的内容。</p>
+                <p>虽说国内有用app取代web网站的趋势，但是各类web技术在当今时代仍然是不可或缺的。本系列博客从web三大件（HTML、CSS、JavaScript）入手，逐渐深入浏览器、web开发语言、web引擎、数据库、web框架等内容。</p>
+<h2 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h2><p>HTML(HyperText Markup Language)是一种用来组织web网页的语言。它用各种 <strong>标记(tag)</strong> 来组织网页的内容。</p>
 <p>我们创建一个名字为 <strong>test.html</strong> 的文件，用文本编辑器将其打开，在其中写入：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>This is a title<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>H1 text<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
 <p>保存文件后把文件拖到浏览器里，浏览器的标签页上会显示  <strong>This is a title</strong> ,而页面内会显示一个大大的 <strong>H1 text</strong> 。</p>
 <p>我们从第一行开始看起：</p>
 <p><code>&lt;!DOCTYPE html&gt;</code>这行是让浏览器按照w3c的标准方式来处理这个html文件，而不是用浏览器自己的方式，这可以防止你的网页在不同浏览器上出现显示差异。这其实跟Linux上的shell脚本有点类似，即在文件首行预先声明该用哪种方式处理该文件。</p>
 <p>接下来的<code>&lt;html&gt;</code>  <code>&lt;head&gt;</code>  <code>&lt;title&gt;</code> <code>&lt;body&gt;</code>和<code>&lt;h1&gt;</code>都是HTML标签，或者也能叫作HTML元素，因为它们都有着与其对应的另一半，即有着开始标签和结束标签。</p>
 <p>其中被<code>&lt;html&gt;&lt;/html&gt;</code>包围的内容即为网页的所有内容，被<code>&lt;head&gt;&lt;/head&gt;</code>包围的是网页的元(meta)数据，被<code>&lt;title&gt;&lt;/title&gt;</code>包围的是网页的标题，被<code>&lt;body&gt;&lt;/body&gt;</code>包围的是网页的内容主体，而<code>&lt;h1&gt;&lt;/h1&gt;</code>中的内容是一个大标题。</p>
 <p>了解了一个HTML网页的基本结构后，我们接下来来了解各种HTML标签。顺便了解一下一个叫作 <strong>emmet</strong> 的工具。</p>
-<h1 id="Emmet"><a href="#Emmet" class="headerlink" title="Emmet"></a>Emmet</h1><p><strong>Emmet</strong>提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。</p>
+<h2 id="Emmet"><a href="#Emmet" class="headerlink" title="Emmet"></a>Emmet</h2><p><strong>Emmet</strong>提供了一种HTML标签的快捷写法，在大多数现代的代码编辑器中都有内置或者用插件实现。学会了它以后手写HTML标签会非常快。</p>
 <p>我们来简单地介绍一下emmet的语法。先从最简单的开始吧。</p>
 <p>使用<code>!</code>在emmet中打出如下的代码（在某些编辑器内你可能需要输入<code>!&gt;</code>才能得到以下补全代码）：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html">&lt;<span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;en&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;viewport&quot;</span> <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Document<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
