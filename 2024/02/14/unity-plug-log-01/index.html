@@ -16,18 +16,22 @@
   <meta name="author" content="Blackwood">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Unity插件很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。 插件结构首先我们需要为自己的插件定一个结构：">
+    <meta name="description" content="Unity插件这里说的插件不是官方文档脚本部分里的那个插件，而是我们开发游戏时用于扩展编辑器功能的插件。很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。 写什么插件关于写什么插件，我思来想去最后想到了，我们来写一个控制台插件，我玩过的很多游戏都有控制台">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity插件开发日志 01">
 <meta property="og:url" content="http://example.com/2024/02/14/unity-plug-log-01/index.html">
 <meta property="og:site_name" content="Blackwood&#39;s Blogs">
-<meta property="og:description" content="Unity插件很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。 插件结构首先我们需要为自己的插件定一个结构：">
+<meta property="og:description" content="Unity插件这里说的插件不是官方文档脚本部分里的那个插件，而是我们开发游戏时用于扩展编辑器功能的插件。很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。 写什么插件关于写什么插件，我思来想去最后想到了，我们来写一个控制台插件，我玩过的很多游戏都有控制台">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/02/14/unity-plug-log-01/ConsoleToggle.png">
+<meta property="og:image" content="http://example.com/2024/02/14/unity-plug-log-01/ConsoleToggleResult.png">
+<meta property="og:image" content="http://example.com/2024/02/14/unity-plug-log-01/ConsoleMenu.png">
 <meta property="article:published_time" content="2024-02-14T12:01:43.000Z">
-<meta property="article:modified_time" content="2024-02-14T15:57:30.599Z">
+<meta property="article:modified_time" content="2024-02-20T15:29:17.654Z">
 <meta property="article:author" content="Blackwood">
 <meta property="article:tag" content="Unity">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2024/02/14/unity-plug-log-01/ConsoleToggle.png">
   
   
   
@@ -220,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          105 字
+          694 字
         
       </span>
     
@@ -231,7 +235,7 @@
         
         
         
-          1 分钟
+          6 分钟
         
       </span>
     
@@ -273,8 +277,27 @@
             
               <div class="markdown-body">
                 
-                <h2 id="Unity插件"><a href="#Unity插件" class="headerlink" title="Unity插件"></a>Unity插件</h2><p>很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。</p>
-<h2 id="插件结构"><a href="#插件结构" class="headerlink" title="插件结构"></a>插件结构</h2><p>首先我们需要为自己的插件定一个结构：</p>
+                <h2 id="Unity插件"><a href="#Unity插件" class="headerlink" title="Unity插件"></a>Unity插件</h2><p>这里说的插件不是官方文档脚本部分里的那个插件，而是我们开发游戏时用于扩展编辑器功能的插件。很多时候我们会发现Unity并不自带某些我们需要的功能，这时我们需要去资源商店或其他地方找别人写好的插件安装，来让自己的Unity得到这些本来没有的功能。今天呢我们就来自己写一个Unity插件吧。</p>
+<h2 id="写什么插件"><a href="#写什么插件" class="headerlink" title="写什么插件"></a>写什么插件</h2><p>关于写什么插件，我思来想去最后想到了，我们来写一个控制台插件，我玩过的很多游戏都有控制台，但是Unity并不自带类似的东西，游戏在发行后我们没有办法显式地即时控制。</p>
+<h2 id="插件结构"><a href="#插件结构" class="headerlink" title="插件结构"></a>插件结构</h2><p>首先我们需要为自己的插件定一个结构，比如这样：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs txt">ConsolePlugin<br>|- Scripts<br>|- |- XXX.cs<br>|- UI<br>|- |- XXX.cs<br>|- Utils<br>|- |- XXX.cs<br>|- ConsolePlugin.cs<br></code></pre></td></tr></table></figure>
+
+<p>其中<strong>Scripts</strong>目录下的是这个插件的主要逻辑代码，<strong>UI</strong>则是UI方面的代码和资产，<strong>Utils</strong>则是一些适合分离出来复用的模块，最后的<strong>ConsolePlugin.cs</strong>是插件与Unity对接的一个接口。确定了目录结构，我们现在就可以开始写插件了。</p>
+<h2 id="编写-ConsolePlugin-cs"><a href="#编写-ConsolePlugin-cs" class="headerlink" title="编写 ConsolePlugin.cs"></a>编写 ConsolePlugin.cs</h2><p>这个与Unity对接的脚本我们肯定是要最先写好的，我们在这个脚本中应该包含给编辑器使用的UI和逻辑，UI我们会用到IMGUI。</p>
+<p>首先我们需要引入Unity编辑器，<code>using UnityEditor;</code>，然后我们先创建插件专属的菜单栏。只需要定义一个static void的函数，在其前面带上[MenuItem]属性即可，比如下面这个：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs csharp">[<span class="hljs-meta">MenuItem(<span class="hljs-string">&quot;Console/Toggle&quot;</span>)</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConsoleToggle</span>()</span><br>&#123;<br>   Debug.Log(<span class="hljs-string">&quot;Console toggled&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>保存编译后你会发现你Unity的菜单栏多出了一项，里面也有我们定义的子项。</p>
+<p><img src="/2024/02/14/unity-plug-log-01/ConsoleToggle.png" srcset="/img/loading.gif" lazyload alt="如图"></p>
+<p>点击它我们也会看到编辑器的控制台输出了我们定义的文本。</p>
+<p><img src="/2024/02/14/unity-plug-log-01/ConsoleToggleResult.png" srcset="/img/loading.gif" lazyload alt="如图"></p>
+<p>MenuItem这个特性的参数还可以定义选项卡的打开方式，如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-comment">//_i：表示没有组合键，直接按住键盘&quot;i&quot;使用</span><br>[<span class="hljs-meta">MenuItem(<span class="hljs-string">&quot;Console/Inspector _i&quot;</span>)</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConsoleInspector</span>()</span><br>&#123;<br>    Debug.Log(<span class="hljs-string">&quot;Opening Console Inspector&quot;</span>);<br>&#125;<br><br><span class="hljs-comment">//#d：表示按住 Shift + d 使用</span><br>[<span class="hljs-meta">MenuItem(<span class="hljs-string">&quot;Console/Debug #d&quot;</span>)</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConsoleDebug</span>()</span><br>&#123;<br>    Debug.Log(<span class="hljs-string">&quot;Starting Console Debug mode&quot;</span>);<br>&#125;<br><br><span class="hljs-comment">//%w：表示按住 Ctrl + w 使用</span><br>[<span class="hljs-meta">MenuItem(<span class="hljs-string">&quot;Console/Window %w&quot;</span>)</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConsoleWindow</span>()</span><br>&#123;<br>    Debug.Log(<span class="hljs-string">&quot;Opening Console window&quot;</span>);<br>&#125;<br><br><span class="hljs-comment">//&amp;a：表示按住 Alt + a 使用</span><br>[<span class="hljs-meta">MenuItem(<span class="hljs-string">&quot;Console/About &amp;a&quot;</span>)</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConsoleAbout</span>()</span><br>&#123;<br>    Debug.Log(<span class="hljs-string">&quot;Show plugin developer&#x27;s information&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>效果如图：</p>
+<p><img src="/2024/02/14/unity-plug-log-01/ConsoleMenu.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="编写-UI-Editor-ConsoleEditorWindow-cs"><a href="#编写-UI-Editor-ConsoleEditorWindow-cs" class="headerlink" title="编写 UI&#x2F;Editor&#x2F;ConsoleEditorWindow.cs"></a>编写 UI&#x2F;Editor&#x2F;ConsoleEditorWindow.cs</h2><p>接下来我们编写编辑器这边的窗口。</p>
+<p>首先我们还是需要引用<strong>UnityEditor</strong>，然后我们需要将类的基类改成<strong>EditorWindow</strong>，也就是class的声明变成：<code>public class ConsoleEditorWindow : EditorWindow</code></p>
 
                 
               </div>

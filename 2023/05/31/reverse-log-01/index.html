@@ -24,7 +24,7 @@
 <meta property="og:description" content="逆向工程是什么？逆向工程是一个比较通用的术语，在工业和软件领域都能看到它的身影，它指的是对已经生产出来的产品或已经编译过的可执行文件进行分析，进而得知其运行原理和生产流程或可能的源代码的一项技术。 本博客主要是分享软件逆向工程。 汇编和反汇编汇编语言所有开发出来的程序最终都要从源代码被编译成可执行文件，以机器码的形式被计算机执行。但是在现代编程语言和机器码之间存在着汇编语言这一层中间语言，它比机器">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-05-31T12:09:18.000Z">
-<meta property="article:modified_time" content="2024-01-18T14:27:33.680Z">
+<meta property="article:modified_time" content="2024-04-07T12:03:14.730Z">
 <meta property="article:author" content="Blackwood">
 <meta property="article:tag" content="逆向工程">
 <meta name="twitter:card" content="summary_large_image">
@@ -220,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          665 字
+          705 字
         
       </span>
     
@@ -285,7 +285,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d program<br></code></pre></td></tr></table></figure>
 <p>然后我们会获得一连串的汇编命令，像这样从一个可执行文件中分析出汇编代码就叫作反汇编，根据编译器和平台的不同反汇编出来的汇编代码也会不一样，这里就不赘述了。</p>
 <h2 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h2><p>反编译类似于反汇编，但是从可执行文件中分析出来的是高级语言的代码，但是一般反编译是不够准确的，因为编译器在将源代码编译成可执行文件时会做诸多优化，所以反编译分析出来的高级语言代码不一定就是源代码。</p>
-<p>对于C语言这种纯编译类型的语言编译出来的程序来说，反编译的难度是非常高的，因为诸如gcc等编译器在编译时会进行自动优化。但对于像Java的class文件和C#的IL这些用于JIT运行的中间代码来说，反编译相对比较简单。</p>
+<p>对于C语言这种纯编译类型的语言编译出来的程序来说，反编译的难度是非常高的，因为诸如gcc等编译器在编译时会进行自动优化。但对于像Java的class文件和C#的IL这些用于JIT运行的中间代码来说，反编译相对比较简单，因为语言VM的opcode相比CPU指令来说还是简单许多的。</p>
+<p>在Windows上，我们可以很容易的使用dnspy来反编译dll中的C# IL。</p>
 
                 
               </div>

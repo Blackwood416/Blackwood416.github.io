@@ -24,7 +24,7 @@
 <meta property="og:description" content="安卓刷机的意义一般来说，国内安卓手机厂商的ROM都带有不少的限制，比如杀不掉的后台进程和服务啦、烦人的系统推送啦、恶心人的云控啦等等。而第三方的基于国内ROM的修改版ROM或者类原生ROM都没有这些毛病，并且提供很多个性化的设置（虽然不一定比官方ROM好）。 前置工作一台可以解锁BootLoader的手机我使用的是一台内存配置为8+128GB的Redmi Note12R，CPU是骁龙4gen2，在">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-23T12:28:58.000Z">
-<meta property="article:modified_time" content="2024-02-09T05:53:10.442Z">
+<meta property="article:modified_time" content="2024-04-05T11:04:14.238Z">
 <meta property="article:author" content="Blackwood">
 <meta property="article:tag" content="安卓">
 <meta name="twitter:card" content="summary_large_image">
@@ -284,7 +284,7 @@
 <h3 id="找一个合适的ROM"><a href="#找一个合适的ROM" class="headerlink" title="找一个合适的ROM"></a>找一个合适的ROM</h3><p>MIUI有很多第三方的官改ROM，但官改系统大部分不支持低端机，而且官改系统不是开源系统，无法保证里面是否藏有锁机或格机的程序。</p>
 <p>鉴于以上原因，我最终将目光转向了开源的类原生ROM。遗憾的是大名鼎鼎的<strong>LineageOS</strong>并不支持我的这部Redmi Note12R及其衍生机型。所以在多方查找后，我选择了一个冷门但有官方支持的类原生ROM——<strong>Bliss ROM</strong>。</p>
 <p>这台Redmi Note12R可以刷入基于 <strong>Android 14</strong> 的 <strong>Bliss ROM 17</strong>，而且还带gapps。在<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/blissroms/files/Universe/sky/">这里</a>可以下载到。</p>
-<h3 id="TWRP"><a href="#TWRP" class="headerlink" title="TWRP"></a>TWRP</h3><p><strong>TWRP</strong>是一个开源的第三方Recovery程序，我们需要使用第三方Recovery才能刷入非官方的ROM，否则会无法进入系统。红米Note12R暂时没有官方的TWRP，但是可以通用<a target="_blank" rel="noopener" href="https://www.pling.com/p/2117793/">红米Note12 5G的TWRP</a>，不过目前该版本的TWRP有些bug我们后面再说。</p>
+<h3 id="TWRP"><a href="#TWRP" class="headerlink" title="TWRP"></a>TWRP</h3><p><strong>TWRP</strong>是一个开源的第三方Recovery程序，我们需要使用第三方Recovery才能刷入非官方的ROM，否则会无法进入系统。红米Note12R暂时没有官方的TWRP，第三方倒是有适配，网上搜吧，我就不提供链接了。</p>
 <h2 id="开始刷机"><a href="#开始刷机" class="headerlink" title="开始刷机"></a>开始刷机</h2><h3 id="准备文件与工具"><a href="#准备文件与工具" class="headerlink" title="准备文件与工具"></a>准备文件与工具</h3><p>在<a target="_blank" rel="noopener" href="https://developer.android.google.cn/tools/releases/platform-tools?hl=zh-cn#downloads">这里</a>下载Android platform-tools，解压后里面有我们刷机需要的<strong>adb</strong>和<strong>fastboot</strong>（这个也可以用miui解锁助手文件夹里的）</p>
 <p>为了减少低级错误发生的可能性，我们先把要刷的ROM卡刷包和TWRP放在platform-tools的文件夹下面。</p>
 <h3 id="退出小米账号"><a href="#退出小米账号" class="headerlink" title="退出小米账号"></a>退出小米账号</h3><p>在开始刷机前我们先退出小米账号以防一些莫名其妙的问题。</p>
@@ -301,16 +301,15 @@
 
 <p>如果显示出一个表，前面一列的是乱码后面一列显示device则表示电脑连接成功。</p>
 <p>这时我们输入：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bat">.\fastboot.exe boot twrp.img<br></code></pre></td></tr></table></figure>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bat">.\fastboot.exe flash recovery_a twrp.img<br>.\fastboot.exe flash recovery_b twrp.img<br>.\fastboot.exe reboot recovery<br></code></pre></td></tr></table></figure>
 
 <blockquote>
 <p>注：其中twrp.img请根据实际文件名，善用鼠标和tab补全</p>
 </blockquote>
-<p>这会使我们的手机黑屏重启，这时<strong>立刻按住音量上键+关机键</strong>，<strong>直到手机发出震动时松开关机键保持按住音量上键直到TWRP的画面出现为止</strong>。</p>
 <p>这时我们会成功进入到TWRP的界面。</p>
 <p>右侧有个language选项里面可以选择简体中文。</p>
 <p>我们输入手机锁屏密码进入TWRP。</p>
-<h3 id="刷入ROM卡刷包"><a href="#刷入ROM卡刷包" class="headerlink" title="刷入ROM卡刷包"></a>刷入ROM卡刷包</h3><p>在这一步我们需要用到一个叫作<strong>adb sideload</strong>的功能。</p>
+<h3 id="线刷ROM卡刷包"><a href="#线刷ROM卡刷包" class="headerlink" title="线刷ROM卡刷包"></a>线刷ROM卡刷包</h3><p>在这一步我们需要用到一个叫作<strong>adb sideload</strong>的功能。</p>
 <p>在TWRP的左下角，有个叫<strong>Advanced（中文为“高级”）</strong>的选项。我们点进去，里面有我们要找的adb sideload。</p>
 <p>我们点击adb sideload，上面有两个选项，我们先勾一下，然后滑动下方的拖动条启动adb sideload。</p>
 <p>看到<code>Starting adb sideload feature</code>或<code>启动adb sideload中</code>就表示adb sideload已经启动了。</p>
@@ -321,7 +320,7 @@
 <p>其中rom.img是ROM卡刷包的名称，善用鼠标和tab补全</p>
 </blockquote>
 <p>等待刷入完成后手机上的日志会有几个报红，这是正常现象，下方会显示个按钮叫我们Reboot或者重启，点击那个按钮重启就可以了。</p>
-<h3 id="清除数据"><a href="#清除数据" class="headerlink" title="清除数据"></a>清除数据</h3><p>可能会在重启一半时跳到MIUI Recovery界面，这时我们选择清除数据，清除完后重启，即可进入刷入的第三方ROM。</p>
+<h3 id="清除数据"><a href="#清除数据" class="headerlink" title="清除数据"></a>清除数据</h3><p>如果无法进入系统，重启到TWRP后双清，清除完后重启，即可进入线刷的第三方ROM。</p>
 <h3 id="刷机完成"><a href="#刷机完成" class="headerlink" title="刷机完成"></a>刷机完成</h3><p>如果你看到了第三方ROM的开机动画，这时就代表你已经刷机成功了！</p>
 <h2 id="Bliss，启动！"><a href="#Bliss，启动！" class="headerlink" title="Bliss，启动！"></a>Bliss，启动！</h2><p>因为Bliss的这个包是自带gapps的，所以我们第一次进的时候不要连wifi，不然可能会因为没有魔法而卡在谷歌认证。建议进系统后自行安装梯子软件。经过一些简单的设置我们就可以进入系统了。</p>
 <p>至此我们已经完成了Bliss ROM在红米Note12R上的刷入。</p>
