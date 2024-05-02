@@ -37,7 +37,7 @@ MIUI有很多第三方的官改ROM，但官改系统大部分不支持低端机�
 
 ### TWRP
 
-**TWRP**是一个开源的第三方Recovery程序，我们需要使用第三方Recovery才能刷入非官方的ROM，否则会无法进入系统。红米Note12R暂时没有官方的TWRP，但是可以通用[红米Note12 5G的TWRP](https://www.pling.com/p/2117793/)，不过目前该版本的TWRP有些bug我们后面再说。
+**TWRP**是一个开源的第三方Recovery程序，我们需要使用第三方Recovery才能刷入非官方的ROM，否则会无法进入系统。红米Note12R暂时没有官方的TWRP，第三方倒是有适配，网上搜吧，我就不提供链接了。
 
 ## 开始刷机
 
@@ -82,12 +82,12 @@ cd D:\platform-tools
 这时我们输入：
 
 ```bat
-.\fastboot.exe boot twrp.img
+.\fastboot.exe flash recovery_a twrp.img
+.\fastboot.exe flash recovery_b twrp.img
+.\fastboot.exe reboot recovery
 ```
 
 > 注：其中twrp.img请根据实际文件名，善用鼠标和tab补全
-
-这会使我们的手机黑屏重启，这时**立刻按住音量上键+关机键**，**直到手机发出震动时松开关机键保持按住音量上键直到TWRP的画面出现为止**。
 
 这时我们会成功进入到TWRP的界面。
 
@@ -95,7 +95,7 @@ cd D:\platform-tools
 
 我们输入手机锁屏密码进入TWRP。
 
-### 刷入ROM卡刷包
+### 线刷ROM卡刷包
 
 在这一步我们需要用到一个叫作**adb sideload**的功能。
 
@@ -117,7 +117,7 @@ cd D:\platform-tools
 
 ### 清除数据
 
-可能会在重启一半时跳到MIUI Recovery界面，这时我们选择清除数据，清除完后重启，即可进入刷入的第三方ROM。
+如果无法进入系统，重启到TWRP后双清，清除完后重启，即可进入线刷的第三方ROM。
 
 ### 刷机完成
 

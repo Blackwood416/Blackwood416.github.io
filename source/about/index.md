@@ -5,4 +5,6 @@ layout: about
 
 # Blackwood的个人主页
 
-[我的github主页](https://github.com/Blackwood416)
+就是个废物，基本啥都会一点，但也是只会一点点，泛而不精是我的代名词。
+
+喜欢轻小说和计算机相关的东西，是个二次元阿宅。

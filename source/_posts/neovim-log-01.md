@@ -67,7 +67,3 @@ nvim
 完成后我们按**q**退出Lazy.nvim的浮动窗口，再输入**:q!**来退出neovim，再次输入 `nvim` 进入neovim时就会发现neovim的外观已经变了。
 
 我们可以去**~/.config/nvim/lua**下面找到各种配置文件（即后缀名为lua）的文件，后面我们会讲讲它们里面分别有什么配置。下篇我们来配置LSP。
-
-## 我的NeoVim配置
-
-我的neovim配置在[这里](https://github.com/Blackwood416/Dotfiles/nvim)，需要挂梯子访问,还有我暂时没写Mason的配置文件，所以需要可能有些东西需要自己安装。

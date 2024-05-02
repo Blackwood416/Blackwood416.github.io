@@ -45,7 +45,7 @@ termux-setup-storage
 
 如果想使用Magisk赋予termux root权限，那么需要使用**tsu**来申请root权限。
 
-> Tips：KernelSU可直接给跳过此步
+> Tips：KernelSU可直接给跳过此步，在KernelSU的管理器中给termux root权限即可
 
 ```bash
 pkg install tsu -y
@@ -78,6 +78,17 @@ mkdir -p /data/linux/arch
 tar zxpf ArchLinuxARM-aarch64-latest.tar.gz -C /data/linux/arch/
 ```
 
+## 创建/dev/shm
+
+因为我们可能会用chroot容器来运行一些基于chromium内核的软件，比如electron应用以及chromium本体，所以我们需要创建`/dev/shm`这个目录来让这些软件能够正常运行。
+
+```bash
+# 在宿主机文件系统中创建
+mkdir /dev/shm
+# 在容器文件系统中创建
+mkdir /data/linux/arch/dev/shm
+```
+
 ## 编写启动脚本
 
 我们需要挂载一些宿主机的分区到容器系统才能驱动让其成为一个独立运行的容器，所以我们来编辑chroot容器的启动脚本。我们先使用`exit`来退出root shell，然后输入`nano a`来创建并编辑一个名叫**a**的脚本文件，在其中输入以下内容：
@@ -86,12 +97,6 @@ tar zxpf ArchLinuxARM-aarch64-latest.tar.gz -C /data/linux/arch/
 #!/bin/sh
 ARCHPATH=/data/linux/arch
 TERMUX_PREFIX=/data/data/com.termux/files/usr
-if ![ -d /dev/shm ]; then
-    mkdir -p /dev/shm
-fi
-if ![ -d $ARCHPATH/dev/shm ]; then
-    mkdir -p $ARCHPATH/dev/shm
-fi
 mount -o remount,dev,suid /data
 mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm
 mount -o bind /dev $ARCHPATH/dev
@@ -100,18 +105,43 @@ mount -o bind /sys $ARCHPATH/sys
 mount -o bind /proc $ARCHPATH/proc
 mount -t tmpfs tmpfs $ARCHPATH/tmp
 chroot $ARCHPATH /bin/su - root
-umount -f $ARCHPATH/dev/shm
 umount -f $ARCHPATH/dev/pts
 umount -f $ARCHPATH/dev
 umount -f $ARCHPATH/sys
 umount -f $ARCHPATH/proc
 ```
 
-## 配置用户组
+## 新建用户与配置用户组
+
+作为一个“普通”的Linux用户，我们肯定不能在平常用root用户的，我们进容器后第一件事就是创建一个新的用户：
+
+```bash
+useradd -m -s /bin/bash axis
+passwd axis
+```
+
+axis是我自己定的用户名。
 
 Android只允许在某些用户组里的用户执行某些操作，在chroot容器中也是如此。
 
+使用以下命令添加用户组并将新建的用户加入其中：
 
+```bash
+groupadd -g 3001 android_bt
+groupadd -g 3002 android_bt-net
+groupadd -g 3003 android_inet
+groupadd -g 3004 android_net-raw
+groupadd -g 1015 sdcard-rw
+groupadd -g 1028 sdcard-r
+gpasswd -a axis android_bt
+gpasswd -a axis android_bt-net
+gpasswd -a axis android_inet
+gpasswd -a axis android_net-raw
+gpasswd -a axis sdcard-rw
+gpasswd -a axis sdcard-r
+```
+
+大功告成之后我们不急着换用户，先用着root，可以少打点sudo。
 
 ## 更新系统软件
 
@@ -135,13 +165,66 @@ pacman -Syu
 
 ArchLinuxARM默认的软件源在国外，对大陆用户不太友好，这时我们可以替换为大陆的镜像源来提高pacman的下载速度。
 
-编辑`/etc/pacman.d/mirrorlist`，将以下几行添加到
+将`/etc/pacman.d/`下的`mirrorlist`改名为`mirrorlist.bak`来备份下原本的软件源。
+
+```bash
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+```
+
+重新创建并编辑`/etc/pacman.d/mirrorlist`
+
+```bash
+nano /etc/pacman.d/mirrorlist
+```
+
+在其中加入以下几行从tmoe脚本那抄过来的软件源：
+
+```txt
+## Archlinux arm
+Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/$repo
+Server = https://mirror.archlinuxarm.org/$arch/$repo
+Server = https://mirrors.bfsu.edu.cn/archlinuxarm/$arch/$repo
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/$arch/$repo
+Server = https://mirrors.163.com/archlinuxarm/$arch/$repo
+```
+
+编辑完保存后我们使用`pacman -Syu`来更新一下。
+ 
+我们还可以添加一些额外的软件源，比如archlinuxcn、arch4edu、blackarch，我们编辑`/etc/pacman.conf`：
+
+```bash
+nano /etc/pacman.conf
+```
+
+在文件末尾加入以下文本：
+
+```txt
+[arch4edu]
+Server = https://mirrors.bfsu.edu.cn/arch4edu/$arch
+Server = https://mirrors.tuna.tsinghua.edu.cn/arch4edu/$arch
+Server = https://mirror.autisten.club/arch4edu/$arch
+Server = https://arch4edu.keybase.pub/$arch
+Server = https://mirror.lesviallon.fr/arch4edu/$arch
+Server = https://mirrors.tencent.com/arch4edu/$arch
+SigLevel = Never
+[archlinuxcn]
+Server = https://mirrors.bfsu.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+Server = https://repo.archlinuxcn.org/$arch
+SigLevel = Never
+[blackarch]
+Server = https://mirrors.ustc.edu.cn/blackarch/$repo/os/$arch
+Server = https://mirrors.tuna.tsinghua.edu.cn/blackarch/$repo/os/$arch
+Server = https://mirrors.aliyun.com/blackarch/$repo/os/$arch
+Server = https://www.blackarch.org/blackarch/$repo/os/$arch
+SigLevel = Never
+```
 
 ## 配置语言
 
 容器的默认语言是英文，如果需要将其改成中文，我们需要手动生成语言包并将系统语言配置成中文。
 
-编辑`/etc/locale.gen`，找到`en_US.UTF-8`和`zh_CN.UTF-8`，将这俩行取消注释。
+编辑`/etc/locale.gen`，找到`zh_CN.UTF-8`，将这俩行取消注释。
 
 在shell中输入：
 
@@ -155,43 +238,63 @@ sudo locale-gen
 
 如果你在容器里使用date命令你会发现你的容器内时间是不对的，是标准的零时区时间，为了同步我们自己的时间，我们需要把时区文件软链接到`/etc/localtime`来改变容器的系统时区。
 
-时区文件在`/usr/share/zoneinfo/`下，我们需要在下面找到符合我们时区的城市
+时区文件在`/usr/share/zoneinfo/`下，我们需要在下面找到符合我们时区的城市。北京时间的设置如下：
+
+```bash
+ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+
+之后重启容器即可。
+
+## 安装图形界面
+
+我们装个xfce来当图形界面，因为只装WM真的太折磨人了，你连壁纸软件都得另外装，可能还不如装xfce这种轻量化的DE。使用以下命令在Arch中安装xfce桌面：
+
+```bash
+sudo pacman -Syu xfce4 xfce4-goodies
+```
+
+## 精简系统
+
+对于一个不需要引导和加载的容器系统来说，/boot分区里的东西直接删了都没关系，另外，我们也不需要更新ramdisk，所以我们直接卸载mkinitcpio和删除/boot分区下的内容。
+
+```bash
+sudo pacman -Rsc mkinitcpio
+sudo rm -rf /boot/*
+```
+
+这么整可以省出几百MB的存储空间，还是很香的。
 
 ## 使用termux-x11显示图形界面
 
 将启动脚本中的`mount -t tmpfs tmpfs $ARCHPATH/tmp`改为`mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp`。
 
-然后我建议启动容器时将selinux设置成宽容模式，并将/tmp取消挂载，这样不会产生一些莫名其妙的bug。最终的容器启动脚本如下：
+然后我建议启动容器时将selinux设置成宽容模式，并将/tmp取消挂载，这样不会产生一些莫名其妙的bug，然后为了少打个su来启动root终端，因为我换到了kernelsu，不用tsu了，所以直接用`su -c ""`来用root权限运行命令。最终的容器启动脚本如下：
 
 ```bash
 #!/bin/sh
 ARCHPATH=/data/linux/arch
 TERMUX_PREFIX=/data/data/com.termux/files/usr
-if ![ -d /dev/shm ]; then
-    mkdir -p /dev/shm
-fi
-if ![ -d $ARCHPATH/dev/shm ]; then
-    mkdir -p $ARCHPATH/dev/shm
-fi
-mount -o remount,dev,suid /data
-mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm
-mount -o bind /dev $ARCHPATH/dev
-mount -t devpts devpts $ARCHPATH/dev/pts
-mount -o bind /sys $ARCHPATH/sys
-mount -o bind /proc $ARCHPATH/proc
-mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp
-setenforce 0
-chroot $ARCHPATH /bin/su - root
-umount -f $ARCHPATH/dev/shm
-umount -f $ARCHPATH/dev/pts
-umount -f $ARCHPATH/dev
-umount -f $ARCHPATH/sys
-umount -f $ARCHPATH/proc
-umount -f $ARCHPATH/tmp
-setenforce 1
+su -c "setenforce permissive"
+su -c "mount -o remount,dev,suid /data"
+su -c "mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm"
+su -c "mount -o bind /dev $ARCHPATH/dev"
+su -c "mount -t devpts devpts $ARCHPATH/dev/pts"
+su -c "mount -o bind /sys $ARCHPATH/sys"
+su -c "mount -o bind /proc $ARCHPATH/proc"
+su -c "mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp"
+pkill -f "/system/bin/app_process / com.termux.x11.Loader :0 -ac"
+nohup termux-x11 :0 -ac >/dev/null 2>&1 &
+su -c "chroot $ARCHPATH /bin/su - axis"
+su -c "umount -f $ARCHPATH/dev/pts"
+su -c "umount -f $ARCHPATH/dev"
+su -c "umount -f $ARCHPATH/sys"
+su -c "umount -f $ARCHPATH/proc"
+su -c "umount -f $ARCHPATH/tmp"
+su -c "setenforce enforcing"
 ```
 
-并在容器内的/etc/profile的末尾添加此行来让挂在的tmp目录在容器内可读写：
+记得在容器内的`/etc/profile`的末尾添加此行来让挂载的tmp目录在容器内可读写：
 
 ```bash
 sudo chmod -R 777 /tmp
