@@ -275,6 +275,7 @@ sudo rm -rf /boot/*
 #!/bin/sh
 ARCHPATH=/data/linux/arch
 TERMUX_PREFIX=/data/data/com.termux/files/usr
+# KernelSU 可注释下行
 su -c "setenforce permissive"
 su -c "mount -o remount,dev,suid /data"
 su -c "mount -t tmpfs -o size=256M /dev/shm $ARCHPATH/dev/shm"
@@ -291,6 +292,7 @@ su -c "umount -f $ARCHPATH/dev"
 su -c "umount -f $ARCHPATH/sys"
 su -c "umount -f $ARCHPATH/proc"
 su -c "umount -f $ARCHPATH/tmp"
+# KernelSU 可注释下行
 su -c "setenforce enforcing"
 ```
 
