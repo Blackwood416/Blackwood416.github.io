@@ -47,3 +47,30 @@ dotnet --list-runtimes
 
 ## Blazor项目结构
 
+```
+NewBlazorApp
+├── ClientApp
+│   ├── Pages
+│   │   ├── Index.razor
+│   │   └── _Host.cshtml
+│   ├── Program.cs
+│   ├── Startup.cs
+│   └── wwwroot
+│       ├── css
+│       ├── img
+│       ├── js
+│       └── lib
+├── NewBlazorApp.csproj
+└── Properties
+    └── launchSettings.json
+```
+
+1. `ClientApp`：Blazor的客户端代码，包括Razor组件、CSS、JS等。
+2. `Program.cs`：Blazor的入口点，负责配置Blazor应用的服务并启动。
+3. `Startup.cs`：Blazor的启动配置，包括路由配置、身份验证配置等。
+4. `wwwroot`：Blazor的静态资源目录，包括CSS、JS、图片等。
+5. `Properties`：Blazor的配置文件目录，包括`launchSettings.json`文件。
+
+## 总结
+
+Blazor是一个非常优秀的web应用框架，它能让我们用C#来开发web应用，并且能在客户端和服务器端都能运行，而且性能也非常好，十分适合处理大量动态UI的场景。

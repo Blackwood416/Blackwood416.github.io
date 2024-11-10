@@ -7,9 +7,9 @@ categories: 开发环境
 
 ## 什么是chroot容器？
 
-chroot是Linux发行版中一个用于隔离文件系统的软件，而由于隔离了文件系统，我么只要将系统运行所必要的分区挂载在这个隔离的文件系统中就可以使用chroot创建一个与宿主系统同内核的容器系统了。内核基于Linux的安卓系统当然也是可以使用的，但是需要root。接下来我们就来在已root的安卓设备上安装一个Linux容器吧。
+chroot是Linux发行版中一个用于将进程隔离在一个受限空间的软件，而由于将进程隔离到了受限空间中，我们只需要将系统运行所必要的分区挂载在这个隔离出来的受限空间中就可以使用chroot运行一个与宿主系统共用内核的容器系统了。内核基于Linux的安卓系统当然也是可以使用chroot的，但是需要root权限。接下来我们就来在已root的安卓设备上安装一个Linux容器吧。
 
-## 前置环境
+## 前置要求
 
 ### Root权限
 
@@ -25,15 +25,17 @@ chroot是Linux发行版中一个用于隔离文件系统的软件，而由于隔
 termux-change-repo
 ```
 
-使用上下箭头键来切换选项，使用空格选中选项，回车键确定换源，选tsinghua、ustc、bfsu等大学的源即可。
+**使用上下箭头键来切换选项，使用空格选中选项，回车键确定选项**，选tsinghua（清华大学）、ustc（中国科技大学）、bfsu（北京外国语大学）等大学的源即可。
 
 回车后会自动更新源索引文件，我们再手动更新下自带软件：
 
 ```bash
-apt upgrade -y
+pkg upgrade -y
+# 可简化成
+pkg up -y
 ```
 
-然后再跑一次`termux-change-repo`，选**Single Mirror**，将我们之前选的镜像源再选中确定一次。
+然后再运行一次`termux-change-repo`，选**Single Mirror**，将我们之前选的镜像源再选中确定一次。
 
 使用以下命令给termux赋予存储读写权限：
 
@@ -45,25 +47,25 @@ termux-setup-storage
 
 如果想使用Magisk赋予termux root权限，那么需要使用**tsu**来申请root权限。
 
-> Tips：KernelSU可直接给跳过此步，在KernelSU的管理器中给termux root权限即可
+> Tips：KernelSU可直接跳过此步，在KernelSU的管理器中给termux root权限并重新启动termux即可
 
 ```bash
 pkg install tsu -y
-# 或用简写
+# 可简化成
 pkg i tsu -y
+# 从Magisk获取root权限
+tsu
 ```
 
 ## 下载rootfs
 
-**rootfs**，顾名思义就是**根文件系统**。众所周知Linux的最顶层目录就是 **/**，也就是**根目录**，而rootfs就是根目录的文件系统，为了让容器能像一个操作系统一样运行，我们需要一个Linux发行版的根目录文件系统来作为容器系统的根目录。
-
-这里我们选择**Arch Linux ARM**系统来作为我们的容器系统，我们在[官网](https://archlinuxarm.org/about/downloads)可以下载到，一般的安卓设备选择名称为**ARMv8 AArch64 Multi-platform**、文件名为	**ArchLinuxARM-aarch64-latest.tar.gz**的rootfs下载即可。
+这里我们选择**Arch Linux ARM**系统来作为我们的容器系统，我们在[官网](https://archlinuxarm.org/about/downloads)可以下载到，一般的安卓设备选择名称为**ARMv8 AArch64 Multi-platform**、文件名为**ArchLinuxARM-aarch64-latest.tar.gz**的rootfs下载即可。
 
 可以在termux里使用**wget**或者**curl**下载，或者用安卓自带浏览器下载，只要你知道下载到哪里就行。
 
 ## 解压rootfs
 
-我们首先创建一个用于存放容器文件系统的目录，这里我选择在**/data/linux下**创建一个叫**arch**的目录。
+我们首先创建一个用于存放容器文件系统的目录，这里我选择在 **/data/linux** 下创建一个叫 **arch** 的目录。
 
 ```bash
 # 先进入root shell
@@ -72,7 +74,7 @@ su
 mkdir -p /data/linux/arch
 ```
 
-然后我们将下载的rootfs压缩包解压缩到这个目录中：
+然后我们将下载的rootfs压缩包解压缩到这个目录中（假设你已经`cd`到了下载压缩包的目录）：
 
 ```bash
 tar zxpf ArchLinuxARM-aarch64-latest.tar.gz -C /data/linux/arch/
@@ -118,6 +120,8 @@ umount -f $ARCHPATH/proc
 ```bash
 useradd -m -s /bin/bash axis
 passwd axis
+# 建议顺便也改下root用户的密码
+passwd root
 ```
 
 axis是我自己定的用户名。
@@ -141,7 +145,29 @@ gpasswd -a axis sdcard-rw
 gpasswd -a axis sdcard-r
 ```
 
-大功告成之后我们不急着换用户，先用着root，可以少打点sudo。
+大功告成之后我们不急着换用户，先用着root，可以少打点sudo和密码。
+
+> 如果需要这个普通用户在使用root权限运行命令时不需要输入密码，可以自行编辑 /etc/sudoers，当然你需要先使用pacman安装sudo后才会有这个文件，因为容器系统里并不自带sudo这个软件。
+
+## 解决DNS问题
+
+`/etc/resolv.conf`默认是一个链接到`/run/systemd/resolve/resolv.conf`的链接，而我们chroot容器是没有systemd的，所以我们需要重新创建`/etc/resolv.conf`。
+
+```bash
+rm -rf /etc/resolv.conf
+touch /etc/resolv.conf
+```
+
+我们`nano /etc/resolv.conf`来编辑一下里面的内容，加入以下几行：
+
+```bash
+# 谷歌DNS
+nameserver 8.8.8.8
+# 国内高速DNS
+nameserver 114.114.114.114
+```
+
+如果不解决DNS的问题，我们在第二次启动容器时会连不上网络。
 
 ## 更新系统软件
 
@@ -156,7 +182,7 @@ pacman-key --populate
 
 ```bash
 # 在更新前可以编辑 /etc/pacman.conf 将 ParallelDownloads = 5 取消注释以提高下载速度
-pacman -Syu
+pacman -Syyu base-devel --noconfirm
 ```
 
 > Tips：如遇到error: could not determine cachedir mount point /var/cache/pacman/pkg 的情况，需要编辑 /etc/pacman.confg，将其中的CheckSpace注释起来。
@@ -246,6 +272,8 @@ ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 之后重启容器即可。
 
+> 在容器内用`exit`可以退出容器回到termux，在termux中输入`./a`则可以启动容器。
+
 ## 安装图形界面
 
 我们装个xfce来当图形界面，因为只装WM真的太折磨人了，你连壁纸软件都得另外装，可能还不如装xfce这种轻量化的DE。使用以下命令在Arch中安装xfce桌面：
@@ -256,7 +284,7 @@ sudo pacman -Syu xfce4 xfce4-goodies
 
 ## 精简系统
 
-对于一个不需要引导和加载的容器系统来说，/boot分区里的东西直接删了都没关系，另外，我们也不需要更新ramdisk，所以我们直接卸载mkinitcpio和删除/boot分区下的内容。
+对于一个不需要引导和加载的容器系统来说，**/boot**分区里的东西直接删了都没关系，另外，我们也不需要更新 **ramdisk**，所以我们可以直接卸载 **mkinitcpio** 和删除 **/boot** 分区下的内容。
 
 ```bash
 sudo pacman -Rsc mkinitcpio
@@ -265,6 +293,19 @@ sudo rm -rf /boot/*
 
 这么整可以省出几百MB的存储空间，还是很香的。
 
+## 访问宿主机内部存储
+
+有时我们需要在容器内访问宿主机的内部存储，用外部的文件管理器将文件复制进容器里显然很不方便。
+
+我们可以通过挂载宿主机的内部存储来让容器可以访问宿主机的内部存储，在容器的启动脚本中chroot前加入下面这行：
+
+```bash
+su -c "mkdir $ARCHPATH/sdcard"
+su -c "mount -o bind /data/media/0 $ARCHPATH/sdcard"
+```
+
+这样宿主机的内部存储就会被挂载到容器的`/sdcard`目录。
+
 ## 使用termux-x11显示图形界面
 
 将启动脚本中的`mount -t tmpfs tmpfs $ARCHPATH/tmp`改为`mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp`。
@@ -272,7 +313,7 @@ sudo rm -rf /boot/*
 然后我建议启动容器时将selinux设置成宽容模式，并将/tmp取消挂载，这样不会产生一些莫名其妙的bug，然后为了少打个su来启动root终端，因为我换到了kernelsu，不用tsu了，所以直接用`su -c ""`来用root权限运行命令。最终的容器启动脚本如下：
 
 ```bash
-#!/bin/sh
+#!/bin/bash
 ARCHPATH=/data/linux/arch
 TERMUX_PREFIX=/data/data/com.termux/files/usr
 # KernelSU 可注释下行
@@ -301,3 +342,10 @@ su -c "setenforce enforcing"
 ```bash
 sudo chmod -R 777 /tmp
 ```
+
+## 卸载chroot容器
+
+怎么卸载一个chroot容器呢？步骤很简单。
+
+1. **重启设备（强制重置所有挂载，因为`umount`有时并不发挥作用）**
+2. **删除容器目录(即`rm -rf 容器所对应的目录`)**

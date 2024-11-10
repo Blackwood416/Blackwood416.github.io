@@ -44,4 +44,4 @@ objdump -d program
 
 对于C语言这种纯编译类型的语言编译出来的程序来说，反编译的难度是非常高的，因为诸如gcc等编译器在编译时会进行自动优化。但对于像Java的class文件和C#的IL这些用于JIT运行的中间代码来说，反编译相对比较简单，因为语言VM的opcode相比CPU指令来说还是简单许多的。
 
-在Windows上，我们可以很容易的使用dnspy来反编译dll中的C# IL。
+在Windows上，我们可以很容易的使用dnspy或者ilspy来反编译dll中的C# IL。
