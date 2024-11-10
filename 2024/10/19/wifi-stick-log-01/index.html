@@ -1,0 +1,697 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Blackwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言本系列博客将记录我折腾一根MSM8916（骁龙410）芯片的随身WiFi的过程。 材料准备 一根MSM8916（骁龙410）芯片的随身WiFi 一根USB延长线（用来连接电脑） 尖头的镊子（用来短接主板触电）（可选） 小型十字螺丝刀（用来拧螺丝）  软件工具我不喜欢使用别人封装的某某工具箱，所以我使用了官方的固件烧写工具QPT（Qualcomm Premium Tool）。 网上就能下载到，不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随身WiFi折腾日志 01">
+<meta property="og:url" content="http://blackwood416.github.io/2024/10/19/wifi-stick-log-01/index.html">
+<meta property="og:site_name" content="Blackwood&#39;s Blogs">
+<meta property="og:description" content="前言本系列博客将记录我折腾一根MSM8916（骁龙410）芯片的随身WiFi的过程。 材料准备 一根MSM8916（骁龙410）芯片的随身WiFi 一根USB延长线（用来连接电脑） 尖头的镊子（用来短接主板触电）（可选） 小型十字螺丝刀（用来拧螺丝）  软件工具我不喜欢使用别人封装的某某工具箱，所以我使用了官方的固件烧写工具QPT（Qualcomm Premium Tool）。 网上就能下载到，不">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-18T16:42:45.000Z">
+<meta property="article:modified_time" content="2024-10-19T14:02:53.998Z">
+<meta property="article:author" content="Blackwood">
+<meta property="article:tag" content="随身WiFi">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>随身WiFi折腾日志 01 - Blackwood&#39;s Blogs</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blackwood416.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="随身WiFi折腾日志 01"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-19 00:42" pubdate>
+          2024年10月19日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">随身WiFi折腾日志 01</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本系列博客将记录我折腾一根MSM8916（骁龙410）芯片的随身WiFi的过程。</p>
+<h2 id="材料准备"><a href="#材料准备" class="headerlink" title="材料准备"></a>材料准备</h2><ul>
+<li>一根MSM8916（骁龙410）芯片的随身WiFi</li>
+<li>一根USB延长线（用来连接电脑）</li>
+<li>尖头的镊子（用来短接主板触电）（可选）</li>
+<li>小型十字螺丝刀（用来拧螺丝）</li>
+</ul>
+<h2 id="软件工具"><a href="#软件工具" class="headerlink" title="软件工具"></a>软件工具</h2><p>我不喜欢使用别人封装的某某工具箱，所以我使用了官方的固件烧写工具QPT（Qualcomm Premium Tool）。</p>
+<p>网上就能下载到，不过还需要key来激活。</p>
+<h2 id="进入9008模式"><a href="#进入9008模式" class="headerlink" title="进入9008模式"></a>进入9008模式</h2><p>首先，我们需要进入9008模式。</p>
+<p>进入9008模式有两种方式：</p>
+<ol>
+<li>在插上电源的同时按住主板上的重置键（RESET）</li>
+<li>短接主板上的特定触点（根据主板型号而定）</li>
+</ol>
+<p>我手上的这根番茄朵扬的随身wifi（主板型号：SP970）第一种方式无效，所以我使用的是第二种方式。</p>
+<p>如果你成功进入9008模式，那么你的随身wifi并不会有正常开机的led灯闪烁，并且你能在<strong>设备管理器</strong>的端口里找到9008设备，如下图所示：</p>
+<p>TODO：待补充</p>
+<p>如果你找不到设备，那么可能是你没有安装9008驱动。</p>
+<h2 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h2><p>在刷入固件之前，建议备份好原有的数据。QPT的备份分三种：Block0、Partition、Firmware，我们都需要用到。</p>
+<ul>
+<li><p>Block0：俗称全量包备份，包含了磁盘中的所有数据，建议首先备份，只会导出一个.bin文件。</p>
+</li>
+<li><p>Partition：可以以分区的形式备份所有的分区，每个分区都会导出一个.img或.bin文件。</p>
+</li>
+<li><p>Firmware：用于备份系统的固件分区，会导出很多文件以及rawprogram0.xml分区配置表，同时userdata分区是不会进行备份的。</p>
+</li>
+</ul>
+<blockquote>
+<p>Tips：每次进入9008模式，只能进行一次scan（扫描）或者read（读取）操作，所以我们可能需要数次进入9008模式才能完成三种备份。</p>
+</blockquote>
+<h3 id="Block0备份"><a href="#Block0备份" class="headerlink" title="Block0备份"></a>Block0备份</h3><p>我们一定要首先进行Block0备份，否则一旦刷机过程出错，我们就无法恢复到最开始的状态以便重新开始了。</p>
+<p>进入9008模式，打开QPT，选择Block0选项卡，选择备份文件夹，点击**Read( 9008 )**，等待备份完成。</p>
+<h3 id="Partition备份"><a href="#Partition备份" class="headerlink" title="Partition备份"></a>Partition备份</h3><p>进入9008模式，打开QPT，选择partition选项卡，选择scan后点击红色的<strong>DoJob</strong>，待读取出全部分区后，选择右侧的<strong>Backup All</strong>，选择备份文件夹，等待备份完成。</p>
+<h3 id="Firmware备份"><a href="#Firmware备份" class="headerlink" title="Firmware备份"></a>Firmware备份</h3><p>进入9008模式，打开QPT，选择Firmware选项卡，选择<strong>backup Firmware</strong>，选择备份文件夹，等待备份完成。</p>
+<blockquote>
+<p>Tips：中途可能提示失败，可能是因为读到了userdata分区导致的，并不妨碍我们备份固件，无视即可。</p>
+</blockquote>
+<h2 id="刷入系统"><a href="#刷入系统" class="headerlink" title="刷入系统"></a>刷入系统</h2><p>我们从<a target="_blank" rel="noopener" href="https://www.kancloud.cn/a813630449/ufi_car/2795165">这里</a>下载大佬编译的Debian系统，在下载页面选择对应主板号的版本下载下来。</p>
+<ol>
+<li>下载好后，解压到一个文件夹。</li>
+<li>TODO：待补充</li>
+<li>打开QPT，在Partition页面对boot分区进行format操作，再将随身wifi拔插一下，即可重启到fastboot模式。</li>
+<li>打开命令行，cd到Debian系统的解压目录，输入命令：</li>
+</ol>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bat">fastboot devices # 查看设备是否连接成功<br>.\flash.bat # 开始刷入系统<br></code></pre></td></tr></table></figure>
+
+<p>途中需要按几次回车，等待刷入完成，拔插一次随身wifi，即可进入系统，此时会发现随身wifi的led灯会变成蓝红色闪烁。</p>
+<h2 id="连接系统"><a href="#连接系统" class="headerlink" title="连接系统"></a>连接系统</h2><p>我们需要通过ssh连接到系统，但在此之前，我们需要让windows系统识别到此时的随身wifi。</p>
+<p>打开<strong>设备管理器</strong>，如果你在<strong>其他设备</strong>看到了<strong>未知的RNDIS设备</strong>，就说明系统识别到了随身wifi，但还需要安装驱动，否则无法连接。</p>
+<blockquote>
+<p>如果你没看到，那么你需要查看设备管理器列表的顶部，看看你的随身wifi是否被识别为了ADB设备，如果是，那么你需要卸载那个设备并删除它的驱动。</p>
+</blockquote>
+<p>直接选择从本地找驱动安装，找到<strong>Microsoft</strong>下的<strong>远程NDIS设备</strong>，点击安装。</p>
+<p>安装完成后，就可以在网络适配器list中看到<strong>RNDIS设备</strong>了。</p>
+<p>然后，我们就可以通过ssh连接到系统了。</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bat">ssh root@<span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">68</span>.<span class="hljs-number">1</span> # <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">68</span>.<span class="hljs-number">1</span>是这个debian系统默认的IP地址<br># 输入密码<span class="hljs-number">1</span>，即可进入系统<br></code></pre></td></tr></table></figure>
+
+<h2 id="配置系统"><a href="#配置系统" class="headerlink" title="配置系统"></a>配置系统</h2>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%90%9E%E6%9C%BA/" class="category-chain-item">搞机</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9A%8F%E8%BA%ABWiFi/" class="print-no-link">#随身WiFi</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>随身WiFi折腾日志 01</div>
+      <div>http://blackwood416.github.io/2024/10/19/wifi-stick-log-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Blackwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/09/unity-shader-log-01/" title="unity-shader-log-01">
+                        <span class="hidden-mobile">unity-shader-log-01</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
