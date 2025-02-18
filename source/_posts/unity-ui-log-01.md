@@ -1,29 +1,29 @@
 ---
-title: Unity UI开发日志 01
+title: Unity UI 开发日志 01
 date: 2024-02-14 20:02:27
 tags: Unity
 categories: 开发
 ---
 
-## 选择哪个UI方案？
+## 选择哪个 UI 方案？
 
-在Unity中，有三种UI开发框架可选，其一是最新的UI Toolkit，然后是UGUI，最后是IMGUI。
+在 Unity 中，有三种 UI 开发框架可选，其一是最新的 UI Toolkit，然后是 UGUI，最后是 IMGUI。
 
-它们三者有何不同呢？在Unity官方文档里已经给出了解答：
+它们三者有何不同呢？在 Unity 官方文档里已经给出了解答：
 
-+ UI Toolkit适合程序员和UI设计师，类似Web的UI设计对习惯基于GameObject的工具和工作流的技术美术不是那么友好。
++ UI Toolkit 适合程序员和 UI 设计师，类似 Web 的 UI 设计对习惯基于 GameObject 的工具和工作流的技术美术不是那么友好。
 
-+ UGUI适合程序员和技术美术，同理对不熟悉GameObject的UI设计师不是那么友好。
++ UGUI 适合程序员和技术美术，同理对不熟悉 GameObject 的 UI 设计师不是那么友好。
 
-+ IMGUI只适合程序员，对技术美术和UI设计师都不怎么友好。
++ IMGUI 只适合程序员，对技术美术和 UI 设计师都不怎么友好。
 
-> 另外：UI Toolkit更适合需要适配不同分辨率的覆盖屏幕型的UI，UGUI更适合游戏世界内UI和VR的UI还有那些需要自定义shader或材质实现的UI。
+> 另外：UI Toolkit 更适合需要适配不同分辨率的覆盖屏幕型的 UI，UGUI 更适合游戏世界内 UI 和 VR 的 UI 还有那些需要自定义 shader 或材质实现的 UI。
 
-我们按照官方文档的顺序，先来学习UI Toolkit。
+我们按照官方文档的顺序，先来学习 UI Toolkit。
 
-## Unity中UI的种类
+## Unity 中 UI 的种类
 
-Unity中我们可以为游戏创建UI，也可以给Unity编辑器创建新的UI。也就是**Runtime UI**和**Editor UI**的区别。
+Unity 中我们可以为游戏创建 UI，也可以给 Unity 编辑器创建新的 UI。也就是`Runtime UI`和`Editor UI`的区别。
 
 ## UI Toolkit
 
@@ -31,37 +31,37 @@ Unity中我们可以为游戏创建UI，也可以给Unity编辑器创建新的UI
 
 #### 新建 Editor Window
 
-我们先打开Unity，以任意模板新建一个项目，然后在资源管理器里右键选择 **Create > UI Toolkit > Editor Window**，在弹出的窗口里的C#一栏输入**MyCustomEditor**，将USS栏的**✓**取消掉，最后点击Confirm创建。
+我们先打开 Unity，以任意模板新建一个项目，然后在资源管理器里右键选择 `Create > UI Toolkit > Editor Window`，在弹出的窗口里的 C#一栏输入 `MyCustomEditor`，将 USS 栏的**✓**取消掉，最后点击 Confirm 创建。
 
-#### 为 Editor Window创建UI
+#### 为 Editor Window 创建 UI
 
-有三种方法为Window添加UI，它们分别是UI Builder可视化编辑、UXML文本编辑、C#代码编辑。
+有三种方法为 Window 添加 UI，它们分别是 UI Builder 可视化编辑、UXML 文本编辑、C#代码编辑。
 
-##### UI Builder可视化编辑
+##### UI Builder 可视化编辑
 
-点击图中这个Open来打开UI Builder。
+点击图中这个 Open 来打开 UI Builder。
 
-![这个界面是检查器窗口](UIBuilder.png)
+![这个界面是检查器窗口](https://s2.loli.net/2024/11/21/AR9zBa8qxiDj7ed.png)
 
 这个是个人都会，在在左边拖动控件放下就是了。我们重点讲一下另外俩个。
 
 ##### UXML 文本编辑
 
-我们在Assets下按顺序点击**Create > UI Toolkit > UI Document**，将其命名为**MyCustomEditor_UXML**。
+我们在 Assets 下按顺序点击 `Create > UI Toolkit > UI Document`，将其命名为`MyCustomEditor_UXML`。
 
-我们点击它右边的那个箭头，会弹出一个叫inline style的东西，我们点击它会自动跳转到外部文本编辑器。
+我们点击它右边的那个箭头，会弹出一个叫 inline style 的东西，我们点击它会自动跳转到外部文本编辑器。
 
-![展开前](UXML_1.png)
+![展开前](https://s2.loli.net/2024/11/21/N75XOhwAUYDLiCQ.png)
 
-![展开后](UXML_2.png)
+![展开后](https://s2.loli.net/2024/11/21/wu3yPpIo6TVmj7b.png)
 
 然后我们可以在里面添加一些内容，标签大概长这样。
 
-![代码长这样](UXML_code.png)
+![代码长这样](https://s2.loli.net/2024/11/21/sigk9AvCVZ3Dcul.png)
 
-然后我们需要更改Editor Window的C#代码来让其加载这个UXML文件。
+然后我们需要更改 Editor Window 的 C#代码来让其加载这个 UXML 文件。
 
-编辑**MyCustomEditor.cs**，在类中添加以下代码：
+编辑`MyCustomEditor.cs`，在类中添加以下代码：
 
 ```csharp
     [SerializeField]
@@ -74,19 +74,19 @@ Unity中我们可以为游戏创建UI，也可以给Unity编辑器创建新的UI
     root.Add(m_UXMLTree.Instantiate());
 ```
 
-然后我们在资源管理器中选中**MyCustomEditor.cs**，在右侧的检查器中将**UXML Tree**设置成**MyCustomEditor_UXML.uxml**。
+然后我们在资源管理器中选中 `MyCustomEditor.cs` ，在右侧的检查器中将 `UXML Tree`设置成 `MyCustomEditor_UXML.uxml` 。
 
-然后我们再查看**Window > UI Toolkit > MyCustomEditor**就能看到我们用UXML写的编辑器UI了。
+然后我们再查看`Window > UI Toolkit > MyCustomEditor`就能看到我们用 UXML 写的编辑器 UI 了。
 
-![窗口长这样](UXML_window.png)
+![窗口长这样](https://s2.loli.net/2024/11/21/v8bLG3afME2he9p.png)
 
 ##### C#代码编辑
 
-作为程序员最喜欢的应该就是用代码来操控所有的东西了。而Unity UI Toolkit也允许我们用代码来创建销毁或调整控件。
+作为程序员最喜欢的应该就是用代码来操控所有的东西了。而 Unity UI Toolkit 也允许我们用代码来创建销毁或调整控件。
 
-打开**MyCustomEditor.cs**，我们可以看到using里面有一行`using UnityEngine.UIElements`，这个是添加UI所必须加的引用。
+打开`MyCustomEditor.cs`，我们可以看到 using 里面有一行`using UnityEngine.UIElements`，这个是添加 UI 所必须加的引用。
 
-在CreateUI()方法里我么可以看到`VisualElement root = rootVisualElement`，要向窗口增加UI，我们需要先创建UI对象并给它们添加一些属性，然后使用这个`root`的**Add()**方法来将UI添加到窗口。
+在 CreateUI() 方法里我么可以看到`VisualElement root = rootVisualElement`，要向窗口增加 UI，我们需要先创建 UI 对象并给它们添加一些属性，然后使用这个`root`的** Add() **方法来将 UI 添加到窗口。
 
 例子如下：
 
@@ -97,17 +97,17 @@ public void CreateGUI()
     VisualElement root = rootVisualElement;
 
     // VisualElements objects can contain other VisualElements following a tree hierarchy.
-    Label label = new Label("这时由C#创建的文本");
+    Label label = new Label("这时由 C#创建的文本");
     root.Add(label);
 
     Button button = new Button();
     button.name = "button_cs";
-    button.text = "这是由C#创建的按钮";
+    button.text = "这是由 C#创建的按钮";
     root.Add(button);
 
     Toggle toggle = new Toggle();
     toggle.name = "toggle_cs";
-    toggle.label = "这是由C#创建的勾选项";
+    toggle.label = "这是由 C#创建的勾选项";
     root.Add(toggle);
 
     // Import UXML
@@ -121,11 +121,11 @@ public void CreateGUI()
 
 保存后重新打开窗口我们可以看到效果：
 
-![C#版本](csharp_window1.png)
+![C#版本](https://s2.loli.net/2024/11/21/LmWedVfAk2PrQFj.png)
 
-#### 为UI添加控制
+#### 为 UI 添加控制
 
-最终的C#代码长这样：
+最终的 C#代码长这样：
 
 ```csharp
 using UnityEditor;
@@ -211,4 +211,4 @@ public class MyCustomEditor : EditorWindow
 }
 ```
 
-下节我们学习UI Builder的一些具体使用。
+下节我们学习 UI Builder 的一些具体使用。
