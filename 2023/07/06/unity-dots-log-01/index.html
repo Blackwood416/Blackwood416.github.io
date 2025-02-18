@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Blackwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Unity Dots 学习日志 01我想用这篇博客来记录一下我学习使用Unity Dots来开发Unity 3D游戏的过程，我们将使用Unity Dots来开发一个FPS射击游戏的原型。 Dots 相关概念首先我们来了解一些Unity Dots的相关概念，它与传统的Unity技术栈有何不同？ 面向数据设计（Data-Oriented Design）Data-Oriented Design简称DOD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity Dots 学习日志 01">
+<meta property="og:url" content="http://blackwood416.github.io/2023/07/06/unity-dots-log-01/index.html">
+<meta property="og:site_name" content="Blackwood&#39;s Blogs">
+<meta property="og:description" content="Unity Dots 学习日志 01我想用这篇博客来记录一下我学习使用Unity Dots来开发Unity 3D游戏的过程，我们将使用Unity Dots来开发一个FPS射击游戏的原型。 Dots 相关概念首先我们来了解一些Unity Dots的相关概念，它与传统的Unity技术栈有何不同？ 面向数据设计（Data-Oriented Design）Data-Oriented Design简称DOD">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-06T12:55:55.000Z">
+<meta property="article:modified_time" content="2024-01-18T14:27:33.681Z">
+<meta property="article:author" content="Blackwood">
+<meta property="article:tag" content="unity">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Unity Dots 学习日志 01 - Blackwood&#39;s Blogs</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blackwood416.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Unity Dots 学习日志 01"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-06 20:55" pubdate>
+          2023年7月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Unity Dots 学习日志 01</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Unity-Dots-学习日志-01"><a href="#Unity-Dots-学习日志-01" class="headerlink" title="Unity Dots 学习日志 01"></a>Unity Dots 学习日志 01</h1><p>我想用这篇博客来记录一下我学习使用Unity Dots来开发Unity 3D游戏的过程，我们将使用Unity Dots来开发一个FPS射击游戏的原型。</p>
+<h1 id="Dots-相关概念"><a href="#Dots-相关概念" class="headerlink" title="Dots 相关概念"></a>Dots 相关概念</h1><p>首先我们来了解一些Unity Dots的相关概念，它与传统的Unity技术栈有何不同？</p>
+<h2 id="面向数据设计（Data-Oriented-Design）"><a href="#面向数据设计（Data-Oriented-Design）" class="headerlink" title="面向数据设计（Data-Oriented Design）"></a>面向数据设计（Data-Oriented Design）</h2><p><strong>Data-Oriented Design</strong>简称<strong>DOD</strong>，是不同于面向对象编程&#x2F;设计（Object-Oriented Programming &#x2F; Design）的一种新兴的程序设计方法。</p>
+<p>从字面上来看，DOP 从数据的角度来进行程序设计，而 OOP 则从对象的角度来进行程序设计。DOP 比OOP 更适合处理大量的数据，这刚好符合当代电子游戏的发展所带来的高性能需求。</p>
+<p>但是DOP 缓存友好的优点也使使用它的代码更难编写和理解，需要开发者具备良好的计算机基础，熟悉内存（memory）、缓存（cache）等概念。</p>
+<h2 id="Entities"><a href="#Entities" class="headerlink" title="Entities"></a>Entities</h2><p><strong>Entities</strong>是Unity Dots 的核心包，也是我们使用Dots 技术栈所主要学习的包。</p>
+<h2 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h2><p><strong>Entity Component System</strong>是Entities 的核心架构，Entities 采用此架构来组织代码和数据。</p>
+<h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h3><p>总而言之，Entity类似于GameObject，它可以挂载一个或多个Component。<br>创建或者销毁一个Entity会引发<strong>structrual change</strong>，具体我们后面再说。所有的Entity都由World中的<strong>EntityManager</strong>来管理。<br>Entity没有类型，但是可以通过与其相关的Components来分类。<br>EntityManager会记录已存在的Entity所具有的Components的集合，这些Components集合被称为<strong>Archetypes</strong>，我们后面也会讲到。</p>
+<h3 id="Component"><a href="#Component" class="headerlink" title="Component"></a>Component</h3><p>Component是用来给<strong>System</strong>读写的数据。</p>
+<p>继承自接口<strong>IComponentData</strong>的结构体会被标记为Component类型。这种Component类型只储存非托管类型的数据，虽然这种Component可以储存方法，但是最好还是只储存纯净的数据。</p>
+<p>当然也可以创建一个储存托管类型的Component，但是弊大于利，这里就不提了。</p>
+<p>上面提到Entity所具有的Components的集合叫作<strong>Archetype</strong>，这里有个关键概念：<strong>Chunk</strong>，我们后面再说。</p>
+<h3 id="System"><a href="#System" class="headerlink" title="System"></a>System</h3><p>System用于提供将Component从当前状态转换到下一状态的逻辑。例如根据所有移动的Entities的速度乘上一帧与当前帧之间的时间间隔来计算出它们这一帧的位置。</p>
+<p>System在主线程上被每帧执行，然后是可以设定多个Systems之间的优先级的，我们可以自己决定谁先执行谁后执行。</p>
+<p>System有四种可用类型：</p>
+<ul>
+<li><strong>SystemBase</strong>：用于创建托管System的基类。</li>
+<li><strong>ISystem</strong>：用于创建非托管System的接口。</li>
+<li><strong>EntityCommandBufferSystem</strong>：用于为其他Systems提供<strong>Entity Command Buffer</strong>实例，可以用来将structural changes堆在一起从而提供性能。</li>
+<li><strong>ComponentSystemGroup</strong>：为Systems的组织和更新提供优先级。</li>
+</ul>
+<p>一个System只能处理一个World中的Entities，也就是说System是与World绑定在一起的。</p>
+<p>Unity默认会对System进行自动加载，自动加载进程默认会创建一个有着三个System Groups的World，它们分别是<strong>InitializationSystemGroup</strong>，<strong>SimulationSystemGroup</strong>和<strong>PresentationSystemGroup</strong>，一般System会被加到<strong>SimulationSystemGroup</strong>里，可以通过**[UpdateInGroup]**属性来指定加入到某个System Group。</p>
+<p>要关闭System的自动加载，可以在脚本里定义**#UNITY_DIABLE_AUTOMATIC_SYSTEM_BOOTSTRAP**。</p>
+<h3 id="World"><a href="#World" class="headerlink" title="World"></a>World</h3><p>World是Entities的集合，Entity的ID只有在自己的World中是唯一的。每个World都有一个EntityManager结构体来创建、销毁和修改World中的Entities。</p>
+<p>Unity默认会在进入Play模式时创建一个World实例并将Systems添加进去。</p>
+<h3 id="Archetypes"><a href="#Archetypes" class="headerlink" title="Archetypes"></a>Archetypes</h3><p>Archetype是World中所有具有相同Component组合的Entities的独一无二的标识。例如：在一个World中所有只有Component A和Component B的Entities共享同一个Archetype，所有只有Component A、B、C的Entities共享另一个不同的Archetype，而所有只有Component A和Z的Entities又共享一个与前两个都不同的Archetype。</p>
+<p>当在一个Entity中新增或移除Component时，World中的EntityManager会将这个Entity移动到对应的Archetype中。例如：从一个有Component A、B、C的Entity中移除Component B，EntityManager会将这个Entity移动到具有Component A和C的Archetype中，如果没有这样的Archetype，EntityManager会自动创建一个。</p>
+<p>Archetypes一般在程序生命周期的早期就会稳定下来，所以可以将索引缓存下来以提高性能。</p>
+<p>Archetype只有在World被销毁时才会被销毁。</p>
+<h4 id="Archetype-chunks"><a href="#Archetype-chunks" class="headerlink" title="Archetype chunks"></a>Archetype chunks</h4><p>Chunk是ECS架构中特有的一种数据结构，相同Archetype的Entities会在内存中被以名为Chunk的内存块的形式存储，每个Chunk占用16KB的内存空间，每个Chunk能存储的Entities数量取决于Chunk中Archetype所存储的Components的种类和数量。Chunk的创建与销毁也由EntityManager管理。</p>
+<p>Chunk包含一个储存每一种Component数据的数组和一个存储Entities的ID的数组。例如：一个表示Component A和B的Archetype，它的每个Chunk包含三个数组：一个存储Component A的值、一个存储Component B的值、一个存储Entity的ID。</p>
+<h3 id="Structural-changes"><a href="#Structural-changes" class="headerlink" title="Structural changes"></a>Structural changes</h3><p>在Unity中会导致重新分配chunk占用的内存或改变chunk中的内容的操作被称为Structural changes。这些操作会影响性能，它们只会出现在游戏主线程中而不是jobs中。</p>
+<p>下面三种操作被认定为Structural changes：</p>
+<ul>
+<li>创建或销毁Entity</li>
+<li>添加或移除Components</li>
+<li>设置一个共享的Component值</li>
+</ul>
+<p>值得一提的是，Jobs线程之间的同步也会间接导致Structural changes。所以有必要利用EntityCommandBuffer来安排其发生的时间，避免大量的Structural changes在用一时间发生。</p>
+<h3 id="Safety-in-Entities"><a href="#Safety-in-Entities" class="headerlink" title="Safety in Entities"></a>Safety in Entities</h3><p>Entities核心包中的各种API使用了很多unsafe代码来尽可能的提高性能，但是这与C#的安全理念背道而驰，所以我们来看看Entities中的安全问题是怎么解决的。</p>
+<p>大多数情况下ECS框架会进行安全检查并及时报错以防止编辑器崩溃，可以在<strong>Jobs &gt; Burst &gt; Safety Checks</strong>下找到相关设置。</p>
+<p>Entities核心包中包含两种引用类型来标记被包含的类型的访问方式。它们分别是ReadWrite（RefRW）和ReadOnly（RefRO）。当安全检查处于开启状态，运行程序时这两个引用类型会进行检查以确保被包含类型一直处于合法状态。Structural changes可能导致被包含类型不再合法。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/index.html">Unity Dots官方文档（没中文）</a><br><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/EntityComponentSystemSamples">Unity Dots官方GitHub示例（没中文）</a><br><a target="_blank" rel="noopener" href="https://docs.unity.cn/cn/2022.3/Manual/UnityManual.html">Unity 官方中文文档</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%80%E5%8F%91/" class="category-chain-item">开发</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/unity/" class="print-no-link">#unity</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Unity Dots 学习日志 01</div>
+      <div>http://blackwood416.github.io/2023/07/06/unity-dots-log-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Blackwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/06/unity-dots-log-02/" title="Unity Dots 学习日志 02">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Unity Dots 学习日志 02</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/05/neovim-log-04/" title="NeoVim 配置日志 04">
+                        <span class="hidden-mobile">NeoVim 配置日志 04</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

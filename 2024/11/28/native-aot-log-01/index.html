@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Blackwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Native AOT我们都知道 C#是对标 Java 的语言，所以 C#一直以来也是以 JIT（Just In Time）的方式运行，直到最近.NET 才真正实现了 C#的 AOT 编译。 有了 AOT 编译，C#可以直接被编译成对应平台的二进制程序，而无需依赖.Net Runtime 来运行。下面就来体验一下 Native AOT 吧。 ASP.NET Native AOTASP.NET 也可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ASP.NET Native AOT 探索日志 01">
+<meta property="og:url" content="http://blackwood416.github.io/2024/11/28/native-aot-log-01/index.html">
+<meta property="og:site_name" content="Blackwood&#39;s Blogs">
+<meta property="og:description" content="Native AOT我们都知道 C#是对标 Java 的语言，所以 C#一直以来也是以 JIT（Just In Time）的方式运行，直到最近.NET 才真正实现了 C#的 AOT 编译。 有了 AOT 编译，C#可以直接被编译成对应平台的二进制程序，而无需依赖.Net Runtime 来运行。下面就来体验一下 Native AOT 吧。 ASP.NET Native AOTASP.NET 也可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/Z1ymvzU2kdrQARo.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/2GX4KCpL5EIlaNw.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/or9hLykebGmWtsS.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/xurEG6kKjpRTqbD.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/AYJzFPyIfv7h3OX.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/JOEYULSr9cZXMdF.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/QeS5WlLwEFVJZD1.png">
+<meta property="article:published_time" content="2024-11-28T06:40:14.000Z">
+<meta property="article:modified_time" content="2024-12-02T14:23:31.378Z">
+<meta property="article:author" content="Blackwood">
+<meta property="article:tag" content="ASP.NET NativeAOT">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s2.loli.net/2024/12/02/Z1ymvzU2kdrQARo.png">
+  
+  
+  
+  <title>ASP.NET Native AOT 探索日志 01 - Blackwood&#39;s Blogs</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blackwood416.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ASP.NET Native AOT 探索日志 01"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-28 14:40" pubdate>
+          2024年11月28日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          894 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ASP.NET Native AOT 探索日志 01</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Native-AOT"><a href="#Native-AOT" class="headerlink" title="Native AOT"></a>Native AOT</h2><p>我们都知道 C#是对标 Java 的语言，所以 C#一直以来也是以 JIT（Just In Time）的方式运行，直到最近.NET 才真正实现了 C#的 AOT 编译。</p>
+<p>有了 AOT 编译，C#可以直接被编译成对应平台的二进制程序，而无需依赖.Net Runtime 来运行。下面就来体验一下 Native AOT 吧。</p>
+<h2 id="ASP-NET-Native-AOT"><a href="#ASP-NET-Native-AOT" class="headerlink" title="ASP.NET Native AOT"></a>ASP.NET Native AOT</h2><p>ASP.NET 也可以使用 Native AOT，这意味着我们可以不依赖.Net Runtime 在任意支持.Net 的平台上运行一个 ASP.NET Server。</p>
+<p>官方提供了一些 Native AOT 模板，其中最实用的是<code>Minimal Web API for Native AOT</code>，它是一个最小的 ASP.NET Web API 项目，可以用来测试和验证 Native AOT 的功能。</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>首先，我们安装.Net 8 以上的.Net SDK（我使用的是.Net 9），然后通过以下命令就可以创建一个名称为 test 的<code>Minimal Web API for Native AOT</code>项目：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">dotnet new webapiaot -n test<br></code></pre></td></tr></table></figure>
+
+<p>为项目启用 Native AOT 的关键在于<code>.csproj</code>文件里的这个配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span>&gt;</span><br>  ...<br>  <span class="hljs-tag">&lt;<span class="hljs-name">PublishAot</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">PublishAot</span>&gt;</span><br>  ...<br><span class="hljs-tag">&lt;/<span class="hljs-name">PropertyGroup</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="编译项目"><a href="#编译项目" class="headerlink" title="编译项目"></a>编译项目</h2><p>要使用 Native AOT 来编译项目，我们需要使用<code>dotnet publish</code>命令，因为 Native AOT 的编译时间较长，所以微软官方推荐在发布应用时再进行 Native AOT 编译。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">dotnet publish -c Release -r win-x64<br></code></pre></td></tr></table></figure>
+
+<p>运行完成后我们就可以在项目目录里的<code>/bin/Release/net9.0/win-x64/publish</code>目录下找到编译产物了。</p>
+<p><img src="https://s2.loli.net/2024/12/02/Z1ymvzU2kdrQARo.png" srcset="/img/loading.gif" lazyload alt="图 0"></p>
+<h2 id="跨平台编译"><a href="#跨平台编译" class="headerlink" title="跨平台编译"></a>跨平台编译</h2><p>很多时候，我们懒得将源码同步到容器或服务器上进行对应平台的编译，这时我们可以通过一些配置来实现在 Windows 上跨平台甚至是跨架构编译。</p>
+<p>正常情况下，<code>dotnet publish -c Release -r linux-arm64</code>会报如下错误：</p>
+<p><img src="https://s2.loli.net/2024/12/02/2GX4KCpL5EIlaNw.png" srcset="/img/loading.gif" lazyload alt="图 1"></p>
+<p>这时安装一个 NuGet 包，叫作<code>PublishAotCross</code>，这个包使用<code>Zig</code>来生成跨平台的二进制程序，让我们在<code>dotnet publish</code>的时候能使用<code>-r</code>参数来指定编译的平台。</p>
+<p>我们在项目里安装<code>PublishAotCross</code>包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">dotnet add package PublishAotCross<br></code></pre></td></tr></table></figure>
+
+<p>然后参考<a target="_blank" rel="noopener" href="https://github.com/MichalStrehovsky/PublishAotCross">官方 GitHub</a>的 README，下载<code>Zig</code>并解压到任意目录，然后在 Path 环境变量中添加相关的路径以让其能被全局调用。</p>
+<p><img src="https://s2.loli.net/2024/12/02/or9hLykebGmWtsS.png" srcset="/img/loading.gif" lazyload alt="图 2"></p>
+<p>现在执行<code>dotnet publish -c Release -r linux-arm64 /p:StripSymbols=false</code>，可以看到编译成功了：</p>
+<p><img src="https://s2.loli.net/2024/12/02/xurEG6kKjpRTqbD.png" srcset="/img/loading.gif" lazyload alt="图 3"></p>
+<p>但是因为我们没有执行可选步骤，必须将 Debug 符号表嵌入到可执行文件中，导致了编译产物十分巨大。</p>
+<p><img src="https://s2.loli.net/2024/12/02/AYJzFPyIfv7h3OX.png" srcset="/img/loading.gif" lazyload alt="图 4"></p>
+<p>这个可选步骤要执行起来其实也十分简单，那就是去下载一个 LLVM（压缩包大小约 1.3G），然后将里面的<code>llvm-objcopy</code>给放到<code>Zig</code>的安装目录下。</p>
+<p>然后我们在项目的<code>.csproj</code>里添加如下选项：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span>&gt;</span><br>  ...<br>  <span class="hljs-tag">&lt;<span class="hljs-name">StripSymbols</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">StripSymbols</span>&gt;</span><br>  ...<br><span class="hljs-tag">&lt;/<span class="hljs-name">PropertyGroup</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这样我们就可以不加<code>/p:StripSymbols=false</code>参数来编译，编译产物的大小也大大减小了。</p>
+<p><img src="https://s2.loli.net/2024/12/02/JOEYULSr9cZXMdF.png" srcset="/img/loading.gif" lazyload alt="图 5"></p>
+<h2 id="优化程序体积"><a href="#优化程序体积" class="headerlink" title="优化程序体积"></a>优化程序体积</h2><p>我们发现这个编译产物的大小还是有那么一点大，那么有没有办法将它再缩小一点呢？</p>
+<p>办法当然是有的，我们去下载一个叫作<code>PublishAotCompressed</code>的 NuGet 包，这个包使用<code>UPX</code>来压缩可执行文件。</p>
+<p>我们使用<code>dotnet add package PublishAotCompressed</code>来安装这个包，然后在项目的<code>.csproj</code>里添加如下配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span>&gt;</span><br>  ...<br>  <span class="hljs-tag">&lt;<span class="hljs-name">PublishLzmaCompressed</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">PublishLzmaCompressed</span>&gt;</span><br>  ...<br><span class="hljs-tag">&lt;/<span class="hljs-name">PropertyGroup</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>然后我们再次尝试编译，程序的大小从 10MB 缩小到了 3MB。</p>
+<p><img src="https://s2.loli.net/2024/12/02/QeS5WlLwEFVJZD1.png" srcset="/img/loading.gif" lazyload alt="图 6"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Native AOT 是一个好东西，可以提高程序的性能和安全性，在启动速度方面比 JIT 要快上许多，但是它也存在一些问题，比如现阶段还不支持很多特性，关于这点我们以后再聊。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%80%E5%8F%91/" class="category-chain-item">开发</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ASP-NET-NativeAOT/" class="print-no-link">#ASP.NET NativeAOT</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ASP.NET Native AOT 探索日志 01</div>
+      <div>http://blackwood416.github.io/2024/11/28/native-aot-log-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Blackwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/01/os-log-04/" title="os-log-04">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">os-log-04</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/21/octave-log-01/" title="Octave 学习日志 01">
+                        <span class="hidden-mobile">Octave 学习日志 01</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

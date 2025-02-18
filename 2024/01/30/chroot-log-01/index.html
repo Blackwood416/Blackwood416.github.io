@@ -1,0 +1,762 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Blackwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="什么是chroot容器？chroot是Linux发行版中一个用于将进程隔离在一个受限空间的软件，而由于将进程隔离到了受限空间中，我们只需要将系统运行所必要的分区挂载在这个隔离出来的受限空间中就可以使用chroot运行一个与宿主系统共用内核的容器系统了。内核基于Linux的安卓系统当然也是可以使用chroot的，但是需要root权限。接下来我们就来在已root的安卓设备上安装一个Linux容器吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="chroot容器研究日志 01">
+<meta property="og:url" content="http://blackwood416.github.io/2024/01/30/chroot-log-01/index.html">
+<meta property="og:site_name" content="Blackwood&#39;s Blogs">
+<meta property="og:description" content="什么是chroot容器？chroot是Linux发行版中一个用于将进程隔离在一个受限空间的软件，而由于将进程隔离到了受限空间中，我们只需要将系统运行所必要的分区挂载在这个隔离出来的受限空间中就可以使用chroot运行一个与宿主系统共用内核的容器系统了。内核基于Linux的安卓系统当然也是可以使用chroot的，但是需要root权限。接下来我们就来在已root的安卓设备上安装一个Linux容器吧。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-29T16:08:19.000Z">
+<meta property="article:modified_time" content="2024-08-08T08:00:01.119Z">
+<meta property="article:author" content="Blackwood">
+<meta property="article:tag" content="chroot">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>chroot容器研究日志 01 - Blackwood&#39;s Blogs</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blackwood416.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="chroot容器研究日志 01"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-30 00:08" pubdate>
+          2024年1月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">chroot容器研究日志 01</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="什么是chroot容器？"><a href="#什么是chroot容器？" class="headerlink" title="什么是chroot容器？"></a>什么是chroot容器？</h2><p>chroot是Linux发行版中一个用于将进程隔离在一个受限空间的软件，而由于将进程隔离到了受限空间中，我们只需要将系统运行所必要的分区挂载在这个隔离出来的受限空间中就可以使用chroot运行一个与宿主系统共用内核的容器系统了。内核基于Linux的安卓系统当然也是可以使用chroot的，但是需要root权限。接下来我们就来在已root的安卓设备上安装一个Linux容器吧。</p>
+<h2 id="前置要求"><a href="#前置要求" class="headerlink" title="前置要求"></a>前置要求</h2><h3 id="Root权限"><a href="#Root权限" class="headerlink" title="Root权限"></a>Root权限</h3><p>首先你的安卓手机需要获得root权限，这里就不说了，可以看看我的其他博客。</p>
+<h3 id="终端模拟器"><a href="#终端模拟器" class="headerlink" title="终端模拟器"></a>终端模拟器</h3><p>然后你需要一个终端模拟器来操作root shell，建议使用<strong>termux</strong>。</p>
+<p>首次进入termux中，我们先换国内源来提高下载速度：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">termux-change-repo<br></code></pre></td></tr></table></figure>
+
+<p><strong>使用上下箭头键来切换选项，使用空格选中选项，回车键确定选项</strong>，选tsinghua（清华大学）、ustc（中国科技大学）、bfsu（北京外国语大学）等大学的源即可。</p>
+<p>回车后会自动更新源索引文件，我们再手动更新下自带软件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">pkg upgrade -y<br><span class="hljs-comment"># 可简化成</span><br>pkg up -y<br></code></pre></td></tr></table></figure>
+
+<p>然后再运行一次<code>termux-change-repo</code>，选<strong>Single Mirror</strong>，将我们之前选的镜像源再选中确定一次。</p>
+<p>使用以下命令给termux赋予存储读写权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">termux-setup-storage<br></code></pre></td></tr></table></figure>
+
+<h3 id="必要软件"><a href="#必要软件" class="headerlink" title="必要软件"></a>必要软件</h3><p>如果想使用Magisk赋予termux root权限，那么需要使用<strong>tsu</strong>来申请root权限。</p>
+<blockquote>
+<p>Tips：KernelSU可直接跳过此步，在KernelSU的管理器中给termux root权限并重新启动termux即可</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">pkg install tsu -y<br><span class="hljs-comment"># 可简化成</span><br>pkg i tsu -y<br><span class="hljs-comment"># 从Magisk获取root权限</span><br>tsu<br></code></pre></td></tr></table></figure>
+
+<h2 id="下载rootfs"><a href="#下载rootfs" class="headerlink" title="下载rootfs"></a>下载rootfs</h2><p>这里我们选择<strong>Arch Linux ARM</strong>系统来作为我们的容器系统，我们在<a target="_blank" rel="noopener" href="https://archlinuxarm.org/about/downloads">官网</a>可以下载到，一般的安卓设备选择名称为<strong>ARMv8 AArch64 Multi-platform</strong>、文件名为<strong>ArchLinuxARM-aarch64-latest.tar.gz</strong>的rootfs下载即可。</p>
+<p>可以在termux里使用<strong>wget</strong>或者<strong>curl</strong>下载，或者用安卓自带浏览器下载，只要你知道下载到哪里就行。</p>
+<h2 id="解压rootfs"><a href="#解压rootfs" class="headerlink" title="解压rootfs"></a>解压rootfs</h2><p>我们首先创建一个用于存放容器文件系统的目录，这里我选择在 <strong>&#x2F;data&#x2F;linux</strong> 下创建一个叫 <strong>arch</strong> 的目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 先进入root shell</span><br>su<br><span class="hljs-comment"># 创建目录</span><br><span class="hljs-built_in">mkdir</span> -p /data/linux/arch<br></code></pre></td></tr></table></figure>
+
+<p>然后我们将下载的rootfs压缩包解压缩到这个目录中（假设你已经<code>cd</code>到了下载压缩包的目录）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tar zxpf ArchLinuxARM-aarch64-latest.tar.gz -C /data/linux/arch/<br></code></pre></td></tr></table></figure>
+
+<h2 id="创建-dev-shm"><a href="#创建-dev-shm" class="headerlink" title="创建&#x2F;dev&#x2F;shm"></a>创建&#x2F;dev&#x2F;shm</h2><p>因为我们可能会用chroot容器来运行一些基于chromium内核的软件，比如electron应用以及chromium本体，所以我们需要创建<code>/dev/shm</code>这个目录来让这些软件能够正常运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在宿主机文件系统中创建</span><br><span class="hljs-built_in">mkdir</span> /dev/shm<br><span class="hljs-comment"># 在容器文件系统中创建</span><br><span class="hljs-built_in">mkdir</span> /data/linux/arch/dev/shm<br></code></pre></td></tr></table></figure>
+
+<h2 id="编写启动脚本"><a href="#编写启动脚本" class="headerlink" title="编写启动脚本"></a>编写启动脚本</h2><p>我们需要挂载一些宿主机的分区到容器系统才能驱动让其成为一个独立运行的容器，所以我们来编辑chroot容器的启动脚本。我们先使用<code>exit</code>来退出root shell，然后输入<code>nano a</code>来创建并编辑一个名叫<strong>a</strong>的脚本文件，在其中输入以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/sh</span><br>ARCHPATH=/data/linux/arch<br>TERMUX_PREFIX=/data/data/com.termux/files/usr<br>mount -o remount,dev,suid /data<br>mount -t tmpfs -o size=256M /dev/shm <span class="hljs-variable">$ARCHPATH</span>/dev/shm<br>mount -o <span class="hljs-built_in">bind</span> /dev <span class="hljs-variable">$ARCHPATH</span>/dev<br>mount -t devpts devpts <span class="hljs-variable">$ARCHPATH</span>/dev/pts<br>mount -o <span class="hljs-built_in">bind</span> /sys <span class="hljs-variable">$ARCHPATH</span>/sys<br>mount -o <span class="hljs-built_in">bind</span> /proc <span class="hljs-variable">$ARCHPATH</span>/proc<br>mount -t tmpfs tmpfs <span class="hljs-variable">$ARCHPATH</span>/tmp<br><span class="hljs-built_in">chroot</span> <span class="hljs-variable">$ARCHPATH</span> /bin/su - root<br>umount -f <span class="hljs-variable">$ARCHPATH</span>/dev/pts<br>umount -f <span class="hljs-variable">$ARCHPATH</span>/dev<br>umount -f <span class="hljs-variable">$ARCHPATH</span>/sys<br>umount -f <span class="hljs-variable">$ARCHPATH</span>/proc<br></code></pre></td></tr></table></figure>
+
+<h2 id="新建用户与配置用户组"><a href="#新建用户与配置用户组" class="headerlink" title="新建用户与配置用户组"></a>新建用户与配置用户组</h2><p>作为一个“普通”的Linux用户，我们肯定不能在平常用root用户的，我们进容器后第一件事就是创建一个新的用户：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">useradd -m -s /bin/bash axis<br>passwd axis<br><span class="hljs-comment"># 建议顺便也改下root用户的密码</span><br>passwd root<br></code></pre></td></tr></table></figure>
+
+<p>axis是我自己定的用户名。</p>
+<p>Android只允许在某些用户组里的用户执行某些操作，在chroot容器中也是如此。</p>
+<p>使用以下命令添加用户组并将新建的用户加入其中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">groupadd -g 3001 android_bt<br>groupadd -g 3002 android_bt-net<br>groupadd -g 3003 android_inet<br>groupadd -g 3004 android_net-raw<br>groupadd -g 1015 sdcard-rw<br>groupadd -g 1028 sdcard-r<br>gpasswd -a axis android_bt<br>gpasswd -a axis android_bt-net<br>gpasswd -a axis android_inet<br>gpasswd -a axis android_net-raw<br>gpasswd -a axis sdcard-rw<br>gpasswd -a axis sdcard-r<br></code></pre></td></tr></table></figure>
+
+<p>大功告成之后我们不急着换用户，先用着root，可以少打点sudo和密码。</p>
+<blockquote>
+<p>如果需要这个普通用户在使用root权限运行命令时不需要输入密码，可以自行编辑 &#x2F;etc&#x2F;sudoers，当然你需要先使用pacman安装sudo后才会有这个文件，因为容器系统里并不自带sudo这个软件。</p>
+</blockquote>
+<h2 id="解决DNS问题"><a href="#解决DNS问题" class="headerlink" title="解决DNS问题"></a>解决DNS问题</h2><p><code>/etc/resolv.conf</code>默认是一个链接到<code>/run/systemd/resolve/resolv.conf</code>的链接，而我们chroot容器是没有systemd的，所以我们需要重新创建<code>/etc/resolv.conf</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">rm</span> -rf /etc/resolv.conf<br><span class="hljs-built_in">touch</span> /etc/resolv.conf<br></code></pre></td></tr></table></figure>
+
+<p>我们<code>nano /etc/resolv.conf</code>来编辑一下里面的内容，加入以下几行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 谷歌DNS</span><br>nameserver 8.8.8.8<br><span class="hljs-comment"># 国内高速DNS</span><br>nameserver 114.114.114.114<br></code></pre></td></tr></table></figure>
+
+<p>如果不解决DNS的问题，我们在第二次启动容器时会连不上网络。</p>
+<h2 id="更新系统软件"><a href="#更新系统软件" class="headerlink" title="更新系统软件"></a>更新系统软件</h2><p>在使用pacman更新系统软件之前，我们先导入公钥。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">pacman-key --init<br>pacman-key --populate<br></code></pre></td></tr></table></figure>
+
+<p>导入完成后就可以愉快的更新了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在更新前可以编辑 /etc/pacman.conf 将 ParallelDownloads = 5 取消注释以提高下载速度</span><br>pacman -Syyu base-devel --noconfirm<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Tips：如遇到error: could not determine cachedir mount point &#x2F;var&#x2F;cache&#x2F;pacman&#x2F;pkg 的情况，需要编辑 &#x2F;etc&#x2F;pacman.confg，将其中的CheckSpace注释起来。</p>
+</blockquote>
+<h2 id="配置软件源"><a href="#配置软件源" class="headerlink" title="配置软件源"></a>配置软件源</h2><p>ArchLinuxARM默认的软件源在国外，对大陆用户不太友好，这时我们可以替换为大陆的镜像源来提高pacman的下载速度。</p>
+<p>将<code>/etc/pacman.d/</code>下的<code>mirrorlist</code>改名为<code>mirrorlist.bak</code>来备份下原本的软件源。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mv</span> /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak<br></code></pre></td></tr></table></figure>
+
+<p>重新创建并编辑<code>/etc/pacman.d/mirrorlist</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nano /etc/pacman.d/mirrorlist<br></code></pre></td></tr></table></figure>
+
+<p>在其中加入以下几行从tmoe脚本那抄过来的软件源：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs txt">## Archlinux arm<br>Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/$repo<br>Server = https://mirror.archlinuxarm.org/$arch/$repo<br>Server = https://mirrors.bfsu.edu.cn/archlinuxarm/$arch/$repo<br>Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/$arch/$repo<br>Server = https://mirrors.163.com/archlinuxarm/$arch/$repo<br></code></pre></td></tr></table></figure>
+
+<p>编辑完保存后我们使用<code>pacman -Syu</code>来更新一下。</p>
+<p>我们还可以添加一些额外的软件源，比如archlinuxcn、arch4edu、blackarch，我们编辑<code>/etc/pacman.conf</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nano /etc/pacman.conf<br></code></pre></td></tr></table></figure>
+
+<p>在文件末尾加入以下文本：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs txt">[arch4edu]<br>Server = https://mirrors.bfsu.edu.cn/arch4edu/$arch<br>Server = https://mirrors.tuna.tsinghua.edu.cn/arch4edu/$arch<br>Server = https://mirror.autisten.club/arch4edu/$arch<br>Server = https://arch4edu.keybase.pub/$arch<br>Server = https://mirror.lesviallon.fr/arch4edu/$arch<br>Server = https://mirrors.tencent.com/arch4edu/$arch<br>SigLevel = Never<br>[archlinuxcn]<br>Server = https://mirrors.bfsu.edu.cn/archlinuxcn/$arch<br>Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch<br>Server = https://repo.archlinuxcn.org/$arch<br>SigLevel = Never<br>[blackarch]<br>Server = https://mirrors.ustc.edu.cn/blackarch/$repo/os/$arch<br>Server = https://mirrors.tuna.tsinghua.edu.cn/blackarch/$repo/os/$arch<br>Server = https://mirrors.aliyun.com/blackarch/$repo/os/$arch<br>Server = https://www.blackarch.org/blackarch/$repo/os/$arch<br>SigLevel = Never<br></code></pre></td></tr></table></figure>
+
+<h2 id="配置语言"><a href="#配置语言" class="headerlink" title="配置语言"></a>配置语言</h2><p>容器的默认语言是英文，如果需要将其改成中文，我们需要手动生成语言包并将系统语言配置成中文。</p>
+<p>编辑<code>/etc/locale.gen</code>，找到<code>zh_CN.UTF-8</code>，将这俩行取消注释。</p>
+<p>在shell中输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo locale-gen<br></code></pre></td></tr></table></figure>
+
+<p>等待生成完毕，我们编辑<code>/etc/locale.conf</code>，将其中的<code>LANG=C</code>替换成<code>LANG=zh_CN.UTF-8</code>，之后重启容器即可。</p>
+<h2 id="配置时区"><a href="#配置时区" class="headerlink" title="配置时区"></a>配置时区</h2><p>如果你在容器里使用date命令你会发现你的容器内时间是不对的，是标准的零时区时间，为了同步我们自己的时间，我们需要把时区文件软链接到<code>/etc/localtime</code>来改变容器的系统时区。</p>
+<p>时区文件在<code>/usr/share/zoneinfo/</code>下，我们需要在下面找到符合我们时区的城市。北京时间的设置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ln</span> -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime<br></code></pre></td></tr></table></figure>
+
+<p>之后重启容器即可。</p>
+<blockquote>
+<p>在容器内用<code>exit</code>可以退出容器回到termux，在termux中输入<code>./a</code>则可以启动容器。</p>
+</blockquote>
+<h2 id="安装图形界面"><a href="#安装图形界面" class="headerlink" title="安装图形界面"></a>安装图形界面</h2><p>我们装个xfce来当图形界面，因为只装WM真的太折磨人了，你连壁纸软件都得另外装，可能还不如装xfce这种轻量化的DE。使用以下命令在Arch中安装xfce桌面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu xfce4 xfce4-goodies<br></code></pre></td></tr></table></figure>
+
+<h2 id="精简系统"><a href="#精简系统" class="headerlink" title="精简系统"></a>精简系统</h2><p>对于一个不需要引导和加载的容器系统来说，**&#x2F;boot**分区里的东西直接删了都没关系，另外，我们也不需要更新 <strong>ramdisk</strong>，所以我们可以直接卸载 <strong>mkinitcpio</strong> 和删除 <strong>&#x2F;boot</strong> 分区下的内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Rsc mkinitcpio<br>sudo <span class="hljs-built_in">rm</span> -rf /boot/*<br></code></pre></td></tr></table></figure>
+
+<p>这么整可以省出几百MB的存储空间，还是很香的。</p>
+<h2 id="访问宿主机内部存储"><a href="#访问宿主机内部存储" class="headerlink" title="访问宿主机内部存储"></a>访问宿主机内部存储</h2><p>有时我们需要在容器内访问宿主机的内部存储，用外部的文件管理器将文件复制进容器里显然很不方便。</p>
+<p>我们可以通过挂载宿主机的内部存储来让容器可以访问宿主机的内部存储，在容器的启动脚本中chroot前加入下面这行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">su -c <span class="hljs-string">&quot;mkdir <span class="hljs-variable">$ARCHPATH</span>/sdcard&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o bind /data/media/0 <span class="hljs-variable">$ARCHPATH</span>/sdcard&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>这样宿主机的内部存储就会被挂载到容器的<code>/sdcard</code>目录。</p>
+<h2 id="使用termux-x11显示图形界面"><a href="#使用termux-x11显示图形界面" class="headerlink" title="使用termux-x11显示图形界面"></a>使用termux-x11显示图形界面</h2><p>将启动脚本中的<code>mount -t tmpfs tmpfs $ARCHPATH/tmp</code>改为<code>mount -o bind $TERMUX_PREFIX/tmp $ARCHPATH/tmp</code>。</p>
+<p>然后我建议启动容器时将selinux设置成宽容模式，并将&#x2F;tmp取消挂载，这样不会产生一些莫名其妙的bug，然后为了少打个su来启动root终端，因为我换到了kernelsu，不用tsu了，所以直接用<code>su -c &quot;&quot;</code>来用root权限运行命令。最终的容器启动脚本如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br>ARCHPATH=/data/linux/arch<br>TERMUX_PREFIX=/data/data/com.termux/files/usr<br><span class="hljs-comment"># KernelSU 可注释下行</span><br>su -c <span class="hljs-string">&quot;setenforce permissive&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o remount,dev,suid /data&quot;</span><br>su -c <span class="hljs-string">&quot;mount -t tmpfs -o size=256M /dev/shm <span class="hljs-variable">$ARCHPATH</span>/dev/shm&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o bind /dev <span class="hljs-variable">$ARCHPATH</span>/dev&quot;</span><br>su -c <span class="hljs-string">&quot;mount -t devpts devpts <span class="hljs-variable">$ARCHPATH</span>/dev/pts&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o bind /sys <span class="hljs-variable">$ARCHPATH</span>/sys&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o bind /proc <span class="hljs-variable">$ARCHPATH</span>/proc&quot;</span><br>su -c <span class="hljs-string">&quot;mount -o bind <span class="hljs-variable">$TERMUX_PREFIX</span>/tmp <span class="hljs-variable">$ARCHPATH</span>/tmp&quot;</span><br>pkill -f <span class="hljs-string">&quot;/system/bin/app_process / com.termux.x11.Loader :0 -ac&quot;</span><br><span class="hljs-built_in">nohup</span> termux-x11 :0 -ac &gt;/dev/null 2&gt;&amp;1 &amp;<br>su -c <span class="hljs-string">&quot;chroot <span class="hljs-variable">$ARCHPATH</span> /bin/su - axis&quot;</span><br>su -c <span class="hljs-string">&quot;umount -f <span class="hljs-variable">$ARCHPATH</span>/dev/pts&quot;</span><br>su -c <span class="hljs-string">&quot;umount -f <span class="hljs-variable">$ARCHPATH</span>/dev&quot;</span><br>su -c <span class="hljs-string">&quot;umount -f <span class="hljs-variable">$ARCHPATH</span>/sys&quot;</span><br>su -c <span class="hljs-string">&quot;umount -f <span class="hljs-variable">$ARCHPATH</span>/proc&quot;</span><br>su -c <span class="hljs-string">&quot;umount -f <span class="hljs-variable">$ARCHPATH</span>/tmp&quot;</span><br><span class="hljs-comment"># KernelSU 可注释下行</span><br>su -c <span class="hljs-string">&quot;setenforce enforcing&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>记得在容器内的<code>/etc/profile</code>的末尾添加此行来让挂载的tmp目录在容器内可读写：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">chmod</span> -R 777 /tmp<br></code></pre></td></tr></table></figure>
+
+<h2 id="卸载chroot容器"><a href="#卸载chroot容器" class="headerlink" title="卸载chroot容器"></a>卸载chroot容器</h2><p>怎么卸载一个chroot容器呢？步骤很简单。</p>
+<ol>
+<li><strong>重启设备（强制重置所有挂载，因为<code>umount</code>有时并不发挥作用）</strong></li>
+<li><strong>删除容器目录(即<code>rm -rf 容器所对应的目录</code>)</strong></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="category-chain-item">开发环境</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/chroot/" class="print-no-link">#chroot</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>chroot容器研究日志 01</div>
+      <div>http://blackwood416.github.io/2024/01/30/chroot-log-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Blackwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/02/09/hyperos-log-01/" title="澎湃OS折腾日志 01">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">澎湃OS折腾日志 01</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/01/25/android-log-02/" title="安卓开发学习 02">
+                        <span class="hidden-mobile">安卓开发学习 02</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

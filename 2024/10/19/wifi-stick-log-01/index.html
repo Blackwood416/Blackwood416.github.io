@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Blackwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="工具准备 一根帝旭 UZ801 随身 WiFi 一根 USB 延长线（用来连接电脑） 尖头的镊子（用来短接主板触电）（可选） 小型十字螺丝刀（用来拧螺丝）  软件工具我不喜欢使用别人封装的某某工具箱，所以我使用 QPT（Qualcomm Premium Tool）这种比较纯粹轻量的工具。 网上就能下载到，不过还需要 key 来激活（激活是记得把电脑调到静音，你会感谢我的）。 进入 9008 模式首">
+<meta property="og:type" content="article">
+<meta property="og:title" content="帝旭 UZ801 刷机教程">
+<meta property="og:url" content="http://blackwood416.github.io/2024/10/19/wifi-stick-log-01/index.html">
+<meta property="og:site_name" content="Blackwood&#39;s Blogs">
+<meta property="og:description" content="工具准备 一根帝旭 UZ801 随身 WiFi 一根 USB 延长线（用来连接电脑） 尖头的镊子（用来短接主板触电）（可选） 小型十字螺丝刀（用来拧螺丝）  软件工具我不喜欢使用别人封装的某某工具箱，所以我使用 QPT（Qualcomm Premium Tool）这种比较纯粹轻量的工具。 网上就能下载到，不过还需要 key 来激活（激活是记得把电脑调到静音，你会感谢我的）。 进入 9008 模式首">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/oPuXkxGQMJdgEIB.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/FvqsHe5ugMXK8yL.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/b7ZvHx2zE9ld3nm.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/NvKJOxYlW4k38Pb.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/Rl7oZznSxEKP4r5.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/SPp93Xg1wNdZvhe.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/TULh2YXma5VJWy7.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/cZNxvofnQP9q7OH.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/WTFuphcUsVY2Jdm.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/IHvJkqVPTA6WUD4.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/B9FWblGj3rn6Aai.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/peQOt1Kdk6sIVAW.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/UOlYRbrKHxJ357z.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/qN8E7SLRrn1aPzy.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/MuXqC3hTwpBmVeA.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/wMemCDLNK5kgGyI.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/TZJ9lAPrt2kwM5y.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/7s6dqXBeCjuYvPO.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/IbqtECfPO6o8pxz.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/TSDOGhbXRQUrz1p.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/WeMky1EJOqup4nw.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/42PsoBXrlOihv31.png">
+<meta property="og:image" content="https://s2.loli.net/2024/12/02/Oy9BSh3wHJlRx6k.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/28/ilvS3trxfGY85zH.png">
+<meta property="article:published_time" content="2024-10-18T16:42:45.000Z">
+<meta property="article:modified_time" content="2024-12-12T11:51:31.554Z">
+<meta property="article:author" content="Blackwood">
+<meta property="article:tag" content="随身WiFi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s2.loli.net/2024/11/28/oPuXkxGQMJdgEIB.png">
+  
+  
+  
+  <title>帝旭 UZ801 刷机教程 - Blackwood&#39;s Blogs</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blackwood416.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="帝旭 UZ801 刷机教程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-19 00:42" pubdate>
+          2024年10月19日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">帝旭 UZ801 刷机教程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="工具准备"><a href="#工具准备" class="headerlink" title="工具准备"></a>工具准备</h2><ul>
+<li>一根帝旭 UZ801 随身 WiFi</li>
+<li>一根 USB 延长线（用来连接电脑）</li>
+<li>尖头的镊子（用来短接主板触电）（可选）</li>
+<li>小型十字螺丝刀（用来拧螺丝）</li>
+</ul>
+<h2 id="软件工具"><a href="#软件工具" class="headerlink" title="软件工具"></a>软件工具</h2><p>我不喜欢使用别人封装的某某工具箱，所以我使用 QPT（Qualcomm Premium Tool）这种比较纯粹轻量的工具。</p>
+<p>网上就能下载到，不过还需要 key 来激活（激活是记得把电脑调到静音，你会感谢我的）。</p>
+<h2 id="进入-9008-模式"><a href="#进入-9008-模式" class="headerlink" title="进入 9008 模式"></a>进入 9008 模式</h2><p>首先，我们需要进入 9008 模式。</p>
+<p>进入 9008 模式有两种方式：</p>
+<ol>
+<li>通过后台页面访问对应链接进入 adb，通过 adb 命令进入 9008 模式。</li>
+<li>通过短接主板触点进入 9008 模式。</li>
+</ol>
+<blockquote>
+<p>Tips: 判断棒子进没进入 9008 模式，最显著的特征就是棒子上的 LED 灯，有通电但是不亮的就是正在 9008 模式，反之有灯亮起（不论什么颜色）都代表棒子没有进入 9008。</p>
+</blockquote>
+<h3 id="通过-ADB-进入-9008-模式"><a href="#通过-ADB-进入-9008-模式" class="headerlink" title="通过 ADB 进入 9008 模式"></a>通过 ADB 进入 9008 模式</h3><p>连接棒子发出的 wifi，在浏览器访问<code>http://192.168.100.1</code>，在以下界面输入账号密码，默认账号密码都是<code>admin</code>。</p>
+<p><img src="https://s2.loli.net/2024/11/28/oPuXkxGQMJdgEIB.png" srcset="/img/loading.gif" lazyload alt="图 2">  </p>
+<p>看到如下界面证明棒子运行正常。</p>
+<p><img src="https://s2.loli.net/2024/11/28/FvqsHe5ugMXK8yL.png" srcset="/img/loading.gif" lazyload alt="图 3">  </p>
+<p>然后我们访问<code>http://192.168.100.1/usbdebug.html</code>，这个链接的界面是空白的，但是访问后棒子会自动重启并开启<code>adb</code>。</p>
+<p>如果我们在电脑上安装了<code>adb</code>，我们就可以通过<code>adb devices</code>命令查看设备是否连接成功。</p>
+<p><img src="https://s2.loli.net/2024/11/28/b7ZvHx2zE9ld3nm.png" srcset="/img/loading.gif" lazyload alt="图 4">  </p>
+<p>如果能识别到设备，那么我们可以使用命令<code>adb reboot edl</code>来进入 9008 模式。</p>
+<p><img src="https://s2.loli.net/2024/11/28/NvKJOxYlW4k38Pb.png" srcset="/img/loading.gif" lazyload alt="图 5">  </p>
+<h3 id="通过短接触点进入-9008-模式"><a href="#通过短接触点进入-9008-模式" class="headerlink" title="通过短接触点进入 9008 模式"></a>通过短接触点进入 9008 模式</h3><p>首先，我们需要将棒子拆开，拧开螺丝，取出主板。</p>
+<p>然后，我们找到主板上的这两个触点，使用尖头的镊子短接这两个触点，并连接电脑。</p>
+<p><img src="https://s2.loli.net/2024/11/28/Rl7oZznSxEKP4r5.png" srcset="/img/loading.gif" lazyload alt="图 6">  </p>
+<h2 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h2><h3 id="切换-SIM-卡（可选）"><a href="#切换-SIM-卡（可选）" class="headerlink" title="切换 SIM 卡（可选）"></a>切换 SIM 卡（可选）</h3><p>在刷机之前，我们需要通过棒子的后台界面将棒子的 SIM 卡切换到卡槽，不然刷完机，是无法使用我们自己的卡来上网的（因为 UZ801 无法在 OpenWrt&#x2F;Debian 中切卡）。</p>
+<p>访问后台<code>http://192.168.100.1</code>，点击<code>高级设置</code>，在<code>SIM 卡信息</code>里，在<code>SIM 卡选择</code>里从<code>ESIM</code>换到<code>SIM</code>，切卡密码是<code>admin8888</code>。</p>
+<p><img src="https://s2.loli.net/2024/11/28/SPp93Xg1wNdZvhe.png" srcset="/img/loading.gif" lazyload alt="图 7">  </p>
+<p><img src="https://s2.loli.net/2024/11/28/TULh2YXma5VJWy7.png" srcset="/img/loading.gif" lazyload alt="图 8">  </p>
+<p><img src="https://s2.loli.net/2024/11/28/cZNxvofnQP9q7OH.png" srcset="/img/loading.gif" lazyload alt="图 9">  </p>
+<h3 id="QPT-的备份"><a href="#QPT-的备份" class="headerlink" title="QPT 的备份"></a>QPT 的备份</h3><p>在刷入系统之前，建议备份好原有的数据。QPT 的备份分三种：Block0、Partition、Firmware，我们需要用到前两种。</p>
+<ul>
+<li><p>Block0：会备份 emmc 中的所有数据，建议首先备份，只会导出一个<code>.bin</code> 文件。</p>
+</li>
+<li><p>Partition：可以以分区的形式备份所有的分区，每个分区都会导出一个<code>.img</code> 或<code>.bin</code> 文件。</p>
+</li>
+<li><p>Firmware：用于备份系统的固件，但是 QPT 的 Firmware 备份有点问题，会报 Error，有些备份出来的文件也是空文件。</p>
+</li>
+</ul>
+<blockquote>
+<p>Tips：每次进入 9008 模式，只能进行一次 scan（扫描）或者 read（读取）操作，所以我们需要进入 9008 模式两次才能完成 Block0 和 Partition 备份。</p>
+</blockquote>
+<h3 id="Block0-备份"><a href="#Block0-备份" class="headerlink" title="Block0 备份"></a>Block0 备份</h3><p>我们一定要首先进行 Block0 备份，否则一旦刷机过程出错，我们就无法恢复到最开始的状态以便重新开始了。</p>
+<p>进入 9008 模式，打开 QPT，选择<code>Block0</code>选项卡，点击<code>Read( 9008 )</code>，。</p>
+<p><img src="https://s2.loli.net/2024/11/28/WTFuphcUsVY2Jdm.png" srcset="/img/loading.gif" lazyload alt="图 1">  </p>
+<h3 id="Partition-备份"><a href="#Partition-备份" class="headerlink" title="Partition 备份"></a>Partition 备份</h3><p>进入 9008 模式，打开 QPT，选择<code>partition</code>选项卡，选择<code>scan</code>后点击红色的<code>DoJob</code>，待读取出全部分区后，选择第一项<code>modem</code>分区，选择<code>backup</code>，<code>DoJob</code>，然后选择备份文件夹，等待备份完成。</p>
+<p><img src="https://s2.loli.net/2024/12/02/IHvJkqVPTA6WUD4.png" srcset="/img/loading.gif" lazyload alt="图 11">  </p>
+<p><img src="https://s2.loli.net/2024/12/02/B9FWblGj3rn6Aai.png" srcset="/img/loading.gif" lazyload alt="图 12">  </p>
+<h2 id="刷机"><a href="#刷机" class="headerlink" title="刷机"></a>刷机</h2><p>我们首先需要下载对应板号的系统，你要刷 OP 就找 OP 的系统，要刷 Debian 就找 Debian 的系统，这里我以刷入 Debian 为例。</p>
+<h3 id="下载系统"><a href="#下载系统" class="headerlink" title="下载系统"></a>下载系统</h3><h4 id="OpenWrt"><a href="#OpenWrt" class="headerlink" title="OpenWrt"></a>OpenWrt</h4><p>这里以苏苏小亮亮的 OpenWrt 为例，访问 <a target="_blank" rel="noopener" href="https://www.kancloud.cn/a813630449/ufi_car/2792820">这里</a> 找到下载地址。</p>
+<h4 id="Debian"><a href="#Debian" class="headerlink" title="Debian"></a>Debian</h4><p>这里推荐下载 js 佬的超频版 Debian，可以充分发挥出棒子的性能，而且系统里没有什么乱七八糟的东西。可以在 <a target="_blank" rel="noopener" href="https://www.coolapk.com/feed/41664623?shareKey=NzQzOTdlZjRlMzk2Njc0ODIyMjA~&shareUid=31652160&shareFrom=com.coolapk.market_14.6.0">这篇帖子</a> 里找到下载地址。</p>
+<h3 id="刷入系统"><a href="#刷入系统" class="headerlink" title="刷入系统"></a>刷入系统</h3><h4 id="进入-fastboot-的两种方式"><a href="#进入-fastboot-的两种方式" class="headerlink" title="进入 fastboot 的两种方式"></a>进入 fastboot 的两种方式</h4><ol>
+<li>使用<code>adb reboot bootloader</code>命令进入 fastboot 模式，跟 adb 一样，我们也可以通过<code>fastboot devices</code>来查看设备是否进入了 fastboot 模式。</li>
+<li>在 9008 模式时用 QPT 格式化<code>boot</code>分区，重启后系统会因为找不到<code>boot</code>分区而自动进入 fastboot 模式。</li>
+</ol>
+<h4 id="OpenWrt-1"><a href="#OpenWrt-1" class="headerlink" title="OpenWrt"></a>OpenWrt</h4><p>苏苏小亮亮包里的<code>flash.bat</code>写的有些问题，以下是我修改后的版本：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs bat">@<span class="hljs-built_in">echo</span> off<br><span class="hljs-built_in">echo</span> OpenStick Bootloader<br><span class="hljs-built_in">echo</span> please make sure your device <span class="hljs-keyword">in</span> fastboot <span class="hljs-built_in">mode</span><br><span class="hljs-built_in">pause</span><br>fastboot <span class="hljs-built_in">erase</span> boot<br>fastboot flash aboot aboot.bin<br>fastboot reboot<br><span class="hljs-built_in">echo</span> when detected a fastboot device<br><span class="hljs-built_in">pause</span><br>fastboot oem dump fsc &amp;&amp; fastboot get_staged fsc.bin<br>fastboot oem dump fsg &amp;&amp; fastboot get_staged fsg.bin<br>fastboot oem dump modemst1 &amp;&amp; fastboot get_staged modemst1.bin<br>fastboot oem dump modemst2 &amp;&amp; fastboot get_staged modemst2.bin<br>fastboot <span class="hljs-built_in">erase</span> boot<br>fastboot reboot bootloader<br><span class="hljs-built_in">echo</span> when detected a fastboot device<br><span class="hljs-built_in">pause</span><br>fastboot flash partition gpt_both0.bin<br>fastboot flash hyp hyp.mbn<br>fastboot flash rpm rpm.mbn<br>fastboot flash sbl1 sbl1.mbn<br>fastboot flash tz tz.mbn<br>fastboot flash fsc fsc.bin<br>fastboot flash fsg fsg.bin<br>fastboot flash modemst1 modemst1.bin<br>fastboot flash modemst2 modemst2.bin<br>fastboot flash aboot aboot.bin<br>fastboot flash cdt sbc_1.<span class="hljs-number">0</span>_8016.bin<br>fastboot <span class="hljs-built_in">erase</span> boot<br>fastboot <span class="hljs-built_in">erase</span> rootfs<br>fastboot reboot<br><span class="hljs-built_in">echo</span> flashing OpenWrt!<br><span class="hljs-built_in">echo</span> when detected a fastboot device<br><span class="hljs-built_in">pause</span><br>fastboot flash boot boot.img<br>fastboot -S <span class="hljs-number">200</span>m flash rootfs rootfs.img<br>fastboot reboot<br><span class="hljs-built_in">echo</span> all done!!<br><span class="hljs-built_in">pause</span><br></code></pre></td></tr></table></figure>
+
+<p>你可以把<code>flash.bat</code>改成我上面这样，然后运行刷入即可。</p>
+<h4 id="Debian-1"><a href="#Debian-1" class="headerlink" title="Debian"></a>Debian</h4><p>没啥好说的，运行<code>一键刷入工具。bat</code>，然后通过输入数字来选择对应的超频频率就可以了，<code>释放内存</code>版是阉割了 SIM 卡上网能力，所以如果你要用 SIM 卡槽的功能就不要刷<code>释放内存</code>版。</p>
+<h2 id="连接系统"><a href="#连接系统" class="headerlink" title="连接系统"></a>连接系统</h2><h3 id="Windows设备驱动"><a href="#Windows设备驱动" class="headerlink" title="Windows设备驱动"></a>Windows设备驱动</h3><p>我们需要确保我们连接到棒子是用到<code>Microsoft</code>的<code>远程NDIS兼容设备</code>这个驱动，否则我们无法让棒子以NDIS模式连接到 Windows。</p>
+<p>使用<code>Win + X M</code>快捷键打开设备管理器，如果你的设备管理器在刷完OpenWrt&#x2F;Debian后出现了如下的设备，那么你需要调整该设备的驱动。</p>
+<p><img src="https://s2.loli.net/2024/12/02/peQOt1Kdk6sIVAW.png" srcset="/img/loading.gif" lazyload alt="图 13">  </p>
+<p>我们右键卸载设备并删除它的驱动程序。</p>
+<p><img src="https://s2.loli.net/2024/12/02/UOlYRbrKHxJ357z.png" srcset="/img/loading.gif" lazyload alt="图 14">  </p>
+<p>拔插一下棒子（重启），然后你会在设备管理器看到这样一个设备或者未知设备。</p>
+<p><img src="https://s2.loli.net/2024/12/02/qN8E7SLRrn1aPzy.png" srcset="/img/loading.gif" lazyload alt="图 15">  </p>
+<p>我们右键更新它的驱动，点击下面的<code>浏览我的电脑以查找驱动程序</code>。</p>
+<p><img src="https://s2.loli.net/2024/12/02/MuXqC3hTwpBmVeA.png" srcset="/img/loading.gif" lazyload alt="图 16">  </p>
+<p>然后点击<code>让我从计算机上的可用驱动程序列表中选取</code>，然后点击下一步。</p>
+<p><img src="https://s2.loli.net/2024/12/02/wMemCDLNK5kgGyI.png" srcset="/img/loading.gif" lazyload alt="图 17">  </p>
+<p>下滑找到<code>网络适配器</code>，然后点击下一步。</p>
+<p><img src="https://s2.loli.net/2024/12/02/TZJ9lAPrt2kwM5y.png" srcset="/img/loading.gif" lazyload alt="图 18">  </p>
+<p>找到<code>厂商</code>为<code>Microsoft</code>的驱动，在右边的列表里找到<code>远程NDIS兼容设备</code>，然后点击下一步。</p>
+<p><img src="https://s2.loli.net/2024/12/02/7s6dqXBeCjuYvPO.png" srcset="/img/loading.gif" lazyload alt="图 19">  </p>
+<p>这个弹窗选择<code>是</code>，然后驱动就换好了。</p>
+<p><img src="https://s2.loli.net/2024/12/02/IbqtECfPO6o8pxz.png" srcset="/img/loading.gif" lazyload alt="图 20">  </p>
+<p>这时在设备管理器的<code>网络适配器</code>栏目下应该能找到设备名为<code>远程NDIS兼容设备</code>的设备，这个就是我们的棒子。</p>
+<p><img src="https://s2.loli.net/2024/12/02/TSDOGhbXRQUrz1p.png" srcset="/img/loading.gif" lazyload alt="图 21">  </p>
+<h3 id="OpenWrt-2"><a href="#OpenWrt-2" class="headerlink" title="OpenWrt"></a>OpenWrt</h3><p>OpenWrt作为路由器系统是有Web后台的，完成驱动安装后，浏览器访问<code>http://192.168.1.1</code>，登录<code>root</code>用户，默认没有密码。</p>
+<p><img src="https://s2.loli.net/2024/12/02/WeMky1EJOqup4nw.png" srcset="/img/loading.gif" lazyload alt="图 22">  </p>
+<h3 id="Debian-2"><a href="#Debian-2" class="headerlink" title="Debian"></a>Debian</h3><p>Debian 没有 Web 后台，需要使用 ssh 连接，<code>root</code>的默认密码是<code>1313144</code>。</p>
+<p>我个人现在使用<code>WindTerm</code>来连接 ssh，你也可以使用<code>Putty</code>、<code>MobaXterm</code>等工具，如果你喜欢纯命令行操作那么直接用<code>Windows 可选功能</code>里安装的<code>OpenSSH 客户端</code>也可以。</p>
+<h2 id="配置系统"><a href="#配置系统" class="headerlink" title="配置系统"></a>配置系统</h2><h3 id="OpenWrt-更新"><a href="#OpenWrt-更新" class="headerlink" title="OpenWrt 更新"></a>OpenWrt 更新</h3><p>更新系统，截至2024年12月2日，这个OpenWrt版本无法直接用<code>opkg update</code>更新软件源。</p>
+<p>我们在终端里<code>vi /etc/opkg/distfeeds.conf</code>，会显示以下内容：</p>
+<p><img src="https://s2.loli.net/2024/12/02/42PsoBXrlOihv31.png" srcset="/img/loading.gif" lazyload alt="图 24">  </p>
+<p>将里面的链接换成可以用的链接。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">src<span class="hljs-regexp">/gz handsomemod_core https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>targets<span class="hljs-regexp">/armsr/</span>armv8/packages<br>src<span class="hljs-regexp">/gz handsomemod_base https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>packages<span class="hljs-regexp">/aarch64_cortex-a53/</span>base<br>src<span class="hljs-regexp">/gz handsomemod_luci https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>packages<span class="hljs-regexp">/aarch64_cortex-a53/</span>luci<br>src<span class="hljs-regexp">/gz handsomemod_packages https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>packages<span class="hljs-regexp">/aarch64_cortex-a53/</span>packages<br>src<span class="hljs-regexp">/gz handsomemod_routing https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>packages<span class="hljs-regexp">/aarch64_cortex-a53/</span>routing<br>src<span class="hljs-regexp">/gz handsomemod_telephony https:/</span><span class="hljs-regexp">/downloads.immortalwrt.org/</span>releases<span class="hljs-regexp">/23.05.4/</span>packages<span class="hljs-regexp">/aarch64_cortex-a53/</span>telephony<br></code></pre></td></tr></table></figure>
+
+<p>现在就可以正常更新了。</p>
+<h3 id="修复基带固件"><a href="#修复基带固件" class="headerlink" title="修复基带固件"></a>修复基带固件</h3><p>无论是刷 OpenWrt 还是 Debian，都需要修复基带固件，否则无法正常使用 SIM 卡的网络。</p>
+<p><img src="https://s2.loli.net/2024/12/02/Oy9BSh3wHJlRx6k.png" srcset="/img/loading.gif" lazyload alt="图 23">  </p>
+<p>将之前 9008 备份<code>modem</code>分区备份出来的<code>NON-HLOS.bin</code>改名为<code>NON-HLOS.img</code>，然后使用<code>DiskGenius</code>打开，将<code>image</code>文件夹复制出来，下图是<code>image</code>文件夹里的内容。</p>
+<p><img src="https://s2.loli.net/2024/11/28/ilvS3trxfGY85zH.png" srcset="/img/loading.gif" lazyload alt="图 10">  </p>
+<p>我们需要将<code>image</code>里的所有文件复制到 OpenWrt 的<code>/lib/firmware</code>或者 Debian 的<code>/usr/lib/firmware</code>目录下，然后重启棒子。</p>
+<blockquote>
+<p>Tips：如果你是用命令行来使用 ssh，那么你可以使用<code>scp</code>命令来复制文件。</p>
+<p><strong>OpenWrt</strong></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir">scp -r /path/to/image/* root<span class="hljs-variable">@192</span>.<span class="hljs-number">168.1</span>.<span class="hljs-number">1</span><span class="hljs-symbol">:/lib/firmware</span><br></code></pre></td></tr></table></figure>
+<p><strong>Debian</strong></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir">scp -r /path/to/image/* root<span class="hljs-variable">@10</span>.<span class="hljs-number">42.0</span>.<span class="hljs-number">1</span><span class="hljs-symbol">:/usr/lib/firmware</span><br></code></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="短信转发"><a href="#短信转发" class="headerlink" title="短信转发"></a>短信转发</h2><h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><p>Q：为什么我访问<code>http://192.168.100.1/usbdebug.html</code>后，用<code>adb devices</code>命令无法识别到设备？</p>
+<p>A：请使用<code>设备管理器</code>检查你的设备驱动是否正常（即设备图标旁边是否有个感叹号），如果有感叹号，请把设备卸载（勾选删除驱动），然后重新尝试进入 adb 模式。</p>
+<p>Q：为什么我进入了 9008 模式，但是在 QPT 里识别不到设备？</p>
+<p>A：还是驱动问题，请确保你安装了 9008 驱动并且重启了电脑，然后再次让棒子进入 9008 模式就可以成功识别。</p>
+<p>Q：为什么我的<code>OpenWrt/Debian</code>系统上不了网？</p>
+<p>A：请先确保你的棒子连接到了可以访问互联网的网络：WiFi、GSM 等。如果还是不能联网，请检查系统的 DNS 设置，使用<code>vim</code>或者<code>nano</code>编辑<code>/etc/resolv.conf</code>文件，添加<code>nameserver 8.8.8.8</code>，保存并退出。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9A%8F%E8%BA%ABWiFi/" class="category-chain-item">随身WiFi</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9A%8F%E8%BA%ABWiFi/" class="print-no-link">#随身WiFi</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>帝旭 UZ801 刷机教程</div>
+      <div>http://blackwood416.github.io/2024/10/19/wifi-stick-log-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Blackwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/11/16/os-log-02/" title="操作系统学习日志 02">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">操作系统学习日志 02</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/09/unity-shader-log-01/" title="unity-shader-log-01">
+                        <span class="hidden-mobile">unity-shader-log-01</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
