@@ -10,7 +10,8 @@ export function getVisiblePosts(posts: BlogPost[]): BlogPost[] {
 		.toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
-export function routeSegment(value: string): string {
+// Use only when constructing hrefs; pass raw values to Astro getStaticPaths().params.
+export function encodeHrefSegment(value: string): string {
 	return encodeURIComponent(value);
 }
 

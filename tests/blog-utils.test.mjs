@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { countTaxonomy, groupPostsByYearMonth, routeSegment } from '../src/lib/blog.ts';
+import { countTaxonomy, encodeHrefSegment, groupPostsByYearMonth } from '../src/lib/blog.ts';
 
 const post = ({ pubDate, tags = [], categories = [], draft = false }) => ({
   data: {
@@ -11,9 +11,9 @@ const post = ({ pubDate, tags = [], categories = [], draft = false }) => ({
   },
 });
 
-describe('routeSegment', () => {
-  it('encodes Chinese path segments', () => {
-    expect(routeSegment('开发日志')).toBe('%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97');
+describe('encodeHrefSegment', () => {
+  it('encodes Chinese href path segments', () => {
+    expect(encodeHrefSegment('开发日志')).toBe('%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97');
   });
 });
 
