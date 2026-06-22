@@ -98,6 +98,7 @@ describe('migrateHexo', () => {
     const sourceAboutDir = path.join(hexoRoot, 'source', 'about');
     const outputBlogDir = path.join(projectRoot, 'src', 'content', 'blog');
     const sourcePostPath = path.join(sourcePostsDir, 'sample-post.md');
+    const quotedDatePostPath = path.join(sourcePostsDir, 'quoted-date.md');
 
     await fs.mkdir(sourcePostsDir, { recursive: true });
     await fs.mkdir(sourceAboutDir, { recursive: true });
@@ -109,6 +110,7 @@ describe('migrateHexo', () => {
       [
         '---',
         'title: Sample Post',
+        'date: 2024-01-24 20:37:17',
         'tags:',
         '  - Astro',
         '  - Migration',
@@ -118,6 +120,18 @@ describe('migrateHexo', () => {
         '# Sample Post',
         '',
         'Readable paragraph with **markdown**.',
+      ].join('\n'),
+      'utf8',
+    );
+    await fs.writeFile(
+      quotedDatePostPath,
+      [
+        '---',
+        'title: Quoted Date',
+        'date: "2024-01-25 08:00:00"',
+        '---',
+        '',
+        'Quoted date body.',
       ].join('\n'),
       'utf8',
     );
@@ -143,18 +157,20 @@ describe('migrateHexo', () => {
     });
     const secondOutput = await fs.readFile(outputPostPath, 'utf8');
     const parsed = matter(secondOutput);
+    const quotedDateOutput = matter(await fs.readFile(path.join(outputBlogDir, 'quoted-date.md'), 'utf8'));
 
     await expect(fs.access(path.join(outputBlogDir, 'old-post.md'))).rejects.toThrow();
     await expect(fs.readFile(path.join(outputBlogDir, 'notes.txt'), 'utf8')).resolves.toBe('keep me');
     expect(parsed.data).toMatchObject({
       title: 'Sample Post',
       description: 'Readable paragraph with markdown.',
-      pubDate: stableDate.toISOString(),
+      pubDate: '2024-01-24T12:37:17.000Z',
       tags: ['Astro', 'Migration'],
       categories: ['Dev'],
       draft: false,
     });
     expect(parsed.content.trim()).toBe('Readable paragraph with **markdown**.');
+    expect(quotedDateOutput.data.pubDate).toBe('2024-01-25T00:00:00.000Z');
     expect(firstOutput).toBe(secondOutput);
     await expect(
       fs.readFile(path.join(projectRoot, 'src', 'content', 'pages', 'about.md'), 'utf8'),

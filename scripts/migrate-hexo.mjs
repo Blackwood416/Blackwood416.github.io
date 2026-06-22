@@ -94,7 +94,8 @@ export async function migrateHexo({
 
     const sourcePath = path.join(sourcePostsDir, entry.name);
     const sourceStat = await fs.stat(sourcePath);
-    const parsed = matter(await fs.readFile(sourcePath, 'utf8'));
+    const sourceMarkdown = await fs.readFile(sourcePath, 'utf8');
+    const parsed = matter(sourceMarkdown);
     if (!isPublishedPost(parsed.data)) {
       continue;
     }
@@ -104,7 +105,11 @@ export async function migrateHexo({
     const frontmatter = {
       title,
       description: String(parsed.data.description ?? parsed.data.excerpt ?? extractDescription(content)),
-      pubDate: normalizePubDate(parsed.data.date ?? parsed.data.pubDate, sourceStat.mtime, sourcePath),
+      pubDate: normalizePubDate(
+        extractRawFrontmatterValue(sourceMarkdown, 'date') ?? parsed.data.date ?? parsed.data.pubDate,
+        sourceStat.mtime,
+        sourcePath,
+      ),
       tags: normalizeList(parsed.data.tags),
       categories: normalizeList(parsed.data.categories),
       draft: false,
@@ -192,6 +197,25 @@ export function normalizePubDate(value, fallbackDate, sourcePath) {
   }
 
   return parsed.toISOString();
+}
+
+function extractRawFrontmatterValue(markdown, key) {
+  const frontmatterMatch = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  if (!frontmatterMatch) {
+    return undefined;
+  }
+
+  const keyPattern = new RegExp(`^\\s*${escapeRegExp(key)}\\s*:\\s*(.*?)\\s*$`, 'm');
+  const valueMatch = frontmatterMatch[1].match(keyPattern);
+  if (!valueMatch) {
+    return undefined;
+  }
+
+  return valueMatch[1].replace(/^(['"])(.*)\1$/, '$2').trim();
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 async function emptyMarkdownFiles(directory) {
