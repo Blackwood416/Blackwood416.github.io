@@ -2,9 +2,43 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="搜索">
-	<header class="page-header">
-		<h1>搜索</h1>
-		<p>站内搜索将在索引生成后可用。</p>
-	</header>
+<BaseLayout title="搜索" description="搜索 Blackwood 的技术文章。">
+	<section class="prose" data-pagefind-ignore>
+		<header class="page-header">
+			<h1>搜索</h1>
+			<p>输入关键词搜索已迁移的文章内容。</p>
+		</header>
+
+		<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+		<div id="search">
+			<p id="search-status">搜索加载中。如果页面长时间没有响应，请确认浏览器允许加载站内脚本。</p>
+		</div>
+		<noscript>
+			<p>搜索需要启用 JavaScript。你也可以先通过归档、标签或分类浏览文章。</p>
+		</noscript>
+
+		<script is:inline src="/pagefind/pagefind-ui.js"></script>
+		<script is:inline>
+			window.addEventListener('DOMContentLoaded', () => {
+				const status = document.querySelector('#search-status');
+
+				if (typeof PagefindUI === 'undefined') {
+					if (status) {
+						status.textContent = '搜索索引尚未加载，请稍后刷新页面。';
+					}
+					return;
+				}
+
+				if (status) {
+					status.remove();
+				}
+
+				new PagefindUI({
+					element: '#search',
+					showSubResults: true,
+					showImages: false,
+				});
+			});
+		</script>
+	</section>
 </BaseLayout>
