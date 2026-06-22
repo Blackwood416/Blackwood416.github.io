@@ -119,10 +119,17 @@ describe('migrateHexo', () => {
         '',
         '# Sample Post',
         '',
+        '![existing](existing.png)',
+        '',
+        '![missing](missing.png)',
+        '',
+        '![remote](https://example.com/remote.png)',
+        '',
         'Readable paragraph with **markdown**.',
       ].join('\n'),
       'utf8',
     );
+    await fs.writeFile(path.join(sourcePostsDir, 'existing.png'), 'fake image', 'utf8');
     await fs.writeFile(
       quotedDatePostPath,
       [
@@ -144,7 +151,7 @@ describe('migrateHexo', () => {
     const stableDate = new Date('2024-01-02T03:04:05.000Z');
     await fs.utimes(sourcePostPath, stableDate, stableDate);
 
-    await migrateHexo({
+    const firstResult = await migrateHexo({
       hexoRoot: pathToFileURL(`${hexoRoot}${path.sep}`),
       projectRoot: pathToFileURL(`${projectRoot}${path.sep}`).href,
     });
@@ -169,7 +176,25 @@ describe('migrateHexo', () => {
       categories: ['Dev'],
       draft: false,
     });
-    expect(parsed.content.trim()).toBe('Readable paragraph with **markdown**.');
+    expect(parsed.content.trim()).toContain('![existing](existing.png)');
+    expect(parsed.content.trim()).toContain('> 缺失图片：missing.png');
+    expect(parsed.content.trim()).toContain('![remote](https://example.com/remote.png)');
+    expect(parsed.content.trim()).not.toContain('![missing](missing.png)');
+    expect(parsed.content.trim()).toContain('Readable paragraph with **markdown**.');
+    expect(firstResult.relativeImageFindings).toEqual([
+      {
+        post: 'sample-post.md',
+        src: 'existing.png',
+        path: path.join(sourcePostsDir, 'existing.png'),
+        exists: true,
+      },
+      {
+        post: 'sample-post.md',
+        src: 'missing.png',
+        path: path.join(sourcePostsDir, 'missing.png'),
+        exists: false,
+      },
+    ]);
     expect(quotedDateOutput.data.pubDate).toBe('2024-01-25T00:00:00.000Z');
     expect(firstOutput).toBe(secondOutput);
     await expect(

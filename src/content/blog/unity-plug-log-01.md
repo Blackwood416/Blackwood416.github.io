@@ -50,11 +50,11 @@ ConsolePlugin
 
 保存编译后你会发现你Unity的菜单栏多出了一项，里面也有我们定义的子项。
 
-![如图](ConsoleToggle.png)
+> 缺失图片：ConsoleToggle.png
 
 点击它我们也会看到编辑器的控制台输出了我们定义的文本。
 
-![如图](ConsoleToggleResult.png)
+> 缺失图片：ConsoleToggleResult.png
 
 MenuItem这个特性的参数还可以定义选项卡的打开方式，如下：
 
@@ -90,7 +90,7 @@ MenuItem这个特性的参数还可以定义选项卡的打开方式，如下：
 
 效果如图：
 
-![](ConsoleMenu.png)
+> 缺失图片：ConsoleMenu.png
 
 ## 编写 UI/Editor/ConsoleEditorWindow.cs
 

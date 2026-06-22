@@ -115,19 +115,16 @@ export async function migrateHexo({
       draft: false,
     };
 
-    const outputPath = path.join(outputBlogDir, entry.name);
-    await fs.writeFile(outputPath, matter.stringify(content.trimStart(), frontmatter), 'utf8');
-    migratedPosts.push({ sourcePath, outputPath });
+    const { markdown: rewrittenContent, findings } = await rewriteMissingRelativeImageReferences(
+      content,
+      path.dirname(sourcePath),
+      entry.name,
+    );
+    relativeImageFindings.push(...findings);
 
-    for (const reference of findRelativeImageReferences(content)) {
-      const resolvedPath = path.resolve(path.dirname(sourcePath), reference.src);
-      relativeImageFindings.push({
-        post: entry.name,
-        src: reference.src,
-        path: resolvedPath,
-        exists: await fileExists(resolvedPath),
-      });
-    }
+    const outputPath = path.join(outputBlogDir, entry.name);
+    await fs.writeFile(outputPath, matter.stringify(rewrittenContent.trimStart(), frontmatter), 'utf8');
+    migratedPosts.push({ sourcePath, outputPath });
   }
 
   const about = matter(await fs.readFile(sourceAboutPath, 'utf8'));
@@ -166,6 +163,39 @@ function isImageOnlyParagraph(paragraph) {
 
 function isRelativeImageSource(src) {
   return !/^(?:[a-z][a-z0-9+.-]*:|\/|#)/iu.test(src);
+}
+
+async function rewriteMissingRelativeImageReferences(markdown, sourceDir, postName) {
+  const findings = [];
+  const imagePattern = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g;
+  let rewritten = '';
+  let lastIndex = 0;
+
+  for (const match of markdown.matchAll(imagePattern)) {
+    const src = match[2].trim();
+    if (!isRelativeImageSource(src)) {
+      continue;
+    }
+
+    const resolvedPath = path.resolve(sourceDir, src);
+    const exists = await fileExists(resolvedPath);
+    findings.push({
+      post: postName,
+      src,
+      path: resolvedPath,
+      exists,
+    });
+
+    if (!exists) {
+      rewritten += `${markdown.slice(lastIndex, match.index)}> 缺失图片：${src}`;
+      lastIndex = match.index + match[0].length;
+    }
+  }
+
+  return {
+    markdown: rewritten + markdown.slice(lastIndex),
+    findings,
+  };
 }
 
 function isMarkdownFilename(filename) {
