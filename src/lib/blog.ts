@@ -3,6 +3,10 @@ import type { CollectionEntry } from 'astro:content';
 export type BlogPost = CollectionEntry<'blog'>;
 export type TaxonomyCount = { name: string; count: number };
 export type ArchiveGroup = { key: string; year: string; month: string; posts: BlogPost[] };
+export type PostNeighbor = BlogPost | null;
+export type PostNeighbors = { previous: PostNeighbor; next: PostNeighbor };
+export type TocHeading = { depth: number; slug: string; text: string };
+export type CodeFenceMeta = { language: string | null; title: string | null; label: string };
 
 export function getVisiblePosts(posts: BlogPost[]): BlogPost[] {
 	return posts
@@ -51,4 +55,37 @@ export function groupPostsByYearMonth(posts: BlogPost[]): ArchiveGroup[] {
 			posts: groupedPosts,
 		};
 	}).sort((a, b) => b.key.localeCompare(a.key));
+}
+
+export function getPostNeighbors(posts: BlogPost[], currentId: string): PostNeighbors {
+	const index = posts.findIndex((post) => post.id === currentId);
+
+	if (index === -1) {
+		return { previous: null, next: null };
+	}
+
+	return {
+		previous: posts[index - 1] ?? null,
+		next: posts[index + 1] ?? null,
+	};
+}
+
+export function getTableOfContentsItems(headings: TocHeading[]): TocHeading[] {
+	const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+
+	return items.length >= 2 ? items : [];
+}
+
+export function parseCodeFenceMeta(meta: string | undefined): CodeFenceMeta {
+	const source = meta?.trim() ?? '';
+	const firstToken = source.match(/^[^\s]+/)?.[0] ?? null;
+	const titleMatch = source.match(/(?:^|\s)title=(?:"([^"]*)"|'([^']*)'|([^\s]+))/);
+	const language = firstToken && !firstToken.includes('=') && !firstToken.startsWith('{') ? firstToken : null;
+	const title = titleMatch?.[1] ?? titleMatch?.[2] ?? titleMatch?.[3] ?? null;
+
+	return {
+		language,
+		title,
+		label: title ?? language ?? 'code',
+	};
 }

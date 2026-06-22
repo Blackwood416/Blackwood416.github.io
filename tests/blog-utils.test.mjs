@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { countTaxonomy, encodeHrefSegment, groupPostsByYearMonth } from '../src/lib/blog.ts';
+import {
+  countTaxonomy,
+  encodeHrefSegment,
+  getPostNeighbors,
+  getTableOfContentsItems,
+  groupPostsByYearMonth,
+} from '../src/lib/blog.ts';
 
 const post = ({ pubDate, tags = [], categories = [], draft = false }) => ({
   data: {
@@ -48,6 +54,58 @@ describe('groupPostsByYearMonth', () => {
       { key: '2024-03', year: '2024', month: '03', posts: [posts[1]] },
       { key: '2024-01', year: '2024', month: '01', posts: [posts[0], posts[2]] },
       { key: '2023-12', year: '2023', month: '12', posts: [posts[3]] },
+    ]);
+  });
+});
+
+describe('getPostNeighbors', () => {
+  it('returns the newer post as previous and older post as next in descending post order', () => {
+    const posts = [
+      { id: 'newest', data: { title: 'Newest', pubDate: new Date('2024-03-01T00:00:00.000Z') } },
+      { id: 'middle', data: { title: 'Middle', pubDate: new Date('2024-02-01T00:00:00.000Z') } },
+      { id: 'oldest', data: { title: 'Oldest', pubDate: new Date('2024-01-01T00:00:00.000Z') } },
+    ];
+
+    expect(getPostNeighbors(posts, 'middle')).toEqual({
+      previous: posts[0],
+      next: posts[2],
+    });
+  });
+
+  it('uses null when a neighboring post does not exist', () => {
+    const posts = [
+      { id: 'newest', data: { title: 'Newest', pubDate: new Date('2024-03-01T00:00:00.000Z') } },
+      { id: 'oldest', data: { title: 'Oldest', pubDate: new Date('2024-01-01T00:00:00.000Z') } },
+    ];
+
+    expect(getPostNeighbors(posts, 'newest')).toEqual({
+      previous: null,
+      next: posts[1],
+    });
+  });
+});
+
+describe('getTableOfContentsItems', () => {
+  it('keeps h2 and h3 headings and omits the table of contents when fewer than two items exist', () => {
+    expect(
+      getTableOfContentsItems([
+        { depth: 1, slug: 'title', text: 'Title' },
+        { depth: 2, slug: 'install', text: 'Install' },
+        { depth: 4, slug: 'deep', text: 'Deep' },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('returns h2 and h3 headings when at least two eligible headings exist', () => {
+    expect(
+      getTableOfContentsItems([
+        { depth: 2, slug: 'install', text: 'Install' },
+        { depth: 3, slug: 'windows', text: 'Windows' },
+        { depth: 4, slug: 'ignored', text: 'Ignored' },
+      ]),
+    ).toEqual([
+      { depth: 2, slug: 'install', text: 'Install' },
+      { depth: 3, slug: 'windows', text: 'Windows' },
     ]);
   });
 });
