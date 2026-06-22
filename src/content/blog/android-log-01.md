@@ -1,0 +1,48 @@
+---
+title: 安卓开发学习 01
+description: >-
+  国内安卓app日益臃肿，而我们作为个人开发者，肯定是要有一定追求的。所以我尝试了一下很新的Jetpack
+  Compose来进行安卓app的开发，它的声明式UI确实很有意思，不过从传统的Java转到Kotlin还是有点门槛的。
+pubDate: '2023-01-24T06:17:20.000Z'
+tags:
+  - 安卓
+categories:
+  - 开发
+draft: false
+---
+## 写文原因
+
+国内安卓app日益臃肿，而我们作为个人开发者，肯定是要有一定追求的。所以我尝试了一下很新的**Jetpack Compose**来进行安卓app的开发，它的声明式UI确实很有意思，不过从传统的Java转到Kotlin还是有点门槛的。
+
+本博客记录基于**Jetpack Compose**的安卓app开发的各种要点和开发过程。
+
+## 安卓开发环境搭建
+
+想要搞软件开发，首当其冲的就是开发环境的搭建。安卓app的开发自然不例外。
+
+编写安卓app最传统的方式是使用Java语言，而谷歌现在将Kotlin定为官方开发语言，然后还推了个Flutter框架，用Dart语言写跨平台的手机app,可以构建安卓或者iOS app，跨平台其实还可以使用Xamarin框架，使用C#语言。
+
+那么选择那么多，我们选哪种呢？
+
+作为一个喜欢C#的开发者，我很想选Xamarin，但是Xamarin因为要打包mono到apk中所以包体会很大。而Kotlin是谷歌官方推荐的语言，我们可以来尝试尝试。
+
+Windows PC或者Linux PC可以使用Android Studio来开发，当然Intellij IDEA也是可以的（毕竟Android Studio就是Intellij IDEA的换皮），不过最好还是用Android Studio（下称AS）。
+
+## 配置Android Studio
+
+大部分人的电脑都会给硬盘分区，而C盘因为存放Windows系统文件所以不适合占满，但是我们的AS偏偏默认就在C盘下创建项目，AVD虚拟机也装在C盘，这时我们需要配置一下来避免这种情况。
+
+### 更改工具存放目录
+
+默认这个目录是`C:\Users\你的用户名\.android`，而假如我们需要把这个目录移到其他盘，我们需要在其他盘先新建一个文件夹，比如`G:\AndroidStudioTool`，我们去Windows设置->系统->关于->高级系统设置->环境变量中新建个变量，建议是在用户变量下新建，变量名为`ANDROID_SDK_HOME`，路径为`G:\AndroidStudioTool`。如果有avd虚拟机，我们进入`G:\AndroidStudioTool\.android\avd`下编辑ini配置文件，将路径指向正确的目录，比如我的avd配置文件如下：
+
+```ini
+avd.ini.encoding=UTF-8
+path=G:\AndroidStudioTool\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd
+path.rel=avd\Pixel_3a_API_34_extension_level_7_x86_64.avd
+target=android-34
+```
+
+### 更改项目存放目录
+
+在IDE里的文件->设置->外观与行为->系统设置下可以找到默认项目目录，配置成你喜欢的目录就好了。
