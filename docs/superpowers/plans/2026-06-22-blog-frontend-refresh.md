@@ -15,7 +15,7 @@
 - Modify `src/lib/blog.ts`: add pure helpers for post neighbors, TOC filtering, and code fence metadata parsing.
 - Create `tests/code-blocks.test.mjs`: tests for code fence metadata parsing.
 - Modify `tests/blog-utils.test.mjs`: tests for previous/next navigation and TOC filtering.
-- Create `src/lib/rehype-code-blocks.mjs`: rehype plugin that wraps code blocks with One Dark editor markup.
+- Create `src/lib/rehype-code-blocks.ts`: rehype plugin that wraps code blocks with One Dark editor markup.
 - Modify `astro.config.mjs`: register the rehype plugin in Markdown rendering.
 - Modify `src/pages/posts/[slug].astro`: pass rendered headings and previous/next post data into the article layout.
 - Create `src/components/TableOfContents.astro`: renders desktop sticky TOC and mobile collapsed TOC.
@@ -220,7 +220,7 @@ git commit -m "feat: add blog refresh utilities"
 ## Task 2: Build-Time Code Block Enhancement
 
 **Files:**
-- Create: `src/lib/rehype-code-blocks.mjs`
+- Create: `src/lib/rehype-code-blocks.ts`
 - Modify: `astro.config.mjs`
 - Modify: `tests/site-shell.test.mjs`
 
@@ -231,9 +231,9 @@ Append to `tests/site-shell.test.mjs`:
 ```js
   it('registers the code block rehype plugin for Markdown rendering', async () => {
     const config = await read('astro.config.mjs');
-    const plugin = await read('src/lib/rehype-code-blocks.mjs');
+    const plugin = await read('src/lib/rehype-code-blocks.ts');
 
-    expect(config).toContain("import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs'");
+    expect(config).toContain("import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts'");
     expect(config).toContain('rehypePlugins: [rehypeCodeBlocks]');
     expect(plugin).toContain('code-block');
     expect(plugin).toContain('data-code-copy');
@@ -248,102 +248,115 @@ Run:
 npm run test -- tests/site-shell.test.mjs
 ```
 
-Expected: fails because `src/lib/rehype-code-blocks.mjs` does not exist and config is not registered.
+Expected: fails because `src/lib/rehype-code-blocks.ts` does not exist and config is not registered.
 
 - [ ] **Step 3: Create the rehype plugin**
 
-Create `src/lib/rehype-code-blocks.mjs`:
+Create `src/lib/rehype-code-blocks.ts`:
 
-```js
+```ts
 import { parseCodeFenceMeta } from './blog.ts';
 
-const textNode = (value) => ({ type: 'text', value });
+type HastNode = {
+	type?: string;
+	tagName?: string;
+	value?: string;
+	properties?: Record<string, unknown>;
+	data?: Record<string, unknown>;
+	children?: HastNode[];
+};
 
-function visit(node, visitor) {
-	if (!node || typeof node !== 'object') {
-		return;
-	}
+const textNode = (value: string): HastNode => ({ type: 'text', value });
 
-	visitor(node);
-
-	if (Array.isArray(node.children)) {
-		for (const child of node.children) {
-			visit(child, visitor);
-		}
-	}
+function isElement(node: HastNode | undefined, tagName?: string): node is HastNode {
+	return Boolean(node && node.type === 'element' && (!tagName || node.tagName === tagName));
 }
 
-function readCodeText(codeNode) {
+function readCodeText(codeNode: HastNode): string {
 	return (codeNode.children ?? [])
 		.filter((child) => child.type === 'text')
 		.map((child) => child.value)
 		.join('');
 }
 
+function createCodeFigure(preNode: HastNode): HastNode | null {
+	const codeNode = preNode.children?.find((child) => isElement(child, 'code'));
+
+	if (!codeNode) {
+		return null;
+	}
+
+	const className = codeNode.properties?.className ?? [];
+	const languageClass = Array.isArray(className)
+		? className.find((name) => String(name).startsWith('language-'))
+		: null;
+	const language = languageClass ? String(languageClass).replace('language-', '') : null;
+	const rawMeta = String(codeNode.data?.meta ?? language ?? '');
+	const meta = parseCodeFenceMeta(rawMeta);
+	const label = meta.title ?? meta.language ?? language ?? 'code';
+	const codeText = readCodeText(codeNode);
+
+	return {
+		type: 'element',
+		tagName: 'figure',
+		properties: {
+			className: ['code-block'],
+			'data-language': meta.language ?? language ?? 'code',
+		},
+		children: [
+			{
+				type: 'element',
+				tagName: 'figcaption',
+				properties: { className: ['code-block__header'] },
+				children: [
+					{
+						type: 'element',
+						tagName: 'span',
+						properties: { className: ['code-block__label'] },
+						children: [textNode(label)],
+					},
+					{
+						type: 'element',
+						tagName: 'button',
+						properties: {
+							type: 'button',
+							className: ['code-block__copy'],
+							'data-code-copy': '',
+							'data-code-text': codeText,
+							'aria-label': `复制 ${label} 代码`,
+						},
+						children: [textNode('复制')],
+					},
+				],
+			},
+			{
+				type: 'element',
+				tagName: 'pre',
+				properties: { className: ['code-block__pre'] },
+				children: [codeNode],
+			},
+		],
+	};
+}
+
+function transformChildren(node: HastNode): void {
+	if (!Array.isArray(node.children)) {
+		return;
+	}
+
+	node.children = node.children.map((child) => {
+		if (isElement(child, 'pre')) {
+			return createCodeFigure(child) ?? child;
+		}
+
+		transformChildren(child);
+		return child;
+	});
+}
+
 export default function rehypeCodeBlocks() {
-	return (tree) => {
-		visit(tree, (node) => {
-			if (node.type !== 'element' || node.tagName !== 'pre') {
-				return;
-			}
-
-			const codeNode = node.children?.find(
-				(child) => child.type === 'element' && child.tagName === 'code',
-			);
-
-			if (!codeNode) {
-				return;
-			}
-
-			const className = codeNode.properties?.className ?? [];
-			const languageClass = Array.isArray(className)
-				? className.find((name) => String(name).startsWith('language-'))
-				: null;
-			const language = languageClass ? String(languageClass).replace('language-', '') : null;
-			const rawMeta = codeNode.data?.meta ?? language ?? '';
-			const meta = parseCodeFenceMeta(rawMeta);
-			const label = meta.title ?? meta.language ?? language ?? 'code';
-			const codeText = readCodeText(codeNode);
-
-			node.tagName = 'figure';
-			node.properties = {
-				className: ['code-block'],
-				'data-language': meta.language ?? language ?? 'code',
-			};
-			node.children = [
-				{
-					type: 'element',
-					tagName: 'figcaption',
-					properties: { className: ['code-block__header'] },
-					children: [
-						{
-							type: 'element',
-							tagName: 'span',
-							properties: { className: ['code-block__label'] },
-							children: [textNode(label)],
-						},
-						{
-							type: 'element',
-							tagName: 'button',
-							properties: {
-								type: 'button',
-								className: ['code-block__copy'],
-								'data-code-copy': '',
-								'data-code-text': codeText,
-								'aria-label': `复制 ${label} 代码`,
-							},
-							children: [textNode('复制')],
-						},
-					],
-				},
-				{
-					type: 'element',
-					tagName: 'pre',
-					properties: { className: ['code-block__pre'] },
-					children: [codeNode],
-				},
-			];
-		});
+	return (tree: HastNode) => {
+		transformChildren(tree);
 	};
 }
 ```
@@ -353,7 +366,7 @@ export default function rehypeCodeBlocks() {
 Modify `astro.config.mjs`:
 
 ```js
-import rehypeCodeBlocks from './src/lib/rehype-code-blocks.mjs';
+import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts';
 ```
 
 Add inside `defineConfig`:
@@ -383,7 +396,7 @@ Expected: tests pass and Astro builds without Markdown rendering errors.
 Run:
 
 ```powershell
-git add astro.config.mjs src/lib/rehype-code-blocks.mjs tests/site-shell.test.mjs
+git add astro.config.mjs src/lib/rehype-code-blocks.ts tests/site-shell.test.mjs
 git commit -m "feat: enhance markdown code blocks"
 ```
 
