@@ -6,10 +6,14 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "astro dev --host",
+    "build": "npm run build:astro && npm run build:search",
+    "build:astro": "astro build",
+    "build:search": "pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "migrate:hexo": "node scripts/migrate-hexo.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
@@ -17,5 +21,10 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.7",
     "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "pagefind": "^1.5.2",
+    "vitest": "^4.1.9"
   }
 }
