@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { countTaxonomy, getVisiblePosts } from '../../lib/blog';
+
+export async function getStaticPaths() {
+	const posts = getVisiblePosts(await getCollection('blog'));
+	const tags = countTaxonomy(posts, 'tags');
+
+	return tags.map((tag) => ({
+		params: { tag: tag.name },
+	}));
+}
+
+const tag = Astro.params.tag ? decodeURIComponent(Astro.params.tag) : '';
+const posts = getVisiblePosts(await getCollection('blog')).filter((post) => post.data.tags.includes(tag));
+---
+
+<BaseLayout title={`标签：${tag}`}>
+	<header class="page-header">
+		<h1>标签：{tag}</h1>
+		<p>共 {posts.length} 篇文章。</p>
+	</header>
+
+	<ul class="post-list">
+		{
+			posts.map((post) => (
+				<li class="post-card">
+					<h2>
+						<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+					</h2>
+					<p class="post-meta">
+						<FormattedDate date={post.data.pubDate} />
+					</p>
+					<p>{post.data.description}</p>
+				</li>
+			))
+		}
+	</ul>
+</BaseLayout>

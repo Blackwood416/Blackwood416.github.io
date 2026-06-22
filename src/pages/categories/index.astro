@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { countTaxonomy, encodeHrefSegment, getVisiblePosts } from '../../lib/blog';
+
+const categories = countTaxonomy(getVisiblePosts(await getCollection('blog')), 'categories');
+---
+
+<BaseLayout title="分类">
+	<header class="page-header">
+		<h1>分类</h1>
+		<p>按分类浏览文章。</p>
+	</header>
+
+	<ul class="taxonomy-list">
+		{
+			categories.map((category) => (
+				<li>
+					<a href={`/categories/${encodeHrefSegment(category.name)}/`}>
+						{category.name} ({category.count})
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</BaseLayout>

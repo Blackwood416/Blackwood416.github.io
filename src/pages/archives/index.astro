@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts, groupPostsByYearMonth } from '../../lib/blog';
+
+const groups = groupPostsByYearMonth(getVisiblePosts(await getCollection('blog')));
+---
+
+<BaseLayout title="归档">
+	<header class="page-header">
+		<h1>归档</h1>
+		<p>按月份浏览文章。</p>
+	</header>
+
+	{
+		groups.map((group) => (
+			<section class="archive-group" aria-labelledby={`archive-${group.key}`}>
+				<h2 id={`archive-${group.key}`}>
+					{group.year}-{group.month}
+				</h2>
+				<ul>
+					{group.posts.map((post) => (
+						<li>
+							<FormattedDate date={post.data.pubDate} />{' '}
+							<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
+</BaseLayout>

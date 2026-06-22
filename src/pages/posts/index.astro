@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts } from '../../lib/blog';
+
+const posts = getVisiblePosts(await getCollection('blog'));
+---
+
+<BaseLayout title="全部文章">
+	<header class="page-header">
+		<h1>全部文章</h1>
+		<p>共 {posts.length} 篇文章。</p>
+	</header>
+
+	<ul class="post-list">
+		{
+			posts.map((post) => (
+				<li class="post-card">
+					<h2>
+						<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+					</h2>
+					<p class="post-meta">
+						<FormattedDate date={post.data.pubDate} />
+					</p>
+					<p>{post.data.description}</p>
+				</li>
+			))
+		}
+	</ul>
+</BaseLayout>
