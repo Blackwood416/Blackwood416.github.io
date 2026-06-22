@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getVisiblePosts } from '../../lib/blog';
+import { encodeHrefSegment, getVisiblePosts } from '../../lib/blog';
 
 const posts = getVisiblePosts(await getCollection('blog'));
 ---
@@ -23,6 +23,18 @@ const posts = getVisiblePosts(await getCollection('blog'));
 					<p class="post-meta">
 						<FormattedDate date={post.data.pubDate} />
 					</p>
+					{
+						(post.data.categories.length > 0 || post.data.tags.length > 0) && (
+							<div class="post-taxonomy">
+								{post.data.categories.map((category) => (
+									<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
+								))}
+								{post.data.tags.map((tag) => (
+									<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
+								))}
+							</div>
+						)
+					}
 					<p>{post.data.description}</p>
 				</li>
 			))

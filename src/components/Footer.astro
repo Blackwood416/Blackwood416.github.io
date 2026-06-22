@@ -5,14 +5,43 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} {SITE_AUTHOR}
+	<p>&copy; {today.getFullYear()} {SITE_AUTHOR}</p>
+	<nav aria-label="页脚链接">
+		<a href="/rss.xml">RSS</a>
+		<a href="https://github.com/Blackwood416/Blackwood416.github.io">GitHub</a>
+	</nav>
 </footer>
 <style>
 	footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
 		max-width: var(--content-width);
 		margin: 0 auto;
 		padding: 2rem 1rem 3rem;
-		color: rgb(var(--gray));
+		color: var(--text-muted);
 		font-size: 0.9rem;
+	}
+	p {
+		margin: 0;
+	}
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+	a {
+		color: var(--text-muted);
+	}
+	a:hover,
+	a:focus-visible {
+		color: var(--accent);
+	}
+	@media (max-width: 640px) {
+		footer {
+			align-items: flex-start;
+			flex-direction: column;
+		}
 	}
 </style>
