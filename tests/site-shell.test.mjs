@@ -39,4 +39,18 @@ describe('production site shell', () => {
     expect(baseHead).not.toContain('blog-placeholder');
     expect(baseHead).not.toContain('ImageMetadata');
   });
+
+  it('registers the code block rehype plugin for Markdown rendering', async () => {
+    const config = await read('astro.config.mjs');
+    const markerPlugin = await read('src/lib/remark-code-block-meta.ts');
+    const plugin = await read('src/lib/rehype-code-blocks.ts');
+
+    expect(config).toContain("import remarkCodeBlockMeta from './src/lib/remark-code-block-meta.ts'");
+    expect(config).toContain("import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts'");
+    expect(config).toContain('remarkPlugins: [remarkCodeBlockMeta]');
+    expect(config).toContain('rehypePlugins: [rehypeCodeBlocks]');
+    expect(markerPlugin).toContain('data-code-block-meta');
+    expect(plugin).toContain('code-block');
+    expect(plugin).toContain('data-code-copy');
+  });
 });

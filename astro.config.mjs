@@ -3,11 +3,20 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+import remarkCodeBlockMeta from './src/lib/remark-code-block-meta.ts';
+import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://blog.blackwood.cv',
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		remarkPlugins: [remarkCodeBlockMeta],
+		rehypePlugins: [rehypeCodeBlocks],
+		shikiConfig: {
+			theme: 'one-dark-pro',
+		},
+	},
 	fonts: [
 		{
 			provider: fontProviders.local(),
