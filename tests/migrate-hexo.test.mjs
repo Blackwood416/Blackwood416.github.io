@@ -10,6 +10,7 @@ import {
   findRelativeImageReferences,
   migrateHexo,
   normalizeList,
+  normalizePubDate,
   removeDuplicateTitleHeading,
 } from '../scripts/migrate-hexo.mjs';
 
@@ -77,6 +78,17 @@ describe('findRelativeImageReferences', () => {
   });
 });
 
+describe('normalizePubDate', () => {
+  it('parses bare Hexo timestamps as Asia/Shanghai for timezone-stable output', () => {
+    expect(normalizePubDate('2024-01-24 20:37:17', new Date('2020-01-01T00:00:00.000Z'), 'post.md')).toBe(
+      '2024-01-24T12:37:17.000Z',
+    );
+    expect(normalizePubDate('2024-01-24T20:37:17', new Date('2020-01-01T00:00:00.000Z'), 'post.md')).toBe(
+      '2024-01-24T12:37:17.000Z',
+    );
+  });
+});
+
 describe('migrateHexo', () => {
   it('migrates from file URL roots deterministically while preserving non-Markdown content files', async () => {
     const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'hexo-migration-'));
@@ -136,7 +148,8 @@ describe('migrateHexo', () => {
     await expect(fs.readFile(path.join(outputBlogDir, 'notes.txt'), 'utf8')).resolves.toBe('keep me');
     expect(parsed.data).toMatchObject({
       title: 'Sample Post',
-      pubDate: stableDate,
+      description: 'Readable paragraph with markdown.',
+      pubDate: stableDate.toISOString(),
       tags: ['Astro', 'Migration'],
       categories: ['Dev'],
       draft: false,

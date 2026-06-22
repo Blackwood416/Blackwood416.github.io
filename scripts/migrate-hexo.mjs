@@ -171,25 +171,27 @@ function isPublishedPost(data) {
   return data.draft !== true && data.published !== false;
 }
 
-function normalizePubDate(value, fallbackDate, sourcePath) {
+export function normalizePubDate(value, fallbackDate, sourcePath) {
   if (value instanceof Date) {
     if (Number.isNaN(value.getTime())) {
       throw new Error(`Post date is invalid: ${sourcePath}`);
     }
 
-    return value;
+    return value.toISOString();
   }
 
   if (value == null || String(value).trim() === '') {
-    return fallbackDate;
+    return fallbackDate.toISOString();
   }
 
-  const parsed = new Date(String(value));
+  const text = String(value).trim();
+  const hexoDateMatch = text.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})$/);
+  const parsed = new Date(hexoDateMatch ? `${hexoDateMatch[1]}T${hexoDateMatch[2]}+08:00` : text);
   if (Number.isNaN(parsed.getTime())) {
     throw new Error(`Post date is invalid: ${sourcePath}`);
   }
 
-  return parsed;
+  return parsed.toISOString();
 }
 
 async function emptyMarkdownFiles(directory) {
