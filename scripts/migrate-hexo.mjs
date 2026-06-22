@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import process from 'process';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import matter from 'gray-matter';
 
 export const DEFAULT_HEXO_ROOT = 'F:/hexo-blogs';
@@ -72,10 +72,12 @@ export async function migrateHexo({
   hexoRoot = DEFAULT_HEXO_ROOT,
   projectRoot = process.cwd(),
 } = {}) {
-  const sourcePostsDir = path.join(hexoRoot, 'source', '_posts');
-  const sourceAboutPath = path.join(hexoRoot, 'source', 'about', 'index.md');
-  const outputBlogDir = path.join(projectRoot, BLOG_OUTPUT_DIR);
-  const outputAboutPath = path.join(projectRoot, ABOUT_OUTPUT_PATH);
+  const normalizedHexoRoot = toFilesystemPath(hexoRoot);
+  const normalizedProjectRoot = toFilesystemPath(projectRoot);
+  const sourcePostsDir = path.join(normalizedHexoRoot, 'source', '_posts');
+  const sourceAboutPath = path.join(normalizedHexoRoot, 'source', 'about', 'index.md');
+  const outputBlogDir = path.join(normalizedProjectRoot, BLOG_OUTPUT_DIR);
+  const outputAboutPath = path.join(normalizedProjectRoot, ABOUT_OUTPUT_PATH);
 
   await fs.mkdir(outputBlogDir, { recursive: true });
   await fs.mkdir(path.dirname(outputAboutPath), { recursive: true });
@@ -91,6 +93,7 @@ export async function migrateHexo({
     }
 
     const sourcePath = path.join(sourcePostsDir, entry.name);
+    const sourceStat = await fs.stat(sourcePath);
     const parsed = matter(await fs.readFile(sourcePath, 'utf8'));
     if (!isPublishedPost(parsed.data)) {
       continue;
@@ -101,7 +104,7 @@ export async function migrateHexo({
     const frontmatter = {
       title,
       description: String(parsed.data.description ?? parsed.data.excerpt ?? extractDescription(content)),
-      pubDate: normalizeDate(parsed.data.date ?? parsed.data.pubDate ?? parsed.data.published),
+      pubDate: normalizePubDate(parsed.data.date ?? parsed.data.pubDate, sourceStat.mtime, sourcePath),
       tags: normalizeList(parsed.data.tags),
       categories: normalizeList(parsed.data.categories),
       draft: false,
@@ -135,6 +138,15 @@ export async function migrateHexo({
   };
 }
 
+function toFilesystemPath(value) {
+  if (value instanceof URL) {
+    return fileURLToPath(value);
+  }
+
+  const text = String(value);
+  return text.startsWith('file:') ? fileURLToPath(text) : text;
+}
+
 function stripMarkdownInlineSyntax(markdown) {
   return markdown
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
@@ -159,16 +171,25 @@ function isPublishedPost(data) {
   return data.draft !== true && data.published !== false;
 }
 
-function normalizeDate(value) {
+function normalizePubDate(value, fallbackDate, sourcePath) {
   if (value instanceof Date) {
-    return value.toISOString();
+    if (Number.isNaN(value.getTime())) {
+      throw new Error(`Post date is invalid: ${sourcePath}`);
+    }
+
+    return value;
   }
 
   if (value == null || String(value).trim() === '') {
-    return new Date().toISOString();
+    return fallbackDate;
   }
 
-  return String(value);
+  const parsed = new Date(String(value));
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`Post date is invalid: ${sourcePath}`);
+  }
+
+  return parsed;
 }
 
 async function emptyMarkdownFiles(directory) {
