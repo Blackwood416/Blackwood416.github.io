@@ -67,18 +67,25 @@ Official reference:
 
 - [Cloudflare Pages custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/)
 
-## GitHub Repository Note
+## Current Deployment
 
-This local checkout currently has no `origin` remote configured. Before connecting Cloudflare Pages to GitHub, push the migrated Astro branch or merge it into the repository branch that Cloudflare will deploy.
+The migrated branch has been pushed to GitHub as `origin/codex/astro-migration`.
 
-Example:
+The initial Cloudflare Pages deployment was created by direct upload with Wrangler:
+
+- Pages project: `blackwood-blog`
+- Default domain: `https://blackwood-blog.pages.dev`
+- Custom domain: `https://blog.blackwood.cv`
+- Uploaded directory: `dist`
+
+Future deploys can either continue using direct upload:
 
 ```sh
-git remote add origin https://github.com/Blackwood416/Blackwood416.github.io.git
-git push -u origin codex/astro-migration
+npm run build
+npx wrangler pages deploy dist --project-name blackwood-blog --branch production
 ```
 
-Then merge or open a pull request so the production branch contains the Astro project.
+Or connect the GitHub repository in Cloudflare Pages after merging the migrated branch into the preferred production branch.
 
 ## Browser-Assisted Steps
 
