@@ -53,4 +53,15 @@ describe('production site shell', () => {
     expect(plugin).toContain('code-block');
     expect(plugin).toContain('data-code-copy');
   });
+
+  it('wires article pages to table of contents and previous-next navigation', async () => {
+    const route = await read('src/pages/posts/[slug].astro');
+    const layout = await read('src/layouts/BlogPost.astro');
+
+    expect(route).toContain('getPostNeighbors');
+    expect(route).toContain('getTableOfContentsItems');
+    expect(route).toContain('headings');
+    expect(layout).toContain('TableOfContents');
+    expect(layout).toContain('PostNavigation');
+  });
 });

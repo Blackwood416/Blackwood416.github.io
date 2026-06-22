@@ -1,23 +1,30 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { getVisiblePosts } from '../../lib/blog';
+import { getPostNeighbors, getTableOfContentsItems, getVisiblePosts } from '../../lib/blog';
 
 export async function getStaticPaths() {
 	const posts = getVisiblePosts(await getCollection('blog'));
 
 	return posts.map((post) => ({
 		params: { slug: post.id },
-		props: post,
+		props: {
+			post,
+			neighbors: getPostNeighbors(posts, post.id),
+		},
 	}));
 }
 
-type Props = CollectionEntry<'blog'>;
+type Props = {
+	post: CollectionEntry<'blog'>;
+	neighbors: ReturnType<typeof getPostNeighbors>;
+};
 
-const post = Astro.props;
-const { Content } = await render(post);
+const { post, neighbors } = Astro.props;
+const { Content, headings } = await render(post);
+const tocItems = getTableOfContentsItems(headings);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} tocItems={tocItems} previous={neighbors.previous} next={neighbors.next}>
 	<Content />
 </BlogPost>

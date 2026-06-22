@@ -1,0 +1,40 @@
+---
+import type { TocHeading } from '../lib/blog';
+
+interface Props {
+	items: TocHeading[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+	items.length > 0 && (
+		<>
+			<aside class="toc toc--desktop" aria-label="文章目录">
+				<p class="toc__title">目录</p>
+				<nav>
+					<ul>
+						{items.map((item) => (
+							<li class={`toc__item toc__item--depth-${item.depth}`}>
+								<a href={`#${item.slug}`}>{item.text}</a>
+							</li>
+						))}
+					</ul>
+				</nav>
+			</aside>
+			<details class="toc toc--mobile">
+				<summary>目录</summary>
+				<nav aria-label="文章目录">
+					<ul>
+						{items.map((item) => (
+							<li class={`toc__item toc__item--depth-${item.depth}`}>
+								<a href={`#${item.slug}`}>{item.text}</a>
+							</li>
+						))}
+					</ul>
+				</nav>
+			</details>
+		</>
+	)
+}

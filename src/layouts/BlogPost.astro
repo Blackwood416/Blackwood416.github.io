@@ -1,44 +1,133 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
+import PostNavigation from '../components/PostNavigation.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { encodeHrefSegment, type PostNeighbors, type TocHeading } from '../lib/blog';
 import BaseLayout from './BaseLayout.astro';
-import { encodeHrefSegment } from '../lib/blog';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	tocItems?: TocHeading[];
+	previous?: PostNeighbors['previous'];
+	next?: PostNeighbors['next'];
+};
 
-const { title, description, pubDate, updatedDate, categories, tags } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	categories,
+	tags,
+	tocItems = [],
+	previous = null,
+	next = null,
+} = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
-	<article class="post">
-		<header class="post-header">
-			<p class="post-date">
-				发布于 <FormattedDate date={pubDate} />
+	<div class="post-shell">
+		<article class="post">
+			<header class="post-header">
+				<p class="post-date">
+					发布于 <FormattedDate date={pubDate} />
+					{
+						updatedDate && (
+							<>
+								<span aria-hidden="true"> · </span>
+								更新于 <FormattedDate date={updatedDate} />
+							</>
+						)
+					}
+				</p>
+				<h1>{title}</h1>
 				{
-					updatedDate && (
-						<>
-							<span aria-hidden="true"> · </span>
-							更新于 <FormattedDate date={updatedDate} />
-						</>
+					(categories.length > 0 || tags.length > 0) && (
+						<div class="post-taxonomy">
+							{categories.map((category) => (
+								<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
+							))}
+							{tags.map((tag) => (
+								<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
+							))}
+						</div>
 					)
 				}
-			</p>
-			<h1>{title}</h1>
-			{
-				(categories.length > 0 || tags.length > 0) && (
-					<div class="post-taxonomy">
-						{categories.map((category) => (
-							<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
-						))}
-						{tags.map((tag) => (
-							<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
-						))}
-					</div>
-				)
+			</header>
+			<TableOfContents items={tocItems} />
+			<div class="prose">
+				<slot />
+			</div>
+			<PostNavigation previous={previous} next={next} />
+		</article>
+		<TableOfContents items={tocItems} />
+	</div>
+	<script is:inline>
+		const parseCodeMeta = (source) => {
+			const value = source.trim();
+			const firstToken = value.match(/^[^\s]+/)?.[0] ?? null;
+			const titleMatch = value.match(/(?:^|\s)title=(?:"([^"]*)"|'([^']*)'|([^\s]+))/);
+			const language = firstToken && !firstToken.includes('=') && !firstToken.startsWith('{') ? firstToken : null;
+			const title = titleMatch?.[1] ?? titleMatch?.[2] ?? titleMatch?.[3] ?? null;
+
+			return {
+				language,
+				label: title ?? language ?? 'code',
+			};
+		};
+
+		document.querySelectorAll('[data-code-block-meta]').forEach((marker) => {
+			const figure = marker.nextElementSibling;
+
+			if (!(figure instanceof HTMLElement) || !figure.classList.contains('code-block')) {
+				return;
 			}
-		</header>
-		<div class="prose">
-			<slot />
-		</div>
-	</article>
+
+			const meta = parseCodeMeta(marker.getAttribute('data-code-block-meta') ?? '');
+			const label = figure.querySelector('.code-block__label');
+			const button = figure.querySelector('[data-code-copy]');
+
+			figure.dataset.language = meta.language ?? 'code';
+
+			if (label) {
+				label.textContent = meta.label;
+			}
+
+			if (button) {
+				button.setAttribute('aria-label', `复制 ${meta.label} 代码`);
+			}
+
+			marker.remove();
+		});
+
+		document.addEventListener('click', async (event) => {
+			const target = event.target;
+
+			if (!(target instanceof Element)) {
+				return;
+			}
+
+			const button = target.closest('[data-code-copy]');
+
+			if (!(button instanceof HTMLElement)) {
+				return;
+			}
+
+			const text = button.getAttribute('data-code-text') ?? '';
+			const original = button.textContent;
+
+			try {
+				await navigator.clipboard.writeText(text);
+				button.textContent = '已复制';
+				window.setTimeout(() => {
+					button.textContent = original;
+				}, 1600);
+			} catch {
+				button.textContent = '复制失败';
+				window.setTimeout(() => {
+					button.textContent = original;
+				}, 1600);
+			}
+		});
+	</script>
 </BaseLayout>
