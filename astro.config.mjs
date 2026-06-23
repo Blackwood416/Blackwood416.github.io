@@ -9,6 +9,9 @@ import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://blog.blackwood.cv',
+	devToolbar: {
+		enabled: false,
+	},
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		remarkPlugins: [remarkCodeBlockMeta],

@@ -5,50 +5,280 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { encodeHrefSegment, getVisiblePosts } from '../lib/blog';
 
-const posts = getVisiblePosts(await getCollection('blog')).slice(0, 10);
+// 取前 6 篇可见文章
+const posts = getVisiblePosts(await getCollection('blog')).slice(0, 6);
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-	<header class="page-header">
-		<h1>{SITE_TITLE}</h1>
-		<p>{SITE_DESCRIPTION}</p>
-		<ul class="link-list">
-			<li><a href="/posts/">全部文章</a></li>
-			<li><a href="/archives/">归档</a></li>
-			<li><a href="/tags/">标签</a></li>
-			<li><a href="/categories/">分类</a></li>
-			<li><a href="/search/">搜索</a></li>
-		</ul>
+	<!-- Hero Section -->
+	<header class="hero animate-fade-up" style="--delay: 1">
+		<h1 class="hero__title">{SITE_TITLE}</h1>
+		<p class="hero__subtitle">
+			欢迎来到我的太空舱。这里记录着关于软件开发、设计模式、逆向工程与技术探索的点点记事。
+			<span class="hero__cursor"></span>
+		</p>
+		<div class="cta-group">
+			<a href="/posts/" class="btn btn--primary">探索文章</a>
+			<a href="/about/" class="btn btn--secondary">关于我</a>
+		</div>
 	</header>
 
-	<section aria-labelledby="recent-posts">
-		<h2 id="recent-posts">最新文章</h2>
-		<ul class="post-list">
-			{
-				posts.map((post) => (
-					<li class="post-card">
-						<h3>
-							<a href={`/posts/${post.id}/`}>{post.data.title}</a>
-						</h3>
-						<p class="post-meta">
-							<FormattedDate date={post.data.pubDate} />
-						</p>
-						{
-							(post.data.categories.length > 0 || post.data.tags.length > 0) && (
-								<div class="post-taxonomy">
-									{post.data.categories.map((category) => (
-										<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
-									))}
-									{post.data.tags.map((tag) => (
-										<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
-									))}
-								</div>
-							)
-						}
-						<p>{post.data.description}</p>
-					</li>
-				))
-			}
-		</ul>
-	</section>
+	<!-- Main Home Layout -->
+	<div class="home-grid">
+		<!-- Left Side: Recent Posts -->
+		<section class="home-content" aria-labelledby="recent-posts">
+			<h2 id="recent-posts" class="animate-fade-up" style="--delay: 2">最新文章</h2>
+			<ul class="post-list">
+				{
+					posts.map((post, index) => (
+						<li class="post-card animate-fade-up" style={`--delay: ${index + 3}`}>
+							<h3>
+								<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+							</h3>
+							<p class="post-meta">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
+							{
+								(post.data.categories.length > 0 || post.data.tags.length > 0) && (
+									<div class="post-taxonomy">
+										{post.data.categories.map((category) => (
+											<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
+										))}
+										{post.data.tags.map((tag) => (
+											<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
+										))}
+									</div>
+								)
+							}
+							<p>{post.data.description}</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<!-- Right Side: Sidebar Widgets -->
+		<aside class="home-sidebar animate-fade-up" style="--delay: 4" aria-label="侧边栏">
+			<!-- Profile Card -->
+			<div class="profile-card">
+				<div class="profile-avatar">B</div>
+				<h3 class="profile-name">Blackwood</h3>
+				<p class="profile-bio">
+					一个热衷于探索底层技术、逆向安全与精致前端架构的设计型开发者。
+				</p>
+				<div class="profile-tags">
+					<span class="profile-tag">#DotNet</span>
+					<span class="profile-tag">#Unity</span>
+					<span class="profile-tag">#Security</span>
+					<span class="profile-tag">#Astro</span>
+				</div>
+				<!-- Social Media -->
+				<div class="social-links">
+					<a href="https://github.com/Blackwood416" target="_blank" class="social-btn" aria-label="GitHub" title="GitHub">
+						<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+						</svg>
+					</a>
+					<a href="/rss.xml" class="social-btn" aria-label="RSS Feed" title="订阅 RSS">
+						<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 11a9 9 0 0 1 9 9"></path>
+							<path d="M4 4a16 16 0 0 1 16 16"></path>
+							<circle cx="5" cy="19" r="1"></circle>
+						</svg>
+					</a>
+				</div>
+			</div>
+		</aside>
+	</div>
 </BaseLayout>
+
+<style>
+	/* Hero Section */
+	.hero {
+		padding: 3.5rem 0 3rem;
+		text-align: left;
+		position: relative;
+	}
+	.hero__title {
+		font-size: 3.5rem;
+		font-weight: 800;
+		line-height: 1.15;
+		margin: 0 0 1.25rem;
+		background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		letter-spacing: -0.03em;
+		transition: color var(--transition-normal);
+	}
+	.hero__subtitle {
+		font-size: 1.35rem;
+		color: var(--text-muted);
+		max-width: 680px;
+		margin: 0 0 2.25rem;
+		line-height: 1.65;
+		transition: color var(--transition-normal);
+	}
+	.hero__cursor {
+		display: inline-block;
+		width: 3px;
+		height: 1.1em;
+		background-color: var(--accent);
+		margin-left: 4px;
+		vertical-align: middle;
+		animation: blink 1s step-end infinite;
+	}
+	
+	/* Call To Action Buttons */
+	.cta-group {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.75rem 1.65rem;
+		border-radius: 12px;
+		font-weight: 600;
+		text-decoration: none;
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+	}
+	.btn--primary {
+		background: var(--accent);
+		color: #ffffff;
+		box-shadow: 0 4px 14px rgba(29, 95, 209, 0.25);
+	}
+	.btn--primary:hover {
+		background: var(--accent-dark);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(29, 95, 209, 0.35);
+	}
+	.btn--secondary {
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--text);
+	}
+	.btn--secondary:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+		transform: translateY(-2px);
+		background: var(--surface-muted);
+	}
+	
+	/* Layout Grid */
+	.home-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 320px;
+		gap: 3rem;
+		margin-top: 2rem;
+		align-items: start;
+	}
+	
+	.post-card a {
+		color: var(--text-strong);
+		transition: color var(--transition-fast);
+	}
+	.post-card a:hover {
+		color: var(--accent);
+	}
+	
+	/* Sidebar名片 */
+	.profile-card {
+		padding: 1.5rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 16px;
+		box-shadow: var(--shadow-sm);
+		transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+	}
+	.profile-avatar {
+		width: 56px;
+		height: 56px;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 1.75rem;
+		font-weight: 800;
+		margin-bottom: 1.25rem;
+		box-shadow: 0 4px 12px rgba(29, 95, 209, 0.2);
+	}
+	.profile-name {
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: var(--text-strong);
+		margin: 0 0 0.5rem;
+		transition: color var(--transition-normal);
+	}
+	.profile-bio {
+		font-size: 0.95rem;
+		color: var(--text-muted);
+		line-height: 1.55;
+		margin: 0 0 1.25rem;
+		transition: color var(--transition-normal);
+	}
+	.profile-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-bottom: 1.5rem;
+	}
+	.profile-tag {
+		font-size: 0.78rem;
+		padding: 0.15rem 0.5rem;
+		background: var(--surface-subtle);
+		border-radius: 6px;
+		color: var(--text-muted);
+		transition: background-color var(--transition-normal), color var(--transition-normal);
+	}
+	
+	/* Social Links */
+	.social-links {
+		display: flex;
+		gap: 0.75rem;
+	}
+	.social-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 10px;
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--text-muted);
+		transition: transform var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+	}
+	.social-btn:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+		transform: translateY(-2px) rotate(8deg);
+	}
+	
+	/* Blinking Cursor Animation */
+	@keyframes blink {
+		from, to { background-color: transparent }
+		50% { background-color: var(--accent) }
+	}
+	
+	@media (max-width: 960px) {
+		.home-grid {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+		.hero {
+			padding: 2.5rem 0 2rem;
+		}
+		.hero__title {
+			font-size: 2.75rem;
+		}
+		.profile-card {
+			margin-top: 1rem;
+		}
+	}
+</style>
+

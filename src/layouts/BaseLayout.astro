@@ -16,12 +16,93 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={title} description={description} />
+		<script is:inline>
+			(function () {
+				const getTheme = () => {
+					if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+						return localStorage.getItem('theme');
+					}
+					if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+						return 'dark';
+					}
+					return 'light';
+				};
+				const theme = getTheme();
+				if (theme === 'dark') {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+			})();
+		</script>
 	</head>
 	<body>
+		<div class="mosaic-container" aria-hidden="true">
+			{Array.from({ length: 12 }).map((_, r) => (
+				Array.from({ length: 20 }).map((_, c) => (
+					<div class="mosaic-tile" style={`--row: ${r}; --col: ${c};`}></div>
+				))
+			))}
+		</div>
 		<Header />
 		<main>
 			<slot />
 		</main>
 		<Footer />
+		<!-- Live2D 看板娘常驻集成 -->
+		<script is:inline src="https://unpkg.com/oh-my-live2d"></script>
+		<script is:inline>
+			(function () {
+				if (typeof OML2D !== 'undefined') {
+					const oml2d = OML2D.loadOml2d({
+						models: [
+							{
+								path: '/assets/Purple紫/Purple紫.model3.json',
+								scale: 0.08,
+								position: [-20, 20],
+								stageStyle: {
+									width: 250,
+									height: 320
+								}
+							}
+						],
+						dockedPosition: 'right', // 靠右侧锚定放置
+						mobileLimit: true, // 屏幕宽度小于 768px 时自动隐藏
+						primaryColor: 'var(--primary)', // 修改 OML 面板配色为符合模型的极光紫
+						tips: {
+							style: {
+								fontSize: '13px',
+								borderRadius: '8px',
+								boxShadow: 'var(--shadow-md)',
+								backgroundColor: 'var(--surface)',
+								color: 'var(--text)',
+								border: '1px solid var(--border)'
+							},
+							welcomeTips: {
+								message: {
+									day: '工作辛苦啦，要喝杯茶吗？',
+									noon: '吃过午饭了吗？休息一下吧。',
+									afternoon: '来杯下午茶，元气满满！',
+									night: '天黑了，今天学到了什么新知识呢？',
+									lateNight: '已经很晚了',
+									morning: '早安！今天也是美好的一天。'
+								}
+							}
+						}
+					});
+				}
+			})();
+		</script>
+		<!-- 液态玻璃位移折射 SVG 滤波器 -->
+		<svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+			<defs>
+				<filter id="liquid-glass">
+					<!-- 使用 fractalNoise 生成多阶水波纹噪声纹理 -->
+					<feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" result="noise" />
+					<!-- 根据噪声纹理对背后图层执行 15 像素比例的位移偏折，模拟水的折射效果 -->
+					<feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
+				</filter>
+			</defs>
+		</svg>
 	</body>
 </html>

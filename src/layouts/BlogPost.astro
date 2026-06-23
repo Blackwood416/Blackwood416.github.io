@@ -129,5 +129,65 @@ const {
 				}, 1600);
 			}
 		});
+
+		// TOC (目录) 视口动态追踪高亮
+		(function () {
+			const headings = Array.from(document.querySelectorAll('.prose h2, .prose h3'));
+			const tocLinks = Array.from(document.querySelectorAll('.toc a'));
+			
+			if (headings.length === 0 || tocLinks.length === 0) {
+				return;
+			}
+			
+			const activeClass = 'active';
+			const visibleHeadingsMap = new Map();
+			
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					visibleHeadingsMap.set(entry.target, entry.isIntersecting);
+				});
+				
+				let activeHeading = null;
+				for (const heading of headings) {
+					if (visibleHeadingsMap.get(heading)) {
+						activeHeading = heading;
+						break;
+					}
+				}
+				
+				if (!activeHeading) {
+					const scrollY = window.scrollY || window.pageYOffset;
+					for (let i = headings.length - 1; i >= 0; i--) {
+						const rect = headings[i].getBoundingClientRect();
+						const top = rect.top + scrollY;
+						if (scrollY >= top - 200) {
+							activeHeading = headings[i];
+							break;
+						}
+					}
+				}
+				
+				if (!activeHeading && headings.length > 0) {
+					activeHeading = headings[0];
+				}
+				
+				if (activeHeading) {
+					const activeId = activeHeading.getAttribute('id');
+					tocLinks.forEach((link) => {
+						const href = link.getAttribute('href');
+						if (href === `#${activeId}`) {
+							link.classList.add(activeClass);
+						} else {
+							link.classList.remove(activeClass);
+						}
+					});
+				}
+			}, {
+				rootMargin: '-80px 0px -40% 0px',
+				threshold: 0
+			});
+			
+			headings.forEach(heading => observer.observe(heading));
+		})();
 	</script>
 </BaseLayout>
