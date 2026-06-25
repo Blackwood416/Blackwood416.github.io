@@ -748,13 +748,13 @@ blockquote {
 	grid-template-rows: repeat(12, 1fr);
 	gap: 1px;
 	pointer-events: none;
-	background: rgba(124, 58, 237, 0.08);
+	background: rgba(0, 0, 0, 0.08); /* 白色主题用黑色网格线 */
 	transition: background-color var(--transition-normal);
 	overflow: hidden;
 }
 
 :global(.dark) .mosaic-container {
-	background: rgba(167, 139, 250, 0.06);
+	background: rgba(255, 255, 255, 0.08); /* 黑色主题用白色网格线 */
 }
 
 .mosaic-tile {
@@ -770,17 +770,17 @@ blockquote {
 @keyframes mosaicWavy {
 	0%, 100% {
 		background-color: var(--surface-subtle);
-		transform: scale(0.97);
+		transform: scale(0.97) translate(0, 0);
 		opacity: 0.04;
 	}
 	50% {
 		background-color: rgba(124, 58, 237, 0.4);
-		transform: scale(1.02);
+		transform: scale(1.02) translate(5px, 5px); /* 引入斜向位移 */
 		opacity: 0.12;
 	}
 	75% {
 		background-color: rgba(13, 148, 136, 0.3);
-		transform: scale(0.99);
+		transform: scale(0.99) translate(2px, 2px);
 		opacity: 0.08;
 	}
 }
@@ -793,17 +793,17 @@ blockquote {
 @keyframes mosaicWavyDark {
 	0%, 100% {
 		background-color: var(--surface-subtle);
-		transform: scale(0.97);
+		transform: scale(0.97) translate(0, 0);
 		opacity: 0.03;
 	}
 	50% {
 		background-color: rgba(167, 139, 250, 0.25);
-		transform: scale(1.02);
+		transform: scale(1.02) translate(5px, 5px); /* 引入斜向位移 */
 		opacity: 0.09;
 	}
 	75% {
 		background-color: rgba(45, 212, 191, 0.2);
-		transform: scale(0.99);
+		transform: scale(0.99) translate(2px, 2px);
 		opacity: 0.06;
 	}
 }
