@@ -18,7 +18,7 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		remarkPlugins: [remarkMath, remarkReadingTime, remarkCodeBlockMeta],
-		rehypePlugins: [rehypeCodeBlocks, rehypeKatex],
+		rehypePlugins: [rehypeKatex, rehypeCodeBlocks],
 		shikiConfig: {
 			theme: 'one-dark-pro',
 		},

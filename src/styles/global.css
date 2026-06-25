@@ -862,3 +862,24 @@ blockquote {
 	box-shadow: var(--glass-shadow);
 	transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
+
+/* 数学公式 (KaTeX) 渲染调优 */
+.katex-mathml {
+	/* 强制隐藏辅助 MathML，彻底解决公式重叠多出一行的问题 */
+	display: none !important;
+}
+
+.katex {
+	font-size: 1.05em; /* 略微增大公式以改善可读性 */
+	color: var(--text-strong); /* 默认使用高对比度文字色 */
+}
+
+/* 亮色模式下公式字色加深，确保在白底上极度清晰 */
+:root:not(.dark) .katex {
+	color: #0d0d0d !important;
+}
+
+/* 暗色模式下公式字色高亮 */
+:global(.dark) .katex {
+	color: #ffffff !important;
+}
