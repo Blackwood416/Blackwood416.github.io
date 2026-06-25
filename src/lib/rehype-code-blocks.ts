@@ -35,6 +35,9 @@ function createCodeFigure(preNode: HastNode): HastNode | null {
 		? className.find((name) => String(name).startsWith('language-'))
 		: null;
 	const language = languageClass ? String(languageClass).replace('language-', '') : null;
+	if (language === 'math' || language === 'katex') {
+		return null;
+	}
 	const rawMeta = String(
 		codeNode.properties?.['data-code-block-meta'] ??
 			preNode.properties?.['data-code-block-meta'] ??
