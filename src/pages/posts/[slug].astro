@@ -21,10 +21,19 @@ type Props = {
 };
 
 const { post, neighbors } = Astro.props;
-const { Content, headings } = await render(post);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const tocItems = getTableOfContentsItems(headings);
+const wordCount = remarkPluginFrontmatter?.wordCount || 0;
+const readingTime = remarkPluginFrontmatter?.readingTime || 0;
 ---
 
-<BlogPost {...post.data} tocItems={tocItems} previous={neighbors.previous} next={neighbors.next}>
+<BlogPost 
+	{...post.data} 
+	tocItems={tocItems} 
+	previous={neighbors.previous} 
+	next={neighbors.next}
+	wordCount={wordCount}
+	readingTime={readingTime}
+>
 	<Content />
 </BlogPost>

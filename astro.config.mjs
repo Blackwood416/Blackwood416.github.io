@@ -5,6 +5,9 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import remarkCodeBlockMeta from './src/lib/remark-code-block-meta.ts';
 import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkReadingTime from './src/lib/remark-reading-time.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,8 +17,8 @@ export default defineConfig({
 	},
 	integrations: [mdx(), sitemap()],
 	markdown: {
-		remarkPlugins: [remarkCodeBlockMeta],
-		rehypePlugins: [rehypeCodeBlocks],
+		remarkPlugins: [remarkMath, remarkReadingTime, remarkCodeBlockMeta],
+		rehypePlugins: [rehypeCodeBlocks, rehypeKatex],
 		shikiConfig: {
 			theme: 'one-dark-pro',
 		},

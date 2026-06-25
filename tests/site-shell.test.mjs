@@ -47,8 +47,8 @@ describe('production site shell', () => {
 
     expect(config).toContain("import remarkCodeBlockMeta from './src/lib/remark-code-block-meta.ts'");
     expect(config).toContain("import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts'");
-    expect(config).toContain('remarkPlugins: [remarkCodeBlockMeta]');
-    expect(config).toContain('rehypePlugins: [rehypeCodeBlocks]');
+    expect(config).toMatch(/remarkPlugins:\s*\[[\s\S]*?remarkCodeBlockMeta[\s\S]*?\]/);
+    expect(config).toMatch(/rehypePlugins:\s*\[[\s\S]*?rehypeCodeBlocks[\s\S]*?\]/);
     expect(markerPlugin).toContain('data-code-block-meta');
     expect(plugin).toContain('code-block');
     expect(plugin).toContain('data-code-copy');

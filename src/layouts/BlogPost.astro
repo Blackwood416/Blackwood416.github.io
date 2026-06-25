@@ -5,11 +5,14 @@ import PostNavigation from '../components/PostNavigation.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { encodeHrefSegment, type PostNeighbors, type TocHeading } from '../lib/blog';
 import BaseLayout from './BaseLayout.astro';
+import { GISCUS_CONFIG } from '../consts';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	tocItems?: TocHeading[];
 	previous?: PostNeighbors['previous'];
 	next?: PostNeighbors['next'];
+	wordCount?: number;
+	readingTime?: number;
 };
 
 const {
@@ -22,6 +25,8 @@ const {
 	tocItems = [],
 	previous = null,
 	next = null,
+	wordCount = 0,
+	readingTime = 0,
 } = Astro.props;
 ---
 
@@ -39,6 +44,26 @@ const {
 							</>
 						)
 					}
+					{
+						wordCount > 0 && (
+							<>
+								<span aria-hidden="true"> · </span>
+								<span>约 {wordCount} 字</span>
+							</>
+						)
+					}
+					{
+						readingTime > 0 && (
+							<>
+								<span aria-hidden="true"> · </span>
+								<span>预计阅读 {readingTime} 分钟</span>
+							</>
+						)
+					}
+					<span aria-hidden="true"> · </span>
+					<span id="busuanzi_container_page_pv" style="display: none;">
+						阅读量 <span id="busuanzi_value_page_pv"></span> 次
+					</span>
 				</p>
 				<h1>{title}</h1>
 				{
@@ -59,6 +84,25 @@ const {
 				<slot />
 			</div>
 			<PostNavigation previous={previous} next={next} />
+			<!-- Giscus 评论区容器 -->
+			<div class="post-comments">
+				<div 
+					class="giscus"
+					data-repo={GISCUS_CONFIG.repo}
+					data-repo-id={GISCUS_CONFIG.repoId}
+					data-category={GISCUS_CONFIG.category}
+					data-category-id={GISCUS_CONFIG.categoryId}
+					data-mapping={GISCUS_CONFIG.mapping}
+					data-strict={GISCUS_CONFIG.strict}
+					data-reactions-enabled={GISCUS_CONFIG.reactionsEnabled}
+					data-emit-metadata={GISCUS_CONFIG.emitMetadata}
+					data-input-position={GISCUS_CONFIG.inputPosition}
+					data-theme="transparent_dark"
+					data-lang={GISCUS_CONFIG.lang}
+					data-loading={GISCUS_CONFIG.loading}
+					crossorigin="anonymous"
+				></div>
+			</div>
 		</article>
 		<TableOfContents items={tocItems} />
 	</div>
@@ -188,6 +232,67 @@ const {
 			});
 			
 			headings.forEach(heading => observer.observe(heading));
+		})();
+
+		// Giscus 异步加载与主题联动同步器
+		(function() {
+			const getTheme = () => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					return 'dark';
+				}
+				return 'light';
+			};
+			
+			const giscusTheme = getTheme() === 'dark' ? 'transparent_dark' : 'light';
+			const giscusEl = document.querySelector('.giscus');
+			if (giscusEl) {
+				giscusEl.setAttribute('data-theme', giscusTheme);
+			}
+			
+			// 创建 giscus 脚本并挂载
+			const script = document.createElement('script');
+			script.src = 'https://giscus.app/client.js';
+			script.setAttribute('data-repo', giscusEl?.getAttribute('data-repo') || '');
+			script.setAttribute('data-repo-id', giscusEl?.getAttribute('data-repo-id') || '');
+			script.setAttribute('data-category', giscusEl?.getAttribute('data-category') || '');
+			script.setAttribute('data-category-id', giscusEl?.getAttribute('data-category-id') || '');
+			script.setAttribute('data-mapping', giscusEl?.getAttribute('data-mapping') || '');
+			script.setAttribute('data-strict', giscusEl?.getAttribute('data-strict') || '0');
+			script.setAttribute('data-reactions-enabled', giscusEl?.getAttribute('data-reactions-enabled') || '1');
+			script.setAttribute('data-emit-metadata', giscusEl?.getAttribute('data-emit-metadata') || '0');
+			script.setAttribute('data-input-position', giscusEl?.getAttribute('data-input-position') || 'top');
+			script.setAttribute('data-theme', giscusTheme);
+			script.setAttribute('data-lang', giscusEl?.getAttribute('data-lang') || 'zh-CN');
+			script.setAttribute('data-loading', giscusEl?.getAttribute('data-loading') || 'lazy');
+			script.crossOrigin = 'anonymous';
+			script.async = true;
+			
+			document.head.appendChild(script);
+			
+			// 动态监听全局 class 变化，通知 giscus iframe 同步切换主题
+			const updateGiscusTheme = () => {
+				const currentTheme = document.documentElement.classList.contains('dark') ? 'transparent_dark' : 'light';
+				const iframe = document.querySelector('iframe.giscus-frame');
+				if (iframe && iframe.contentWindow) {
+					iframe.contentWindow.postMessage(
+						{ giscus: { setConfig: { theme: currentTheme } } },
+						'https://giscus.app'
+					);
+				}
+			};
+			
+			const observer = new MutationObserver((mutations) => {
+				mutations.forEach((mutation) => {
+					if (mutation.attributeName === 'class') {
+						updateGiscusTheme();
+					}
+				});
+			});
+			
+			observer.observe(document.documentElement, { attributes: true });
 		})();
 	</script>
 </BaseLayout>

@@ -16,6 +16,15 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={title} description={description} />
+		<!-- KaTeX 数学公式渲染 CSS -->
+		<link 
+			rel="stylesheet" 
+			href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" 
+			integrity="sha384-nNz1Pr1ZK88SL9JYB/1oVIPz4OE2H0+v3F/EIPyQStRN3Jg25bF1Gkq6JNX38W/o" 
+			crossorigin="anonymous"
+		>
+		<!-- 不蒜子浏览量统计 JS -->
+		<script is:inline async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 		<script is:inline>
 			(function () {
 				const getTheme = () => {

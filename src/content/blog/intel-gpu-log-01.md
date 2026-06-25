@@ -69,19 +69,27 @@ B系列，即**Xe2-HPG**是I卡的第二代架构。
 
 A系列的每颗Xe核心FP32算力：
 
-> $0.614375 \:TFLOPS=\frac{19.66 \:TFLOPS}{32}$
+$$
+0.614375 \:TFLOPS=\frac{19.66 \:TFLOPS}{32}
+$$
 
 B系列的每颗Xe2核心FP32算力：
 
-> $0.6835 \:TFLOPS =\frac{13.67 \:TFLOPS}{20}$
+$$
+0.6835 \:TFLOPS =\frac{13.67 \:TFLOPS}{20}
+$$
 
 A系列的每颗Xe核心的XMX FP16算力：
 
-> $4.3125 \:TFLOPS =\frac{138 \:TFLOPS}{32}$
+$$
+4.3125 \:TFLOPS =\frac{138 \:TFLOPS}{32}
+$$
 
 B系列的每颗Xe2核心的XMX FP16算力：
 
-> $5.8 \:TFLOPS=\frac{116 \:TFLOPS}{20}$
+$$
+5.8 \:TFLOPS=\frac{116 \:TFLOPS}{20}
+$$
 
 由此可见Xe2的架构提升还是很大的，特别是XMX的提升幅度非常大。
 
