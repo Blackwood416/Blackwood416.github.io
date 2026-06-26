@@ -8,6 +8,7 @@ import rehypeCodeBlocks from './src/lib/rehype-code-blocks.ts';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkReadingTime from './src/lib/remark-reading-time.ts';
+import rehypeTables from './src/lib/rehype-tables.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,7 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		remarkPlugins: [remarkMath, remarkReadingTime, remarkCodeBlockMeta],
-		rehypePlugins: [rehypeKatex, rehypeCodeBlocks],
+		rehypePlugins: [rehypeKatex, rehypeTables, rehypeCodeBlocks],
 		shikiConfig: {
 			theme: 'one-dark-pro',
 		},
