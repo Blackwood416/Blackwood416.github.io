@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "migrate:hexo": "node scripts/migrate-hexo.mjs",
+    "new": "node scripts/new-post.mjs",
     "test": "vitest run"
   },
   "dependencies": {
