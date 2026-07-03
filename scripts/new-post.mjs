@@ -33,7 +33,7 @@ function createPost(title, slugInput) {
 		slug = 'untitled-post';
 	}
 	
-	const filename = `${dateStr}-${slug}.md`;
+	const filename = `${slug}.md`;
 	const blogDir = path.resolve('src/content/blog');
 	const filePath = path.join(blogDir, filename);
 
