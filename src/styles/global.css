@@ -270,8 +270,7 @@ th {
 
 @media (min-width: 769px) {
 	th {
-		position: sticky;
-		top: 3.5rem;
+		position: relative; /* 释放 sticky 视口机制，由客户端高频硬件加速 transform 精准定位 */
 		z-index: 10;
 		background-color: var(--surface);
 		background-image: linear-gradient(rgba(124, 58, 237, 0.1), rgba(124, 58, 237, 0.1));

@@ -294,5 +294,49 @@ const {
 			
 			observer.observe(document.documentElement, { attributes: true });
 		})();
+
+		// ==========================================
+		// 动态控制表格在垂直滚动时的多向粘性定位 (解决 overflow-x: auto 与 position: sticky 冲突问题)
+		// ==========================================
+		(function () {
+			const navbar = document.querySelector('header');
+			const tableWrappers = document.querySelectorAll('.table-wrapper');
+			
+			if (tableWrappers.length === 0) return;
+			
+			const handleScroll = () => {
+				// 获取 sticky 导航栏的高度作为粘滞基准 top 值
+				const navbarHeight = navbar ? navbar.offsetHeight : 56;
+				
+				tableWrappers.forEach((wrapper) => {
+					const table = wrapper.querySelector('table');
+					const thead = wrapper.querySelector('thead');
+					if (!table || !thead) return;
+					
+					const wrapperRect = wrapper.getBoundingClientRect();
+					const theadHeight = thead.offsetHeight;
+					
+					// 仅当表格顶部滑入导航栏下方，且表格仍未完全滚出视口时，才对表头进行垂直偏移
+					let offsetY = 0;
+					if (wrapperRect.top < navbarHeight) {
+						const maxOffset = wrapperRect.height - theadHeight;
+						offsetY = Math.min(navbarHeight - wrapperRect.top, maxOffset);
+					}
+					
+					// 应用 transform 进行偏移（带 GPU 硬件加速，滚动流畅无卡顿）
+					const ths = thead.querySelectorAll('th');
+					ths.forEach((th) => {
+						th.style.transform = `translateY(${offsetY}px)`;
+					});
+				});
+			};
+			
+			// 绑定滚动和窗口拉伸事件，确保位置实时正确
+			window.addEventListener('scroll', handleScroll, { passive: true });
+			window.addEventListener('resize', handleScroll, { passive: true });
+			
+			// 触发一次初始化
+			handleScroll();
+		})();
 	</script>
 </BaseLayout>
