@@ -1,0 +1,879 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="开发者小工具箱" description="提供硬件底层的 DDR 带宽计算器、汇编 Cheatsheet 等实用开发者工具。">
+	<div class="tools-layout">
+		<!-- 侧边导航栏 -->
+		<aside class="tools-sidebar">
+			<div class="glass-card sidebar-card">
+				<h3 class="sidebar-title">工具箱</h3>
+				<nav class="sidebar-nav">
+					<button class="nav-item active" data-tool="ddr-calc">
+						<span class="nav-icon">📊</span>
+						<span class="nav-label">DDR 带宽计算器</span>
+					</button>
+					<button class="nav-item" data-tool="asm-sheet">
+						<span class="nav-icon">💻</span>
+						<span class="nav-label">汇编 Cheatsheet</span>
+					</button>
+				</nav>
+			</div>
+		</aside>
+
+		<!-- 主内容区域 -->
+		<main class="tools-main">
+			<!-- 工具 A: DDR 带宽计算器 -->
+			<section id="tool-ddr-calc" class="tool-section active">
+				<div class="glass-card">
+					<div class="tool-header">
+						<h2>📊 DDR 带宽计算器</h2>
+						<p class="tool-desc">输入内存等效数据速率、单通道位宽及通道数量，实时评估硬件的数据传输速率与理论最大吞吐带宽。</p>
+					</div>
+
+					<div class="calc-grid">
+						<!-- 左侧输入面板 -->
+						<div class="calc-inputs">
+							<!-- 预设规格 -->
+							<div class="form-group">
+								<label for="ddr-preset">常用规格预设</label>
+								<select id="ddr-preset" class="form-control">
+									<option value="">-- 自定义参数 --</option>
+									<option value="ddr4-3200-single" data-rate="3200" data-width="64" data-channels="1">DDR4-3200 单通道 (桌面 PC)</option>
+									<option value="ddr4-3200-dual" data-rate="3200" data-width="64" data-channels="2" selected>DDR4-3200 双通道 (传统主流 PC)</option>
+									<option value="ddr5-5600-dual" data-rate="5600" data-width="32" data-channels="4">DDR5-5600 双通道 (等效 4x32-bit 子通道)</option>
+									<option value="lpddr5-6400-quad" data-rate="6400" data-width="16" data-channels="4">LPDDR5-6400 四通道 (超薄本/旗舰移动 SoC)</option>
+									<option value="lpddr5x-8533-quad" data-rate="8533" data-width="16" data-channels="4">LPDDR5X-8533 四通道 (苹果 M系/旗舰天玑 9300)</option>
+									<option value="gddr6-a770" data-rate="16000" data-width="32" data-channels="8">GDDR6 16Gbps (显卡 A770 256-bit 位宽)</option>
+									<option value="hbm2e-ps5" data-rate="3200" data-width="1024" data-channels="4">HBM2e 4-Stack (超宽总线 HPC 加速卡)</option>
+								</select>
+							</div>
+
+							<!-- 等效频率 -->
+							<div class="form-group">
+								<label for="ddr-rate">等效数据速率 (MT/s)</label>
+								<div class="input-with-unit">
+									<input type="number" id="ddr-rate" class="form-control" value="3200" min="1" max="100000" />
+									<span class="unit">MT/s</span>
+								</div>
+							</div>
+
+							<!-- 通道位宽 -->
+							<div class="form-group">
+								<label for="ddr-width">单通道物理位宽 (Bit Width)</label>
+								<select id="ddr-width" class="form-control">
+									<option value="8">8-bit</option>
+									<option value="16">16-bit (LPDDR5 单子通道)</option>
+									<option value="32">32-bit (LPDDR4x/GDDR6 单通道)</option>
+									<option value="64" selected>64-bit (标准 DDR3/DDR4 单通道)</option>
+									<option value="128">128-bit</option>
+									<option value="1024">1024-bit (HBM 单 Stack 位宽)</option>
+								</select>
+							</div>
+
+							<!-- 通道数 -->
+							<div class="form-group">
+								<label for="ddr-channels">内存通道数 (Channels)</label>
+								<div class="input-with-unit">
+									<input type="number" id="ddr-channels" class="form-control" value="2" min="1" max="32" />
+									<span class="unit">通道</span>
+								</div>
+							</div>
+						</div>
+
+						<!-- 右侧计算结果面板 -->
+						<div class="calc-results">
+							<div class="result-card">
+								<div class="result-label">理论吞吐带宽 (GB/s)</div>
+								<div class="result-value" id="bandwidth-gb">51.20</div>
+								<div class="result-sub-value" id="bandwidth-mb">51,200 MB/s</div>
+							</div>
+
+							<div class="result-details">
+								<div class="detail-row">
+									<span class="detail-label">等效总位宽</span>
+									<span class="detail-val" id="total-width">128-bit</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">时钟时序频率</span>
+									<span class="detail-val" id="clock-freq">1600.0 MHz</span>
+								</div>
+								<div class="formula-box">
+									<div class="formula-title">计算公式过程：</div>
+									<div class="formula-text" id="calc-formula">
+										带宽 = 3200 MT/s × 64-bit × 2 通道 ÷ 8 bits/Byte ÷ 1000 = 51.20 GB/s
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- 工具 B: 汇编 Cheatsheet -->
+			<section id="tool-asm-sheet" class="tool-section">
+				<div class="glass-card">
+					<div class="tool-header">
+						<h2>💻 汇编 Cheatsheet</h2>
+						<p class="tool-desc">对比 x86_64 与 ARM64 (AArch64) 架构的核心寄存器布局、函数参数调用约定，以及高频机器指令的映射和对比速查。</p>
+					</div>
+
+					<!-- 架构子切换 Tab -->
+					<div class="tab-container">
+						<button class="tab-btn active" data-arch="register-compare">通用寄存器对比</button>
+						<button class="tab-btn" data-arch="inst-data">数据与算术指令</button>
+						<button class="tab-btn" data-arch="inst-control">分支与控制指令</button>
+					</div>
+
+					<!-- 子 Tab 1: 通用寄存器对比 -->
+					<div id="arch-register-compare" class="tab-panel active">
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>寄存器功能角色</th>
+										<th>x86_64 寄存器</th>
+										<th>ARM64 (AArch64) 寄存器</th>
+										<th>特性及调用约定 (ABI) 说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>累加 / 第一返回值</strong></td>
+										<td><code>rax</code></td>
+										<td><code>x0</code></td>
+										<td>保存函数首个整型返回值。在 x86 中是隐含的累加操作器。</td>
+									</tr>
+									<tr>
+										<td><strong>第二返回值</strong></td>
+										<td><code>rdx</code></td>
+										<td><code>x1</code></td>
+										<td>保存函数第二个整型返回值；x86 中也用于 128位 乘除的高位。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 1</strong></td>
+										<td><code>rdi</code></td>
+										<td><code>x0</code></td>
+										<td>函数调用传递的第 1 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 2</strong></td>
+										<td><code>rsi</code></td>
+										<td><code>x1</code></td>
+										<td>函数调用传递的第 2 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 3</strong></td>
+										<td><code>rdx</code></td>
+										<td><code>x2</code></td>
+										<td>函数调用传递的第 3 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 4</strong></td>
+										<td><code>rcx</code></td>
+										<td><code>x3</code></td>
+										<td>函数调用传递的第 4 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 5</strong></td>
+										<td><code>r8</code></td>
+										<td><code>x4</code></td>
+										<td>函数调用传递的第 5 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>函数实参 6</strong></td>
+										<td><code>r9</code></td>
+										<td><code>x5</code></td>
+										<td>函数调用传递 of 第 6 个整型/指针参数。</td>
+									</tr>
+									<tr>
+										<td><strong>额外函数参数</strong></td>
+										<td>通过堆栈传递</td>
+										<td><code>x6</code> - <code>x7</code></td>
+										<td>ARM64 有 8 个传参寄存器；x86_64 仅 6 个，超出部分借由堆栈。</td>
+									</tr>
+									<tr>
+										<td><strong>临时寄存器</strong></td>
+										<td><code>r10</code>, <code>r11</code></td>
+										<td><code>x9</code> - <code>x15</code></td>
+										<td><strong>Caller-saved</strong>。调用者保护。子函数可以随意覆写。</td>
+									</tr>
+									<tr>
+										<td><strong>静态寄存器</strong></td>
+										<td><code>rbx</code>, <code>r12</code> - <code>r15</code></td>
+										<td><code>x19</code> - <code>x28</code></td>
+										<td><strong>Callee-saved</strong>。被调用者保护。子函数改动前须入栈保护并复原。</td>
+									</tr>
+									<tr>
+										<td><strong>帧指针 (FP)</strong></td>
+										<td><code>rbp</code></td>
+										<td><code>x29</code> (<code>fp</code>)</td>
+										<td>指向当前栈帧底部，辅助编译器定位局部变量和传参。</td>
+									</tr>
+									<tr>
+										<td><strong>链接寄存器 (LR)</strong></td>
+										<td>通过堆栈传递</td>
+										<td><code>x30</code> (<code>lr</code>)</td>
+										<td>保存当前函数返回地址。ARM 硬件级提速机制；x86 通过压栈保存。</td>
+									</tr>
+									<tr>
+										<td><strong>栈指针 (SP)</strong></td>
+										<td><code>rsp</code></td>
+										<td><code>sp</code></td>
+										<td>指向当前栈帧顶部。</td>
+									</tr>
+									<tr>
+										<td><strong>指令指针 (PC)</strong></td>
+										<td><code>rip</code></td>
+										<td><code>pc</code></td>
+										<td>指向下一条即将执行的二进制机器指令。</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- 子 Tab 2: 数据与算术指令 -->
+					<div id="arch-inst-data" class="tab-panel">
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>操作类型</th>
+										<th>x86_64 指令</th>
+										<th>ARM64 指令</th>
+										<th>功能与差异示例说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>数据传送</strong></td>
+										<td><code>mov rax, rbx</code></td>
+										<td><code>mov x0, x1</code></td>
+										<td>通用数据寄存器拷贝。x86 是 <code>mov dst, src</code>。</td>
+									</tr>
+									<tr>
+										<td><strong>内存加载</strong></td>
+										<td><code>mov rax, [rbx]</code></td>
+										<td><code>ldr x0, [x1]</code></td>
+										<td>从内存地址（寄存器指针值）加载数据到寄存器。</td>
+									</tr>
+									<tr>
+										<td><strong>内存存储</strong></td>
+										<td><code>mov [rax], rbx</code></td>
+										<td><code>str x1, [x0]</code></td>
+										<td>将寄存器内容存回指定的内存地址。</td>
+									</tr>
+									<tr>
+										<td><strong>对入栈出栈</strong></td>
+										<td>不支持</td>
+										<td><code>stp x0, x1, [sp, #-16]!</code><br/><code>ldp x0, x1, [sp], #16</code></td>
+										<td>ARM64 的特色对指令，一条指令同时入栈/出栈 2 个寄存器，可自动增加 SP。</td>
+									</tr>
+									<tr>
+										<td><strong>加法运算</strong></td>
+										<td><code>add rax, rbx</code><br/>(<code>rax = rax + rbx</code>)</td>
+										<td><code>add x0, x1, x2</code><br/>(<code>x0 = x1 + x2</code>)</td>
+										<td>x86 为二地址制（覆写 dst）；ARM 为三地址制（保留 src1）。</td>
+									</tr>
+									<tr>
+										<td><strong>减法运算</strong></td>
+										<td><code>sub rax, 10</code></td>
+										<td><code>sub x0, x1, #10</code></td>
+										<td>自减操作。ARM 支持将常数限制在 12 位之内。</td>
+									</tr>
+									<tr>
+										<td><strong>地址估算</strong></td>
+										<td><code>lea rax, [rbx + rcx*4]</code></td>
+										<td>不支持 (用多条 <code>add</code>/<code>lsl</code>)</td>
+										<td>x86 特有的估算指令，常被巧妙当成 <code>y = a + b * c</code> 快速算术乘加器。</td>
+									</tr>
+									<tr>
+										<td><strong>位逻辑与 / 或</strong></td>
+										<td><code>and rax, rbx</code><br/><code>or rax, rbx</code></td>
+										<td><code>and x0, x1, x2</code><br/><code>orr x0, x1, x2</code></td>
+										<td>对两个寄存器按二进制位进行 AND / OR 操作。</td>
+									</tr>
+									<tr>
+										<td><strong>逻辑左移 / 右移</strong></td>
+										<td><code>shl rax, 2</code><br/><code>shr rax, 2</code></td>
+										<td><code>lsl x0, x1, #2</code><br/><code>lsr x0, x1, #2</code></td>
+										<td>左移等效于乘 2 的幂；逻辑右移补零。</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- 子 Tab 3: 分支与控制指令 -->
+					<div id="arch-inst-control" class="tab-panel">
+						<div class="table-wrapper">
+							<table>
+								<thead>
+									<tr>
+										<th>跳转类型</th>
+										<th>x86_64 指令</th>
+										<th>ARM64 指令</th>
+										<th>功能与标志位说明</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>无条件跳转</strong></td>
+										<td><code>jmp label</code></td>
+										<td><code>b label</code></td>
+										<td>直接跳转到指定的标号。</td>
+									</tr>
+									<tr>
+										<td><strong>条件比较</strong></td>
+										<td><code>cmp rax, rbx</code></td>
+										<td><code>cmp x0, x1</code></td>
+										<td>比较两值并根据差值更新状态标志寄存器（EFLAGS / NZCV）。</td>
+									</tr>
+									<tr>
+										<td><strong>等于跳转</strong></td>
+										<td><code>je label</code></td>
+										<td><code>b.eq label</code></td>
+										<td>若比较结果相等（ZF = 1 / Z = 1），则执行跳转。</td>
+									</tr>
+									<tr>
+										<td><strong>不等于跳转</strong></td>
+										<td><code>jne label</code></td>
+										<td><code>b.ne label</code></td>
+										<td>若比较结果不相等（ZF = 0 / Z = 0），则执行跳转。</td>
+									</tr>
+									<tr>
+										<td><strong>大于 / 小于跳转</strong></td>
+										<td><code>jg label</code> (有符号)<br/><code>jl label</code> (有符号)</td>
+										<td><code>b.gt label</code> (有符号)<br/><code>b.lt label</code> (有符号)</td>
+										<td>根据有符号数大小状态执行跳转。</td>
+									</tr>
+									<tr>
+										<td><strong>为零条件跳转</strong></td>
+										<td>先 <code>test rax, rax</code><br/>再 <code>jz label</code></td>
+										<td><code>cbz x0, label</code></td>
+										<td>ARM 特色优化指令：直接检测寄存器是否为 0，跳过 CMP 标志位环节。</td>
+									</tr>
+									<tr>
+										<td><strong>不为零条件跳转</strong></td>
+										<td>先 <code>test rax, rax</code><br/>再 <code>jnz label</code></td>
+										<td><code>cbnz x0, label</code></td>
+										<td>直接检测寄存器非 0 并跳转。</td>
+									</tr>
+									<tr>
+										<td><strong>子函数调用</strong></td>
+										<td><code>call func</code></td>
+										<td><code>bl func</code></td>
+										<td>x86 压入返回地址入栈；ARM64 将返回地址存入 <code>x30(lr)</code>。</td>
+									</tr>
+									<tr>
+										<td><strong>函数返回</strong></td>
+										<td><code>ret</code></td>
+										<td><code>ret</code></td>
+										<td>x86 从栈顶弹出返回地址；ARM64 直接跳转到 <code>x30(lr)</code> 所指地址。</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</section>
+		</main>
+	</div>
+</BaseLayout>
+
+<script is:inline>
+	document.addEventListener('DOMContentLoaded', () => {
+		// ==========================================
+		// 1. 侧边栏工具切换交互
+		// ==========================================
+		const navItems = document.querySelectorAll('.nav-item');
+		const toolSections = document.querySelectorAll('.tool-section');
+
+		navItems.forEach(item => {
+			item.addEventListener('click', () => {
+				// 清除导航激活状态
+				navItems.forEach(nav => nav.classList.remove('active'));
+				// 设置当前激活
+				item.classList.add('active');
+
+				const activeTool = item.getAttribute('data-tool');
+
+				// 切换对应的内容卡片
+				toolSections.forEach(section => {
+					if (section.id === `tool-${activeTool}`) {
+						section.classList.add('active');
+					} else {
+						section.classList.remove('active');
+					}
+				});
+			});
+		});
+
+		// ==========================================
+		// 2. DDR 带宽计算器实时逻辑
+		// ==========================================
+		const ddrPreset = document.getElementById('ddr-preset');
+		const ddrRate = document.getElementById('ddr-rate');
+		const ddrWidth = document.getElementById('ddr-width');
+		const ddrChannels = document.getElementById('ddr-channels');
+
+		const bandwidthGbEl = document.getElementById('bandwidth-gb');
+		const bandwidthMbEl = document.getElementById('bandwidth-mb');
+		const totalWidthEl = document.getElementById('total-width');
+		const clockFreqEl = document.getElementById('clock-freq');
+		const calcFormulaEl = document.getElementById('calc-formula');
+
+		// 核心计算并刷新回显函数
+		function calculateBandwidth() {
+			const rate = parseFloat(ddrRate.value) || 0;
+			const width = parseInt(ddrWidth.value) || 0;
+			const channels = parseInt(ddrChannels.value) || 0;
+
+			// 带宽 (GB/s) = (速率 * 位宽 * 通道数) / 8 / 1000
+			const bandwidthGb = (rate * width * channels) / 8 / 1000;
+			const bandwidthMb = bandwidthGb * 1000;
+
+			// 总位宽
+			const totalWidth = width * channels;
+
+			// 时钟频率 (等效双倍时钟速率核心频率为等效数据速率的一半)
+			// 特殊说明：GDDR6 也是等效 2 倍物理频率，HBM/DDR 相同，为简化显示，以双倍率换算
+			const clockFreq = rate / 2;
+
+			// 回显结果
+			bandwidthGbEl.textContent = bandwidthGb.toFixed(2);
+			bandwidthMbEl.textContent = bandwidthMb.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' MB/s';
+			totalWidthEl.textContent = `${totalWidth}-bit`;
+			clockFreqEl.textContent = `${clockFreq.toFixed(1)} MHz`;
+
+			// 公式更新
+			calcFormulaEl.textContent = `带宽 = ${rate} MT/s × ${width}-bit × ${channels} 通道 ÷ 8 bits/Byte ÷ 1000 = ${bandwidthGb.toFixed(2)} GB/s`;
+
+			// 动效：计算结果小缩放强调
+			bandwidthGbEl.classList.add('pulse');
+			setTimeout(() => bandwidthGbEl.classList.remove('pulse'), 200);
+		}
+
+		// 监听预设改变
+		ddrPreset.addEventListener('change', () => {
+			const selectedOption = ddrPreset.options[ddrPreset.selectedIndex];
+			if (!selectedOption || !selectedOption.value) return;
+
+			ddrRate.value = selectedOption.getAttribute('data-rate');
+			ddrWidth.value = selectedOption.getAttribute('data-width');
+			ddrChannels.value = selectedOption.getAttribute('data-channels');
+
+			calculateBandwidth();
+		});
+
+		// 监听输入改动
+		[ddrRate, ddrWidth, ddrChannels].forEach(el => {
+			el.addEventListener('input', () => {
+				// 若手动修改了任何输入，清空预设选项的高亮，设为自定义
+				ddrPreset.value = "";
+				calculateBandwidth();
+			});
+		});
+
+		// 初始化计算
+		calculateBandwidth();
+
+		// ==========================================
+		// 3. 汇编 Cheatsheet 子标签页切换交互
+		// ==========================================
+		const tabBtns = document.querySelectorAll('.tab-btn');
+		const tabPanels = document.querySelectorAll('.tab-panel');
+
+		tabBtns.forEach(btn => {
+			btn.addEventListener('click', () => {
+				tabBtns.forEach(t => t.classList.remove('active'));
+				btn.classList.add('active');
+
+				const activeArch = btn.getAttribute('data-arch');
+
+				tabPanels.forEach(panel => {
+					if (panel.id === `arch-${activeArch}`) {
+						panel.classList.add('active');
+					} else {
+						panel.classList.remove('active');
+					}
+				});
+			});
+		});
+	});
+</script>
+
+<style>
+	/* 布局网格 */
+	.tools-layout {
+		display: grid;
+		grid-template-columns: 240px 1fr;
+		gap: 1.5rem;
+		max-width: var(--content-width);
+		margin: 2rem auto;
+		padding: 0 1rem;
+		align-items: start;
+	}
+
+	/* 侧边栏 */
+	.tools-sidebar {
+		position: sticky;
+		top: 5rem;
+	}
+
+	.sidebar-card {
+		padding: 1.25rem;
+	}
+
+	.sidebar-title {
+		margin-top: 0;
+		margin-bottom: 1.25rem;
+		font-size: 1rem;
+		color: var(--text-strong);
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		border-bottom: 1px solid var(--glass-border);
+		padding-bottom: 0.75rem;
+	}
+
+	.sidebar-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.nav-item {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		background: transparent;
+		border: 1px solid transparent;
+		padding: 0.75rem 1rem;
+		border-radius: 8px;
+		color: var(--text);
+		text-align: left;
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 0.95rem;
+		font-weight: 500;
+		transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+	}
+
+	.nav-item:hover {
+		background: var(--hover-bg);
+		color: var(--accent);
+		transform: translateX(4px);
+	}
+
+	.nav-item.active {
+		background: var(--surface-subtle);
+		border-color: var(--hover-border);
+		color: var(--accent);
+		font-weight: 600;
+	}
+
+	.nav-icon {
+		font-size: 1.1rem;
+	}
+
+	/* 主展示区域 */
+	.tools-main {
+		min-width: 0; /* 防止子元素溢出 Flex/Grid */
+	}
+
+	.tool-section {
+		display: none;
+	}
+
+	.tool-section.active {
+		display: block;
+		animation: fadeIn var(--transition-normal);
+	}
+
+	.tool-header {
+		margin-bottom: 2rem;
+		border-bottom: 1px solid var(--glass-border);
+		padding-bottom: 1.25rem;
+	}
+
+	.tool-header h2 {
+		margin: 0 0 0.5rem 0;
+		font-size: 1.6rem;
+		color: var(--text-strong);
+	}
+
+	.tool-desc {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--text-muted);
+		line-height: 1.6;
+	}
+
+	/* DDR 带宽计算器网格 */
+	.calc-grid {
+		display: grid;
+		grid-template-columns: 1.2fr 1fr;
+		gap: 2rem;
+		align-items: start;
+	}
+
+	/* 表单样式 */
+	.calc-inputs {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.form-group label {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--text-strong);
+	}
+
+	.form-control {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		border-radius: 8px;
+		border: 1px solid var(--glass-border);
+		background: var(--surface-subtle);
+		color: var(--text-strong);
+		font-family: inherit;
+		font-size: 0.95rem;
+		transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+	}
+
+	.form-control:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+	}
+
+	.input-with-unit {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.input-with-unit .form-control {
+		padding-right: 4.5rem;
+	}
+
+	.input-with-unit .unit {
+		position: absolute;
+		right: 1rem;
+		font-size: 0.85rem;
+		color: var(--text-muted);
+		font-weight: 500;
+		pointer-events: none;
+	}
+
+	/* 计算器结果面板 */
+	.calc-results {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.result-card {
+		background: var(--surface-subtle);
+		border: 1px solid var(--hover-border);
+		border-radius: 12px;
+		padding: 1.75rem;
+		text-align: center;
+		box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+		transition: border-color var(--transition-normal);
+	}
+
+	.result-label {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 0.5rem;
+	}
+
+	.result-value {
+		font-size: 3rem;
+		font-weight: 800;
+		color: var(--accent);
+		line-height: 1.1;
+		margin-bottom: 0.25rem;
+		transition: transform 0.1s ease;
+	}
+
+	.result-value.pulse {
+		transform: scale(1.05);
+	}
+
+	.result-sub-value {
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: var(--text-strong);
+	}
+
+	.result-details {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		background: rgba(124, 58, 237, 0.02);
+		border-radius: 8px;
+		padding: 1rem 1.25rem;
+		border: 1px dashed var(--glass-border);
+	}
+
+	.detail-row {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.9rem;
+	}
+
+	.detail-label {
+		color: var(--text-muted);
+	}
+
+	.detail-val {
+		font-weight: 600;
+		color: var(--text-strong);
+	}
+
+	.formula-box {
+		margin-top: 0.5rem;
+		border-top: 1px solid var(--glass-border);
+		padding-top: 0.75rem;
+	}
+
+	.formula-title {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--text-muted);
+		margin-bottom: 0.25rem;
+	}
+
+	.formula-text {
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--text-strong);
+		font-family: monospace;
+		word-break: break-all;
+	}
+
+	/* 汇编 Cheatsheet Tabs */
+	.tab-container {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+		border-bottom: 1px solid var(--glass-border);
+		padding-bottom: 0.5rem;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.tab-btn {
+		background: transparent;
+		border: none;
+		padding: 0.6rem 1.2rem;
+		border-radius: 6px;
+		color: var(--text-muted);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 0.95rem;
+		font-weight: 500;
+		white-space: nowrap;
+		transition: background-color var(--transition-fast), color var(--transition-fast);
+	}
+
+	.tab-btn:hover {
+		background: var(--hover-bg);
+		color: var(--accent);
+	}
+
+	.tab-btn.active {
+		background: var(--accent);
+		color: #ffffff;
+		font-weight: 600;
+	}
+
+	.tab-panel {
+		display: none;
+	}
+
+	.tab-panel.active {
+		display: block;
+		animation: fadeIn var(--transition-fast);
+	}
+
+	/* 强制 cheatsheet 里的代码块拥有优雅的前景色 */
+	.tab-panel code {
+		background: var(--surface-subtle);
+		color: var(--accent-dark);
+		font-family: monospace;
+		padding: 0.15rem 0.35rem;
+		border-radius: 4px;
+		font-size: 0.85em;
+	}
+
+	:global(.dark) .tab-panel code {
+		color: var(--accent);
+	}
+
+	/* 玻璃卡片公共类 */
+	.glass-card {
+		border-radius: 12px;
+		background: var(--glass-bg);
+		backdrop-filter: url(#liquid-glass) blur(var(--glass-blur)) saturate(180%);
+		-webkit-backdrop-filter: url(#liquid-glass) blur(var(--glass-blur)) saturate(180%);
+		border: 1px solid var(--glass-border);
+		box-shadow: var(--glass-shadow);
+		padding: 2rem;
+		transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+	}
+
+	/* 淡入动画 */
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(4px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	/* 响应式媒体查询 */
+	@media (max-width: 860px) {
+		.tools-layout {
+			grid-template-columns: 1fr;
+		}
+
+		.tools-sidebar {
+			position: static;
+		}
+
+		.sidebar-nav {
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		.nav-item {
+			flex: 1;
+			justify-content: center;
+			min-width: 150px;
+		}
+	}
+
+	@media (max-width: 680px) {
+		.calc-grid {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.result-value {
+			font-size: 2.5rem;
+		}
+	}
+</style>
