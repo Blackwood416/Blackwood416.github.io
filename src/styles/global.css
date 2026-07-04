@@ -176,7 +176,6 @@ img {
 
 .table-wrapper {
 	width: 100%;
-	overflow: hidden;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 	margin: 2rem 0;
@@ -187,6 +186,40 @@ img {
 	-webkit-backdrop-filter: url(#liquid-glass) blur(var(--glass-blur)) saturate(180%);
 	box-shadow: var(--glass-shadow);
 	transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+	
+	/* Firefox 滚动条美化 */
+	scrollbar-width: thin;
+	scrollbar-color: rgba(124, 58, 237, 0.25) transparent;
+}
+
+:global(.dark) .table-wrapper {
+	scrollbar-color: rgba(167, 139, 250, 0.25) transparent;
+}
+
+/* Webkit 滚动条美化 */
+.table-wrapper::-webkit-scrollbar {
+	height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+	background: rgba(124, 58, 237, 0.25);
+	border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+	background: rgba(124, 58, 237, 0.45);
+}
+
+:global(.dark) .table-wrapper::-webkit-scrollbar-thumb {
+	background: rgba(167, 139, 250, 0.25);
+}
+
+:global(.dark) .table-wrapper::-webkit-scrollbar-thumb:hover {
+	background: rgba(167, 139, 250, 0.45);
 }
 
 table {
@@ -197,6 +230,23 @@ table {
 	border-spacing: 0;
 	margin: 0;
 	background: transparent;
+}
+
+/* 显式约束四角单元格的圆角，防止背景溢出，无需依赖 wrapper 的 overflow:hidden 从而释放 sticky 视口定位 */
+thead tr:first-child th:first-child {
+	border-top-left-radius: 12px;
+}
+
+thead tr:first-child th:last-child {
+	border-top-right-radius: 12px;
+}
+
+tbody tr:last-child td:first-child {
+	border-bottom-left-radius: 12px;
+}
+
+tbody tr:last-child td:last-child {
+	border-bottom-right-radius: 12px;
 }
 
 th,
