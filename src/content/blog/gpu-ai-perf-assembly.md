@@ -2,9 +2,9 @@
 title: "显卡AI性能汇总"
 description: "汇总市面上主流显卡的AI性能与特性"
 pubDate: 2026-07-04
-categories: []
-tags: []
-draft: true
+categories: [GPU, 显卡, 硬件]
+tags: [GPU, 算力, AI]
+draft: false
 ---
 
 # 显卡AI性能汇总
