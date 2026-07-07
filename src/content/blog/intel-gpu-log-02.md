@@ -25,6 +25,16 @@ draft: true
 
 ![图 2](https://files.seeusercontent.com/2026/06/29/n4Ps/pic_1782720553381.png)
 
+可以用以下命令查看你的GPU基本信息：
+
+```powershell
+xpu-smi discovery -d 0
+```
+
+输出大概长这个样子：
+
+![图 5](https://files.seeusercontent.com/2026/07/07/8toD/pic_1783425868904.png)  
+
 那如果我们需要监控GPU核心频率，可以用这条命令：
 
 ```powershell
@@ -37,3 +47,23 @@ xpu-smi dump -m 2 -i 1
 
 可以观察到最低主频是600Mhz，然后如果驱动里没有超频的话，跑我这边的XMX极限吞吐测试程序只能跑到2000Mhz。
 
+## 超频设置
+
+
+![图 6](https://files.seeusercontent.com/2026/07/07/u5lR/pic_1783426394885.png)  
+
+我们打开驱动面板，点侧边栏的性能。
+
+![图 7](https://files.seeusercontent.com/2026/07/07/vQ8q/pic_1783426482181.png)  
+
+进到这个页面点上面的调优。
+
+![图 8](https://files.seeusercontent.com/2026/07/07/9Kbt/pic_1783426559904.png)  
+
+打开GPU调优。
+ 
+![图 10](https://files.seeusercontent.com/2026/07/07/0jGs/pic_1783426713720.png)  
+
+`性能提升`调成`1`，然后点右下角`应用更改`，就算把AI算力的超频打开来了。
+
+别看只调了1，但是它会对调度有影响，不调的话跑XMX测试，频率只能到2000Mhz，调了可以到2404Mhz。
