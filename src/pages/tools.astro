@@ -1,5 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import gpuData from '../data/gpu_ai_perf.json';
+
+// 提取所有不重复的厂商、架构与定位分类
+const vendors = [...new Set(gpuData.map(item => item.vendor))].sort();
+const allArchitectures = [...new Set(gpuData.map(item => item.architecture))].sort();
+const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 ---
 
 <BaseLayout title="开发者小工具箱" description="提供硬件底层的 DDR 带宽计算器、汇编 Cheatsheet 等实用开发者工具。">
@@ -16,6 +22,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					<button class="nav-item" data-tool="asm-sheet">
 						<span class="nav-icon">💻</span>
 						<span class="nav-label">汇编 Cheatsheet</span>
+					</button>
+					<button class="nav-item" data-tool="gpu-ai-perf">
+						<span class="nav-icon">⚡</span>
+						<span class="nav-label">显卡 AI 算力对照</span>
 					</button>
 				</nav>
 			</div>
@@ -379,8 +389,107 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 				</div>
 			</section>
+
+			<!-- 工具 C: 显卡 AI 算力与兼容性对照 -->
+			<section id="tool-gpu-ai-perf" class="tool-section">
+				<div class="glass-card">
+					<div class="tool-header">
+						<h2>⚡ 显卡 AI 算力与兼容性对照</h2>
+						<p class="tool-desc">基于 SQLite 提取的 99 款显卡数据，提供单精度浮点（FP32）、AI 核心算力、显存带宽以及各类低精度数据格式（FP16/BF16/FP8/FP4/INT8/INT4）的兼容性矩阵，支持最多 3 款显卡同屏对比与算力性价比换算。</p>
+					</div>
+
+					<!-- 控制面板：搜索 + 多维度过滤 -->
+					<div class="control-panel-gpu">
+						<div class="filter-row-gpu">
+							<div class="filter-group-gpu flex-grow">
+								<label for="gpu-search">型号/架构检索</label>
+								<input type="text" id="gpu-search" class="form-control-gpu" placeholder="输入型号或微架构关键字，如 4090, RDNA 3, Xe-HPG..." />
+							</div>
+							<div class="filter-group-gpu">
+								<label for="gpu-vendor">品牌</label>
+								<select id="gpu-vendor" class="form-control-gpu">
+									<option value="">全部厂商</option>
+									{vendors.map(v => <option value={v}>{v}</option>)}
+								</select>
+							</div>
+							<div class="filter-group-gpu">
+								<label for="gpu-arch">微架构</label>
+								<select id="gpu-arch" class="form-control-gpu">
+									<option value="">全部架构</option>
+									{allArchitectures.map(a => <option value={a}>{a}</option>)}
+								</select>
+							</div>
+							<div class="filter-group-gpu">
+								<label for="gpu-segment">定位</label>
+								<select id="gpu-segment" class="form-control-gpu">
+									<option value="">全部定位</option>
+									{allSegments.map(s => <option value={s}>{s}</option>)}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- 兼容性含义图例 -->
+					<div class="legend-panel">
+						<span class="legend-title">图例说明：</span>
+						<span class="legend-item"><span class="capsule badge-all">FP16</span> 全支持 (CUDA + Tensor)</span>
+						<span class="legend-item"><span class="capsule badge-cuda">FP16</span> 仅 CUDA Core</span>
+						<span class="legend-item"><span class="capsule badge-tensor">FP16</span> 仅 Tensor Core</span>
+						<span class="legend-item"><span class="capsule badge-none">FP16</span> 均不支持</span>
+						<span class="legend-item"><span class="capsule badge-unknown">FP16</span> 支持未知</span>
+					</div>
+
+					<!-- 数据表格区域 -->
+					<div class="table-wrapper">
+						<table id="gpu-table">
+							<thead>
+								<tr>
+									<th style="width: 60px; text-align: center;">对比</th>
+									<th data-sort="model" class="sortable">型号 <span class="sort-icon">↕</span></th>
+									<th data-sort="vendor" class="sortable">品牌 <span class="sort-icon">↕</span></th>
+									<th data-sort="vram_gb" class="sortable text-right">显存 (GB) <span class="sort-icon">↕</span></th>
+									<th data-sort="bandwidth_gbs" class="sortable text-right">带宽 (GB/s) <span class="sort-icon">↕</span></th>
+									<th data-sort="fp32_tflops" class="sortable text-right">FP32 (TFLOPS) <span class="sort-icon">↕</span></th>
+									<th data-sort="ai_core_perf" class="sortable text-right">AI 核心算力 <span class="sort-icon">↕</span></th>
+									<th data-sort="power_w" class="sortable text-right">功耗 (W) <span class="sort-icon">↕</span></th>
+									<th style="text-align: center;">格式兼容矩阵 (FP16 / BF16 / FP8 / FP4 / INT8 / INT4)</th>
+								</tr>
+							</thead>
+							<tbody id="gpu-table-body">
+								<!-- JS 动态填入 -->
+							</tbody>
+						</table>
+					</div>
+					
+					<!-- 空状态提示 -->
+					<div id="gpu-empty-state" class="empty-state" style="display: none;">
+						<p>🔍 没有找到匹配的显卡数据，请尝试调整筛选条件。</p>
+					</div>
+				</div>
+			</section>
 		</main>
 	</div>
+
+	<!-- 底部悬浮对比面板 -->
+	<div id="gpu-compare-bar" class="gpu-compare-bar">
+		<div class="compare-container">
+			<div class="compare-header">
+				<div class="compare-header-left">
+					<h3>⚖️ 显卡 AI 算力同屏对比</h3>
+					<span class="compare-tip">最多支持对比 3 款显卡，可输入折合市价计算性价比指标</span>
+				</div>
+				<button id="compare-clear-btn" class="compare-clear-btn">清空对比</button>
+			</div>
+			<div id="compare-slots" class="compare-slots">
+				<!-- JS 动态填入 -->
+			</div>
+		</div>
+	</div>
+
+	<!-- 注入编译期的静态 GPU 数据字典至前端全局变量 -->
+	<script define:vars={{ gpuData }}>
+		window.__GPU_DATA__ = gpuData;
+	</script>
 </BaseLayout>
 
 <script is:inline>
@@ -502,6 +611,387 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				});
 			});
 		});
+
+		// ==========================================
+		// 4. 显卡 AI 算力与兼容性对照逻辑
+		// ==========================================
+		const gpus = window.__GPU_DATA__ || [];
+		if (gpus.length > 0) {
+			let searchVal = '';
+			let selectedVendor = '';
+			let selectedArch = '';
+			let selectedSegment = '';
+			
+			let sortField = 'id';
+			let sortOrder = 'asc';
+			
+			const selectedCompareIds = new Set();
+			const priceMap = new Map();
+			
+			const searchInput = document.getElementById('gpu-search');
+			const vendorSelect = document.getElementById('gpu-vendor');
+			const archSelect = document.getElementById('gpu-arch');
+			const segmentSelect = document.getElementById('gpu-segment');
+			const tableBody = document.getElementById('gpu-table-body');
+			const emptyState = document.getElementById('gpu-empty-state');
+			
+			const compareBar = document.getElementById('gpu-compare-bar');
+			const compareSlots = document.getElementById('compare-slots');
+			const compareClearBtn = document.getElementById('compare-clear-btn');
+			
+			// 胶囊格式化（包含各数据格式 5 种兼容状态气泡释义）
+			function renderCapsules(item) {
+				const formats = [
+					{ name: 'FP16', val: item.fp16, desc: 'FP16 半精度浮点' },
+					{ name: 'BF16', val: item.bf16, desc: 'BF16 混合精度浮点' },
+					{ name: 'FP8', val: item.fp8, desc: 'FP8 低精度浮点' },
+					{ name: 'FP4', val: item.fp4, desc: 'FP4 极低精度浮点' },
+					{ name: 'INT8', val: item.int8, desc: 'INT8 整型数据' },
+					{ name: 'INT4', val: item.int4, desc: 'INT4 低比特整型' }
+				];
+
+				return formats.map(f => {
+					let statusClass = 'badge-unknown';
+					let tooltipText = `${f.desc}: `;
+					switch (f.val) {
+						case '*':
+							statusClass = 'badge-all';
+							tooltipText += 'CUDA Core 与 Tensor Core 均支持 (全兼容)';
+							break;
+						case '+':
+							statusClass = 'badge-cuda';
+							tooltipText += '仅 CUDA Core 支持，Tensor Core 不支持';
+							break;
+						case '=':
+							statusClass = 'badge-tensor';
+							tooltipText += '仅 Tensor Core 支持，CUDA Core 不支持';
+							break;
+						case '-':
+							statusClass = 'badge-none';
+							tooltipText += '均不支持';
+							break;
+						case '?':
+							statusClass = 'badge-unknown';
+							tooltipText += '支持情况未知';
+							break;
+						default:
+							statusClass = 'badge-unknown';
+							tooltipText += f.val || '支持情况未知';
+					}
+
+					return `<span class="capsule-gpu ${statusClass}" title="${tooltipText}">${f.name}</span>`;
+				}).join(' ');
+			}
+			
+			// 渲染表格
+			function renderTable() {
+				let filtered = gpus.filter(item => {
+					const sText = searchVal.toLowerCase();
+					const matchesSearch = !sText || 
+					                      item.model.toLowerCase().includes(sText) ||
+					                      item.architecture.toLowerCase().includes(sText);
+					const matchesVendor = !selectedVendor || item.vendor === selectedVendor;
+					const matchesArch = !selectedArch || item.architecture === selectedArch;
+					const matchesSegment = !selectedSegment || item.segment === selectedSegment;
+					
+					return matchesSearch && matchesVendor && matchesArch && matchesSegment;
+				});
+				
+				// 排序
+				filtered.sort((a, b) => {
+					let valA = a[sortField];
+					let valB = b[sortField];
+					
+					if (valA === null || valA === undefined) return sortOrder === 'asc' ? 1 : -1;
+					if (valB === null || valB === undefined) return sortOrder === 'asc' ? -1 : 1;
+					
+					if (typeof valA === 'string') {
+						return sortOrder === 'asc' 
+							? valA.localeCompare(valB)
+							: valB.localeCompare(valA);
+					} else {
+						return sortOrder === 'asc' ? valA - valB : valB - valA;
+					}
+				});
+				
+				if (filtered.length === 0) {
+					tableBody.innerHTML = '';
+					emptyState.style.display = 'block';
+					return;
+				}
+				
+				emptyState.style.display = 'none';
+				
+				tableBody.innerHTML = filtered.map(item => {
+					const isChecked = selectedCompareIds.has(item.id) ? 'checked' : '';
+					const aiCoreText = item.ai_core_perf 
+						? `${item.ai_core_perf} <span class="unit-sub-gpu">${item.ai_core_unit || 'TFLOPS'}</span>`
+						: '<span class="none-sub-gpu">-</span>';
+						
+					return `
+						<tr>
+							<td style="text-align: center;">
+								<input type="checkbox" class="gpu-compare-cb" data-id="${item.id}" ${isChecked} />
+							</td>
+							<td class="font-semibold-gpu">${item.model}</td>
+							<td><span class="vendor-tag-gpu tag-gpu-${item.vendor.toLowerCase()}">${item.vendor}</span></td>
+							<td class="text-right">${item.vram_gb !== null ? item.vram_gb : '-'}</td>
+							<td class="text-right">${item.bandwidth_gbs !== null ? item.bandwidth_gbs : '-'}</td>
+							<td class="text-right">${item.fp32_tflops !== null ? item.fp32_tflops : '-'}</td>
+							<td class="text-right">${aiCoreText}</td>
+							<td class="text-right">${item.power_w !== null ? item.power_w : '-'}</td>
+							<td style="text-align: center;">
+								<div class="capsules-flex-gpu">${renderCapsules(item)}</div>
+							</td>
+						</tr>
+					`;
+				}).join('');
+				
+				bindCheckboxEvents();
+			}
+			
+			// 绑定复选框事件
+			function bindCheckboxEvents() {
+				const cbs = tableBody.querySelectorAll('.gpu-compare-cb');
+				cbs.forEach(cb => {
+					cb.addEventListener('change', () => {
+						const id = parseInt(cb.getAttribute('data-id'));
+						if (cb.checked) {
+							if (selectedCompareIds.size >= 3) {
+								alert('最多支持同时对比 3 款显卡！');
+								cb.checked = false;
+								return;
+							}
+							selectedCompareIds.add(id);
+						} else {
+							selectedCompareIds.delete(id);
+						}
+						renderComparePanel();
+					});
+				});
+			}
+			
+			// 渲染对比面板
+			function renderComparePanel() {
+				if (selectedCompareIds.size === 0) {
+					compareBar.classList.remove('active');
+					return;
+				}
+				
+				compareBar.classList.add('active');
+				
+				const selectedItems = gpus.filter(item => selectedCompareIds.has(item.id));
+				
+				// 计算最大值基准
+				const maxVram = Math.max(...selectedItems.map(i => i.vram_gb || 0), 1);
+				const maxBandwidth = Math.max(...selectedItems.map(i => i.bandwidth_gbs || 0), 1);
+				const maxFp32 = Math.max(...selectedItems.map(i => i.fp32_tflops || 0), 1);
+				const maxAiCore = Math.max(...selectedItems.map(i => i.ai_core_perf || 0), 1);
+				const maxPower = Math.max(...selectedItems.map(i => i.power_w || 0), 1);
+				
+				compareSlots.innerHTML = selectedItems.map(item => {
+					const price = priceMap.get(item.id) || '';
+					
+					const pctVram = ((item.vram_gb || 0) / maxVram) * 100;
+					const pctBandwidth = ((item.bandwidth_gbs || 0) / maxBandwidth) * 100;
+					const pctFp32 = ((item.fp32_tflops || 0) / maxFp32) * 100;
+					const pctAiCore = ((item.ai_core_perf || 0) / maxAiCore) * 100;
+					const pctPower = ((item.power_w || 0) / maxPower) * 100;
+					
+					let costPerFp32 = '-';
+					let costPerVram = '-';
+					let costPerAi = '-';
+					
+					if (price) {
+						const pVal = parseFloat(price);
+						if (pVal > 0) {
+							if (item.fp32_tflops) costPerFp32 = (pVal / item.fp32_tflops).toFixed(1) + ' 元/TFLOPS';
+							if (item.vram_gb) costPerVram = (pVal / item.vram_gb).toFixed(1) + ' 元/GB';
+							if (item.ai_core_perf) costPerAi = (pVal / item.ai_core_perf).toFixed(1) + ' 元/' + (item.ai_core_unit || 'TFLOPS');
+						}
+					}
+					
+					return `
+						<div class="compare-card-gpu glass-card-sub-gpu" data-card-id="${item.id}">
+							<div class="card-gpu-title">
+								<h4>${item.model}</h4>
+								<span class="vendor-tag-gpu tag-gpu-${item.vendor.toLowerCase()}">${item.vendor}</span>
+							</div>
+							
+							<div class="compare-metrics">
+								<div class="metric-row">
+									<div class="metric-lbl">显存容量: <span>${item.vram_gb || '-'} GB</span></div>
+									<div class="progress-bar-container-gpu">
+										<div class="progress-bar-gpu bar-vram-gpu" style="width: ${pctVram}%;"></div>
+									</div>
+								</div>
+								<div class="metric-row">
+									<div class="metric-lbl">显存带宽: <span>${item.bandwidth_gbs || '-'} GB/s</span></div>
+									<div class="progress-bar-container-gpu">
+										<div class="progress-bar-gpu bar-width-gpu" style="width: ${pctBandwidth}%;"></div>
+									</div>
+								</div>
+								<div class="metric-row">
+									<div class="metric-lbl">FP32 算力: <span>${item.fp32_tflops || '-'} TFLOPS</span></div>
+									<div class="progress-bar-container-gpu">
+										<div class="progress-bar-gpu bar-fp32-gpu" style="width: ${pctFp32}%;"></div>
+									</div>
+								</div>
+								<div class="metric-row">
+									<div class="metric-lbl">AI 核心算力: <span>${item.ai_core_perf ? (item.ai_core_perf + ' ' + (item.ai_core_unit || 'TFLOPS')) : '-'}</span></div>
+									<div class="progress-bar-container-gpu">
+										<div class="progress-bar-gpu bar-ai-gpu" style="width: ${pctAiCore}%;"></div>
+									</div>
+								</div>
+								<div class="metric-row">
+									<div class="metric-lbl">设计功耗: <span>${item.power_w || '-'} W</span></div>
+									<div class="progress-bar-container-gpu">
+										<div class="progress-bar-gpu bar-power-gpu" style="width: ${pctPower}%;"></div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="compare-pricing">
+								<div class="price-input-group">
+									<label>预估价格 (元)</label>
+									<input type="number" class="compare-price-input" data-id="${item.id}" value="${price}" placeholder="输入预估价格" />
+								</div>
+								<div class="price-results">
+									<div><small>单精度性价比：</small><span>${costPerFp32}</span></div>
+									<div><small>显存容量性价比：</small><span>${costPerVram}</span></div>
+									<div><small>AI 算力性价比：</small><span>${costPerAi}</span></div>
+								</div>
+							</div>
+						</div>
+					`;
+				}).join('');
+				
+				bindPriceInputEvents();
+			}
+			
+			// 绑定价格输入事件（防丢失焦点和数据局域更新）
+			function bindPriceInputEvents() {
+				const inputs = compareSlots.querySelectorAll('.compare-price-input');
+				inputs.forEach(input => {
+					input.addEventListener('input', () => {
+						const id = parseInt(input.getAttribute('data-id'));
+						priceMap.set(id, input.value);
+						
+						const pVal = parseFloat(input.value);
+						const item = gpus.find(i => i.id === id);
+						if (item) {
+							let costPerFp32 = '-';
+							let costPerVram = '-';
+							let costPerAi = '-';
+							
+							if (pVal > 0) {
+								if (item.fp32_tflops) costPerFp32 = (pVal / item.fp32_tflops).toFixed(1) + ' 元/TFLOPS';
+								if (item.vram_gb) costPerVram = (pVal / item.vram_gb).toFixed(1) + ' 元/GB';
+								if (item.ai_core_perf) costPerAi = (pVal / item.ai_core_perf).toFixed(1) + ' 元/' + (item.ai_core_unit || 'TFLOPS');
+							}
+							
+							const card = compareSlots.querySelector(`.compare-card-gpu[data-card-id="${id}"]`);
+							if (card) {
+								const spans = card.querySelectorAll('.price-results span');
+								if (spans.length >= 3) {
+									spans[0].textContent = costPerFp32;
+									spans[1].textContent = costPerVram;
+									spans[2].textContent = costPerAi;
+								}
+							}
+						}
+					});
+				});
+			}
+			
+			// 清空对比
+			compareClearBtn.addEventListener('click', () => {
+				selectedCompareIds.clear();
+				priceMap.clear();
+				renderTable();
+				renderComparePanel();
+			});
+			
+			// 排序头绑定
+			const headers = document.querySelectorAll('#gpu-table th.sortable');
+			headers.forEach(header => {
+				header.addEventListener('click', () => {
+					const field = header.getAttribute('data-sort');
+					if (sortField === field) {
+						sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+					} else {
+						sortField = field;
+						sortOrder = 'desc';
+					}
+					
+					headers.forEach(h => {
+						const icon = h.querySelector('.sort-icon');
+						if (h === header) {
+							icon.textContent = sortOrder === 'asc' ? '↑' : '↓';
+							h.classList.add('sorted');
+						} else {
+							icon.textContent = '↕';
+							h.classList.remove('sorted');
+						}
+					});
+					
+					renderTable();
+				});
+			});
+			
+			// 筛选事件绑定
+			searchInput.addEventListener('input', (e) => {
+				searchVal = e.target.value;
+				renderTable();
+			});
+			
+			vendorSelect.addEventListener('change', (e) => {
+				selectedVendor = e.target.value;
+				renderTable();
+			});
+			
+			archSelect.addEventListener('change', (e) => {
+				selectedArch = e.target.value;
+				renderTable();
+			});
+			
+			segmentSelect.addEventListener('change', (e) => {
+				selectedSegment = e.target.value;
+				renderTable();
+			});
+			
+			// 专门为工具箱内显卡表格挂载多向粘性表头垂直滚动联动逻辑
+			const navbar = document.querySelector('header');
+			const tableWrapper = document.querySelector('#tool-gpu-ai-perf .table-wrapper');
+			
+			const handleStickyScroll = () => {
+				if (!tableWrapper) return;
+				const navbarHeight = navbar ? navbar.offsetHeight : 56;
+				const table = tableWrapper.querySelector('table');
+				const thead = tableWrapper.querySelector('thead');
+				if (!table || !thead) return;
+				
+				const wrapperRect = tableWrapper.getBoundingClientRect();
+				const theadHeight = thead.offsetHeight;
+				
+				let offsetY = 0;
+				if (wrapperRect.top < navbarHeight) {
+					const maxOffset = wrapperRect.height - theadHeight;
+					offsetY = Math.min(navbarHeight - wrapperRect.top, maxOffset);
+				}
+				
+				const ths = thead.querySelectorAll('th');
+				ths.forEach(th => {
+					th.style.transform = `translateY(${offsetY}px)`;
+				});
+			};
+			
+			window.addEventListener('scroll', handleStickyScroll, { passive: true });
+			window.addEventListener('resize', handleStickyScroll, { passive: true });
+			
+			// 初始化载入
+			renderTable();
+		}
 	});
 </script>
 
@@ -874,6 +1364,465 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 		.result-value {
 			font-size: 2.5rem;
+		}
+	}
+
+	/* ==========================================================================
+	   4. 显卡 AI 算力与兼容性对照专属样式
+	   ========================================================================== */
+	.control-panel-gpu {
+		margin-bottom: 1.5rem;
+		padding: 1.25rem;
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px solid var(--glass-border);
+		border-radius: 8px;
+	}
+
+	.filter-row-gpu {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		align-items: flex-end;
+	}
+
+	.filter-group-gpu {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		min-width: 130px;
+	}
+
+	.filter-group-gpu.flex-grow {
+		flex: 1;
+		min-width: 220px;
+	}
+
+	.filter-group-gpu label {
+		font-size: 0.8rem;
+		color: var(--text-muted);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+
+	.form-control-gpu {
+		padding: 0.6rem 0.85rem;
+		border-radius: 6px;
+		border: 1px solid var(--glass-border);
+		background: var(--surface);
+		color: var(--text);
+		font-size: 0.9rem;
+		transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+		width: 100%;
+	}
+
+	.form-control-gpu:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+	}
+
+	/* 兼容性图例 */
+	.legend-panel {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+		margin-bottom: 1.5rem;
+		padding: 0.5rem 0.75rem;
+		background: rgba(255, 255, 255, 0.01);
+		border-radius: 6px;
+		font-size: 0.85rem;
+		align-items: center;
+	}
+
+	.legend-title {
+		color: var(--text-muted);
+		font-weight: 600;
+	}
+
+	.legend-item {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: var(--text);
+	}
+
+	/* 兼容性胶囊微标 */
+	.capsules-flex-gpu {
+		display: flex;
+		justify-content: center;
+		gap: 0.3rem;
+		flex-wrap: nowrap;
+	}
+
+	.capsule-gpu {
+		display: inline-block;
+		width: 44px;
+		text-align: center;
+		padding: 0.2rem 0;
+		font-size: 0.75rem;
+		font-weight: 700;
+		border-radius: 4px;
+		font-family: var(--font-mono, monospace);
+		cursor: help;
+		transition: transform var(--transition-fast);
+	}
+
+	.capsule-gpu:hover {
+		transform: scale(1.1);
+	}
+
+	/* 5 种状态着色器 */
+	.badge-all {
+		background: rgba(16, 185, 129, 0.1);
+		color: #10b981;
+		border: 1px solid rgba(16, 185, 129, 0.25);
+	}
+	:global(.dark) .badge-all {
+		background: rgba(16, 185, 129, 0.18);
+		color: #34d399;
+	}
+
+	.badge-cuda {
+		background: rgba(59, 130, 246, 0.1);
+		color: #3b82f6;
+		border: 1px solid rgba(59, 130, 246, 0.25);
+	}
+	:global(.dark) .badge-cuda {
+		background: rgba(59, 130, 246, 0.18);
+		color: #60a5fa;
+	}
+
+	.badge-tensor {
+		background: rgba(139, 92, 246, 0.1);
+		color: #8b5cf6;
+		border: 1px solid rgba(139, 92, 246, 0.25);
+	}
+	:global(.dark) .badge-tensor {
+		background: rgba(139, 92, 246, 0.18);
+		color: #a78bfa;
+	}
+
+	.badge-none {
+		background: rgba(156, 163, 175, 0.08);
+		color: #9ca3af;
+		border: 1px solid rgba(156, 163, 175, 0.15);
+	}
+	:global(.dark) .badge-none {
+		background: rgba(156, 163, 175, 0.12);
+		color: #9ca3af;
+		border: 1px solid rgba(156, 163, 175, 0.25);
+	}
+
+	.badge-unknown {
+		background: rgba(245, 158, 11, 0.1);
+		color: #d97706;
+		border: 1px solid rgba(245, 158, 11, 0.25);
+	}
+	:global(.dark) .badge-unknown {
+		background: rgba(245, 158, 11, 0.18);
+		color: #fbbf24;
+	}
+
+	/* 品牌标签 */
+	.vendor-tag-gpu {
+		display: inline-block;
+		padding: 0.15rem 0.45rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		border-radius: 4px;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+
+	.tag-gpu-nvidia {
+		background: rgba(118, 185, 0, 0.12);
+		color: #76b900;
+		border: 1px solid rgba(118, 185, 0, 0.25);
+	}
+
+	.tag-gpu-amd {
+		background: rgba(237, 28, 36, 0.1);
+		color: #ff4a5a;
+		border: 1px solid rgba(237, 28, 36, 0.2);
+	}
+
+	.tag-gpu-intel {
+		background: rgba(0, 104, 181, 0.1);
+		color: #00c2ff;
+		border: 1px solid rgba(0, 104, 181, 0.2);
+	}
+
+	/* 表格微调 */
+	#gpu-table th.sortable {
+		cursor: pointer;
+		user-select: none;
+		transition: background-color var(--transition-fast);
+	}
+
+	#gpu-table th.sortable:hover {
+		background: rgba(124, 58, 237, 0.15);
+	}
+
+	#gpu-table th.sorted {
+		color: var(--accent);
+		font-weight: 800;
+	}
+
+	.font-semibold-gpu {
+		font-weight: 600;
+		color: var(--text-strong);
+	}
+
+	.unit-sub-gpu {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		margin-left: 0.15rem;
+	}
+
+	.none-sub-gpu {
+		color: var(--text-muted);
+		opacity: 0.4;
+	}
+
+	/* 底部悬浮对比栏 */
+	.gpu-compare-bar {
+		position: fixed;
+		bottom: -320px;
+		left: 0;
+		width: 100%;
+		z-index: 100;
+		background: rgba(255, 255, 255, 0.85);
+		border-top: 1px solid rgba(124, 58, 237, 0.15);
+		box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(20px) saturate(180%);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		padding: 1.5rem 2rem;
+	}
+
+	:global(.dark) .gpu-compare-bar {
+		background: rgba(15, 12, 25, 0.85);
+		border-top: 1px solid rgba(167, 139, 250, 0.18);
+		box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+	}
+
+	.gpu-compare-bar.active {
+		bottom: 0;
+	}
+
+	.compare-container {
+		max-width: var(--content-width);
+		margin: 0 auto;
+	}
+
+	.compare-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+		border-bottom: 1px solid var(--glass-border);
+		padding-bottom: 0.5rem;
+	}
+
+	.compare-header-left h3 {
+		margin: 0;
+		font-size: 1.1rem;
+		color: var(--text-strong);
+		font-weight: 700;
+	}
+
+	.compare-tip {
+		font-size: 0.8rem;
+		color: var(--text-muted);
+	}
+
+	.compare-clear-btn {
+		background: transparent;
+		border: 1px solid var(--glass-border);
+		padding: 0.35rem 0.85rem;
+		border-radius: 6px;
+		color: var(--text);
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.compare-clear-btn:hover {
+		background: rgba(239, 68, 68, 0.1);
+		color: #ef4444;
+		border-color: rgba(239, 68, 68, 0.25);
+	}
+
+	.compare-slots {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1.5rem;
+	}
+
+	/* 对比卡片 */
+	.glass-card-sub-gpu {
+		border-radius: 10px;
+		background: rgba(124, 58, 237, 0.03);
+		border: 1px solid var(--glass-border);
+		padding: 1.25rem;
+		transition: border-color var(--transition-normal);
+	}
+
+	:global(.dark) .glass-card-sub-gpu {
+		background: rgba(167, 139, 250, 0.03);
+	}
+
+	.card-gpu-title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+
+	.card-gpu-title h4 {
+		margin: 0;
+		font-size: 1rem;
+		color: var(--text-strong);
+		font-weight: 700;
+	}
+
+	.compare-metrics {
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+		margin-bottom: 1rem;
+	}
+
+	.metric-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.metric-lbl {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+
+	.metric-lbl span {
+		font-weight: 700;
+		color: var(--text-strong);
+	}
+
+	/* 百分比对比柱 */
+	.progress-bar-container-gpu {
+		height: 6px;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 3px;
+		overflow: hidden;
+		width: 100%;
+	}
+
+	:global(.dark) .progress-bar-container-gpu {
+		background: rgba(0, 0, 0, 0.2);
+	}
+
+	.progress-bar-gpu {
+		height: 100%;
+		border-radius: 3px;
+		transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.bar-vram-gpu {
+		background: linear-gradient(90deg, #10b981, #34d399);
+	}
+	.bar-width-gpu {
+		background: linear-gradient(90deg, #3b82f6, #60a5fa);
+	}
+	.bar-fp32-gpu {
+		background: linear-gradient(90deg, #f59e0b, #fbbf24);
+	}
+	.bar-ai-gpu {
+		background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+	}
+	.bar-power-gpu {
+		background: linear-gradient(90deg, #ef4444, #f87171);
+	}
+
+	/* 对比价格 */
+	.compare-pricing {
+		border-top: 1px dashed var(--glass-border);
+		padding-top: 0.85rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+
+	.price-input-group {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.price-input-group label {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		font-weight: 600;
+	}
+
+	.compare-price-input {
+		width: 110px;
+		padding: 0.35rem 0.5rem;
+		font-size: 0.8rem;
+		border-radius: 4px;
+		border: 1px solid var(--glass-border);
+		background: var(--surface);
+		color: var(--text-strong);
+		font-weight: 700;
+	}
+
+	.price-results {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		background: rgba(0, 0, 0, 0.02);
+		padding: 0.5rem;
+		border-radius: 4px;
+	}
+
+	:global(.dark) .price-results {
+		background: rgba(255, 255, 255, 0.01);
+	}
+
+	.price-results div {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.price-results span {
+		font-weight: 700;
+		color: var(--accent);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: 3rem 1rem;
+		color: var(--text-muted);
+		font-style: italic;
+	}
+
+	/* 媒体查询 */
+	@media (max-width: 768px) {
+		.gpu-compare-bar {
+			padding: 1rem;
+			bottom: -450px;
+		}
+
+		.compare-slots {
+			grid-template-columns: 1fr;
+			max-height: 240px;
+			overflow-y: auto;
 		}
 	}
 </style>
