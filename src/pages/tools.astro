@@ -432,11 +432,11 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 					<!-- 兼容性含义图例 -->
 					<div class="legend-panel">
 						<span class="legend-title">图例说明：</span>
-						<span class="legend-item"><span class="capsule badge-all">FP16</span> 全支持 (CUDA + Tensor)</span>
-						<span class="legend-item"><span class="capsule badge-cuda">FP16</span> 仅 CUDA Core</span>
-						<span class="legend-item"><span class="capsule badge-tensor">FP16</span> 仅 Tensor Core</span>
-						<span class="legend-item"><span class="capsule badge-none">FP16</span> 均不支持</span>
-						<span class="legend-item"><span class="capsule badge-unknown">FP16</span> 支持未知</span>
+						<span class="legend-item"><span class="capsule-gpu badge-all">FP16</span> 全支持 (矢量/张量单元)</span>
+						<span class="legend-item"><span class="capsule-gpu badge-cuda">FP16</span> 仅矢量单元 (CUDA Core/VALU/XVE)</span>
+						<span class="legend-item"><span class="capsule-gpu badge-tensor">FP16</span> 仅张量单元 (Tensor Core/Matrix Core/XMX)</span>
+						<span class="legend-item"><span class="capsule-gpu badge-none">FP16</span> 均不支持</span>
+						<span class="legend-item"><span class="capsule-gpu badge-unknown">FP16</span> 支持未知</span>
 					</div>
 
 					<!-- 数据表格区域 -->
@@ -656,15 +656,15 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 					switch (f.val) {
 						case '*':
 							statusClass = 'badge-all';
-							tooltipText += 'CUDA Core 与 Tensor Core 均支持 (全兼容)';
+							tooltipText += '矢量单元 (CUDA Core/VALU/XVE) 与 张量单元 (Tensor Core/Matrix Core/XMX) 均支持 (全兼容)';
 							break;
 						case '+':
 							statusClass = 'badge-cuda';
-							tooltipText += '仅 CUDA Core 支持，Tensor Core 不支持';
+							tooltipText += '仅 矢量单元 (CUDA Core/VALU/XVE) 支持，张量单元不支持';
 							break;
 						case '=':
 							statusClass = 'badge-tensor';
-							tooltipText += '仅 Tensor Core 支持，CUDA Core 不支持';
+							tooltipText += '仅 张量单元 (Tensor Core/Matrix Core/XMX) 支持，矢量单元不支持';
 							break;
 						case '-':
 							statusClass = 'badge-none';
@@ -1367,8 +1367,11 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 		}
 	}
 
+</style>
+
+<style is:global>
 	/* ==========================================================================
-	   4. 显卡 AI 算力与兼容性对照专属样式
+	   4. 显卡 AI 算力与兼容性对照专属样式 (全局声明以支持客户端 JS 动态渲染元素)
 	   ========================================================================== */
 	.control-panel-gpu {
 		margin-bottom: 1.5rem;
