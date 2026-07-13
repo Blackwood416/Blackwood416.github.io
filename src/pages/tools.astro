@@ -501,15 +501,27 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 								</select>
 							</div>
 							<div class="filter-group-gpu">
-								<label for="aten-backend-filter">核心后端过滤</label>
-								<select id="aten-backend-filter" class="form-control-gpu">
-									<option value="">全部后端状态</option>
-									<option value="CPU:n">CPU 原生 (Native)</option>
-									<option value="CUDA:n">CUDA 原生 (Native)</option>
-									<option value="MPS:n">MPS 原生 (Native)</option>
-									<option value="HIP:n">HIP 原生 (Native)</option>
-									<option value="XPU:n">XPU 原生 (Native)</option>
-									<option value="XLA:n">XLA 原生 (Native)</option>
+								<label for="aten-backend">自选后端</label>
+								<select id="aten-backend" class="form-control-gpu">
+									<option value="">全部后端</option>
+									<option value="CPU">CPU</option>
+									<option value="CUDA">CUDA</option>
+									<option value="MPS">MPS (Apple)</option>
+									<option value="HIP">HIP/ROCm (AMD)</option>
+									<option value="XPU">Intel XPU</option>
+									<option value="XLA">Google XLA</option>
+									<option value="HPU">Intel HPU</option>
+								</select>
+							</div>
+							<div class="filter-group-gpu">
+								<label for="aten-status">支持状态</label>
+								<select id="aten-status" class="form-control-gpu">
+									<option value="">全部状态</option>
+									<option value="supported">有加速支持 (n/c/f)</option>
+									<option value="n">Native (原生支持)</option>
+									<option value="c">Composite (算子组合)</option>
+									<option value="f">Fallback (后端回退)</option>
+									<option value="o">Unsupported (不支持)</option>
 								</select>
 							</div>
 						</div>
@@ -519,7 +531,7 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 					<div class="legend-panel">
 						<span class="legend-title">派发状态图例：</span>
 						<span class="legend-item"><span class="capsule-gpu badge-all">Native</span> 原生硬件内核支持 (效率最高)</span>
-						<span class="legend-item"><span class="capsule-gpu badge-tensor">Composite</span> 跨硬件复合内核实现</span>
+						<span class="legend-item"><span class="capsule-gpu badge-tensor">Composite</span> 通过组合其他算子实现</span>
 						<span class="legend-item"><span class="capsule-gpu badge-unknown">Fallback</span> 后端通用回退运行</span>
 						<span class="legend-item"><span class="capsule-gpu badge-none">-</span> 未实现 / 不支持</span>
 					</div>
@@ -1089,11 +1101,14 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 		const atenSearchInput = document.getElementById('aten-search');
 		const atenVersionSelect = document.getElementById('aten-version');
 		const atenNamespaceSelect = document.getElementById('aten-namespace');
-		const atenBackendFilter = document.getElementById('aten-backend-filter');
+		const atenBackendSelect = document.getElementById('aten-backend');
+		const atenStatusSelect = document.getElementById('aten-status');
 		const atenTableBody = document.getElementById('aten-table-body');
 		const atenEmptyState = document.getElementById('aten-empty-state');
 		const atenTable = document.getElementById('aten-table');
 		const atenThead = atenTable ? atenTable.querySelector('thead') : null;
+
+		const navbar = document.querySelector('header');
 
 		if (atenTable) {
 			let atenRecords = []; // 算子完整记录列表
@@ -1103,6 +1118,28 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 
 			// 核心硬件展示列表
 			const CORE_BACKENDS = ["CPU", "CUDA", "MPS", "HIP", "XPU", "XLA", "HPU"];
+
+			// 统一为算子表格挂载多向粘性表头垂直滚动联动逻辑
+			const handleAtenStickyScroll = () => {
+				if (!atenThead) return;
+				const headerHeight = atenThead.offsetHeight;
+				const wrapperRect = atenTable.parentElement.getBoundingClientRect();
+				const navbarHeight = navbar ? navbar.offsetHeight : 56;
+				
+				let offsetY = 0;
+				if (wrapperRect.top < navbarHeight) {
+					const maxOffset = wrapperRect.height - headerHeight;
+					offsetY = Math.min(navbarHeight - wrapperRect.top, maxOffset);
+				}
+				
+				const ths = atenThead.querySelectorAll('th');
+				ths.forEach(th => {
+					th.style.transform = `translateY(${offsetY}px)`;
+				});
+			};
+
+			window.addEventListener('scroll', handleAtenStickyScroll, { passive: true });
+			window.addEventListener('resize', handleAtenStickyScroll, { passive: true });
 
 			// 1) 载入版本列表 versions.json
 			const initAtenTool = async () => {
@@ -1171,7 +1208,8 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 			const applyAtenFilters = () => {
 				const query = atenSearchInput.value.toLowerCase().trim();
 				const selectedNamespace = atenNamespaceSelect.value;
-				const backendFilterVal = atenBackendFilter.value; // "CPU:n" 等
+				const selectedBackend = atenBackendSelect.value;
+				const selectedStatus = atenStatusSelect.value;
 
 				filteredAten = atenRecords.filter(item => {
 					// 搜索匹配
@@ -1187,12 +1225,29 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 						}
 					}
 
-					// 核心后端状态匹配
+					// 核心后端状态联动匹配
 					let backendMatch = true;
-					if (backendFilterVal) {
-						const [be, targetStatus] = backendFilterVal.split(':');
-						const itemStatus = item.k[be] || 'o';
-						backendMatch = itemStatus === targetStatus;
+					if (selectedBackend) {
+						const status = item.k[selectedBackend] || 'o';
+						if (selectedStatus) {
+							if (selectedStatus === 'supported') {
+								backendMatch = status === 'n' || status === 'c' || status === 'f';
+							} else {
+								backendMatch = status === selectedStatus;
+							}
+						} else {
+							// 选了后端，没选状态：不限制状态，展示全部
+							backendMatch = true;
+						}
+					} else if (selectedStatus) {
+						// 没选后端，选了状态：展示在任意核心后端上符合该状态的算子
+						backendMatch = CORE_BACKENDS.some(be => {
+							const status = item.k[be] || 'o';
+							if (selectedStatus === 'supported') {
+								return status === 'n' || status === 'c' || status === 'f';
+							}
+							return status === selectedStatus;
+						});
 					}
 
 					return nameMatch && nsMatch && backendMatch;
@@ -1263,7 +1318,7 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 						} else if (status === 'c') {
 							badgeClass = 'badge-tensor';
 							label = 'Composite';
-							desc = `复合内核支持 (Composite): 该算子在分发器中由其他基础算子组合而成，具有跨硬件通用性。`;
+							desc = `通过组合其他算子实现 (Composite): 该算子在分发器中通过组合其他底层算子实现，具有跨硬件通用性。`;
 						} else if (status === 'f') {
 							badgeClass = 'badge-unknown';
 							label = 'Fallback';
@@ -1297,35 +1352,17 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 
 				atenTableBody.appendChild(fragment);
 
-				// 专门为工具箱内算子表格挂载多向粘性表头垂直滚动联动逻辑
-				const handleAtenStickyScroll = () => {
-					const thead = atenTable.querySelector('thead');
-					if (!thead) return;
-					const headerHeight = thead.offsetHeight;
-					const wrapperRect = atenTable.parentElement.getBoundingClientRect();
-					const navbarHeight = navbar ? navbar.offsetHeight : 56;
-					
-					let offsetY = 0;
-					if (wrapperRect.top < navbarHeight) {
-						const maxOffset = wrapperRect.height - headerHeight;
-						offsetY = Math.min(navbarHeight - wrapperRect.top, maxOffset);
-					}
-					
-					const ths = thead.querySelectorAll('th');
-					ths.forEach(th => {
-						th.style.transform = `translateY(${offsetY}px)`;
-					});
-				};
-				
-				window.removeEventListener('scroll', handleAtenStickyScroll);
-				window.addEventListener('scroll', handleAtenStickyScroll, { passive: true });
-				handleAtenStickyScroll();
+				// 渲染完成后手动刷新粘性偏移以对齐位置
+				if (typeof handleAtenStickyScroll === 'function') {
+					handleAtenStickyScroll();
+				}
 			};
 
 			// 6) 事件监听注册
 			atenSearchInput.addEventListener('input', applyAtenFilters);
 			atenNamespaceSelect.addEventListener('change', applyAtenFilters);
-			atenBackendFilter.addEventListener('change', applyAtenFilters);
+			atenBackendSelect.addEventListener('change', applyAtenFilters);
+			atenStatusSelect.addEventListener('change', applyAtenFilters);
 			atenVersionSelect.addEventListener('change', (e) => {
 				loadVersionData(e.target.value);
 			});
