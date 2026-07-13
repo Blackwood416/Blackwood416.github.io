@@ -15,7 +15,7 @@
     "migrate:hexo": "node scripts/migrate-hexo.mjs",
     "new": "node scripts/new-post.mjs",
     "export-db": "node scripts/export-gpu-db.mjs",
-    "process-aten": "node scripts/process-aten-matrix.mjs",
+    "process-aten": "node scripts/process-aten-matrix.mjs && node scripts/sync-all-versions.mjs",
     "test": "vitest run"
   },
   "dependencies": {
