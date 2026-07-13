@@ -27,6 +27,10 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 						<span class="nav-icon">⚡</span>
 						<span class="nav-label">显卡 AI 算力对照</span>
 					</button>
+					<button class="nav-item" data-tool="pytorch-op-support">
+						<span class="nav-icon">🔥</span>
+						<span class="nav-label">PyTorch 算子加速支持</span>
+					</button>
 				</nav>
 			</div>
 		</aside>
@@ -464,6 +468,92 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 					<!-- 空状态提示 -->
 					<div id="gpu-empty-state" class="empty-state" style="display: none;">
 						<p>🔍 没有找到匹配的显卡数据，请尝试调整筛选条件。</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- 工具 D: PyTorch 算子硬件加速支持查询 -->
+			<section id="tool-pytorch-op-support" class="tool-section">
+				<div class="glass-card">
+					<div class="tool-header">
+						<h2>🔥 PyTorch 算子硬件加速支持查询</h2>
+						<p class="tool-desc">基于 PyTorch 动态分发器 (Dispatcher) 提取的算子注册矩阵，支持根据命名空间、算子名、硬件后端及派发机制进行模糊检索和升降序排列。</p>
+					</div>
+
+					<!-- 控制面板：搜索 + 联动过滤 -->
+					<div class="control-panel-gpu">
+						<div class="filter-row-gpu">
+							<div class="filter-group-gpu flex-grow">
+								<label for="aten-search">算子/命名空间检索</label>
+								<input type="text" id="aten-search" class="form-control-gpu" placeholder="输入算子名或命名空间，如 add.Tensor, aten::conv2d..." />
+							</div>
+							<div class="filter-group-gpu">
+								<label for="aten-version">PyTorch 版本</label>
+								<select id="aten-version" class="form-control-gpu">
+									<!-- 由 JS 动态载入 -->
+								</select>
+							</div>
+							<div class="filter-group-gpu">
+								<label for="aten-namespace">命名空间 (Namespace)</label>
+								<select id="aten-namespace" class="form-control-gpu">
+									<option value="">全部</option>
+									<!-- 由 JS 动态载入 -->
+								</select>
+							</div>
+							<div class="filter-group-gpu">
+								<label for="aten-backend-filter">核心后端过滤</label>
+								<select id="aten-backend-filter" class="form-control-gpu">
+									<option value="">全部后端状态</option>
+									<option value="CPU:n">CPU 原生 (Native)</option>
+									<option value="CUDA:n">CUDA 原生 (Native)</option>
+									<option value="MPS:n">MPS 原生 (Native)</option>
+									<option value="HIP:n">HIP 原生 (Native)</option>
+									<option value="XPU:n">XPU 原生 (Native)</option>
+									<option value="XLA:n">XLA 原生 (Native)</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- 兼容性含义图例 -->
+					<div class="legend-panel">
+						<span class="legend-title">派发状态图例：</span>
+						<span class="legend-item"><span class="capsule-gpu badge-all">Native</span> 原生硬件内核支持 (效率最高)</span>
+						<span class="legend-item"><span class="capsule-gpu badge-tensor">Composite</span> 跨硬件复合内核实现</span>
+						<span class="legend-item"><span class="capsule-gpu badge-unknown">Fallback</span> 后端通用回退运行</span>
+						<span class="legend-item"><span class="capsule-gpu badge-none">-</span> 未实现 / 不支持</span>
+					</div>
+
+					<!-- 数据表格区域 -->
+					<div class="table-wrapper">
+						<table id="aten-table">
+							<thead>
+								<tr>
+									<th data-sort="o" class="sortable">算子名称 <span class="sort-icon">↕</span></th>
+									<th data-sort="CPU" class="sortable text-center">CPU <span class="sort-icon">↕</span></th>
+									<th data-sort="CUDA" class="sortable text-center">CUDA <span class="sort-icon">↕</span></th>
+									<th data-sort="MPS" class="sortable text-center">MPS <span class="sort-icon">↕</span></th>
+									<th data-sort="HIP" class="sortable text-center">HIP/ROCm <span class="sort-icon">↕</span></th>
+									<th data-sort="XPU" class="sortable text-center">Intel XPU <span class="sort-icon">↕</span></th>
+									<th data-sort="XLA" class="sortable text-center">Google XLA <span class="sort-icon">↕</span></th>
+									<th data-sort="HPU" class="sortable text-center">Intel HPU <span class="sort-icon">↕</span></th>
+									<th style="text-align: center;">其他可用后端</th>
+								</tr>
+							</thead>
+							<tbody id="aten-table-body">
+								<!-- JS 动态填入 -->
+								<tr>
+									<td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+										正在加载算子支持数据包...
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<!-- 空状态提示 -->
+					<div id="aten-empty-state" class="empty-state" style="display: none;">
+						<p>🔍 没有找到匹配的 PyTorch 算子，请尝试调整筛选条件。</p>
 					</div>
 				</div>
 			</section>
@@ -991,6 +1081,285 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 			
 			// 初始化载入
 			renderTable();
+		}
+
+		// ==========================================
+		// 5. PyTorch 算子硬件加速支持逻辑
+		// ==========================================
+		const atenSearchInput = document.getElementById('aten-search');
+		const atenVersionSelect = document.getElementById('aten-version');
+		const atenNamespaceSelect = document.getElementById('aten-namespace');
+		const atenBackendFilter = document.getElementById('aten-backend-filter');
+		const atenTableBody = document.getElementById('aten-table-body');
+		const atenEmptyState = document.getElementById('aten-empty-state');
+		const atenTable = document.getElementById('aten-table');
+		const atenThead = atenTable ? atenTable.querySelector('thead') : null;
+
+		if (atenTable) {
+			let atenRecords = []; // 算子完整记录列表
+			let filteredAten = []; // 筛选后的列表
+			let atenSortField = 'o'; // 默认按名称排序
+			let atenSortOrder = 'asc';
+
+			// 核心硬件展示列表
+			const CORE_BACKENDS = ["CPU", "CUDA", "MPS", "HIP", "XPU", "XLA", "HPU"];
+
+			// 1) 载入版本列表 versions.json
+			const initAtenTool = async () => {
+				try {
+					const res = await fetch('/data/pytorch/versions.json');
+					if (!res.ok) throw new Error('Failed to fetch versions.json');
+					const versionsMapping = await res.json();
+
+					// 渲染版本下拉框
+					atenVersionSelect.innerHTML = '';
+					for (const [safeName, rawName] of Object.entries(versionsMapping)) {
+						const opt = document.createElement('option');
+						opt.value = safeName;
+						opt.textContent = `PyTorch ${rawName}`;
+						atenVersionSelect.appendChild(opt);
+					}
+
+					// 默认载入第一个版本的数据
+					const defaultVersion = Object.keys(versionsMapping)[0];
+					if (defaultVersion) {
+						atenVersionSelect.value = defaultVersion;
+						await loadVersionData(defaultVersion);
+					}
+				} catch (e) {
+					console.error('Error initializing PyTorch operator tool:', e);
+					atenTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">❌ 载入版本列表失败，请检查资源文件。</td></tr>`;
+				}
+			};
+
+			// 2) 异步加载某一版本的数据
+			const loadVersionData = async (versionName) => {
+				atenTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">正在加载 PyTorch ${versionName} 算子矩阵...</td></tr>`;
+				try {
+					const res = await fetch(`/data/pytorch/${versionName}.json`);
+					if (!res.ok) throw new Error(`Failed to fetch ${versionName}.json`);
+					atenRecords = await res.json();
+
+					// 渲染命名空间下拉框
+					const namespaces = new Set();
+					atenRecords.forEach(item => {
+						if (item.o.includes('::')) {
+							namespaces.add(item.o.split('::')[0]);
+						} else {
+							namespaces.add('aten'); // 默认
+						}
+					});
+					
+					atenNamespaceSelect.innerHTML = '<option value="">全部</option>';
+					[...namespaces].sort().forEach(ns => {
+						const opt = document.createElement('option');
+						opt.value = ns;
+						opt.textContent = ns;
+						atenNamespaceSelect.appendChild(opt);
+					});
+
+					// 执行筛选并渲染
+					applyAtenFilters();
+
+				} catch (e) {
+					console.error('Error loading PyTorch operator data:', e);
+					atenTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">❌ 载入算子支持矩阵失败，请检查网络连接。</td></tr>`;
+				}
+			};
+
+			// 3) 过滤逻辑
+			const applyAtenFilters = () => {
+				const query = atenSearchInput.value.toLowerCase().trim();
+				const selectedNamespace = atenNamespaceSelect.value;
+				const backendFilterVal = atenBackendFilter.value; // "CPU:n" 等
+
+				filteredAten = atenRecords.filter(item => {
+					// 搜索匹配
+					const nameMatch = item.o.toLowerCase().includes(query);
+					
+					// 命名空间匹配
+					let nsMatch = true;
+					if (selectedNamespace) {
+						if (item.o.includes('::')) {
+							nsMatch = item.o.startsWith(selectedNamespace + '::');
+						} else {
+							nsMatch = selectedNamespace === 'aten'; // 无 namespace 默认为 aten
+						}
+					}
+
+					// 核心后端状态匹配
+					let backendMatch = true;
+					if (backendFilterVal) {
+						const [be, targetStatus] = backendFilterVal.split(':');
+						const itemStatus = item.k[be] || 'o';
+						backendMatch = itemStatus === targetStatus;
+					}
+
+					return nameMatch && nsMatch && backendMatch;
+				});
+
+				sortAtenData();
+				renderAtenTable();
+			};
+
+			// 4) 排序逻辑
+			const sortAtenData = () => {
+				filteredAten.sort((a, b) => {
+					let valA, valB;
+
+					if (atenSortField === 'o') {
+						valA = a.o;
+						valB = b.o;
+					} else {
+						// 派发状态权重排序：Native -> 3, Composite -> 2, Fallback -> 1, Unsupported -> 0
+						const statusWeight = { 'n': 3, 'c': 2, 'f': 1, 'o': 0 };
+						valA = statusWeight[a.k[atenSortField] || 'o'] || 0;
+						valB = statusWeight[b.k[atenSortField] || 'o'] || 0;
+					}
+
+					if (valA < valB) return atenSortOrder === 'asc' ? -1 : 1;
+					if (valA > valB) return atenSortOrder === 'asc' ? 1 : -1;
+					return 0;
+				});
+			};
+
+			// 5) 渲染 HTML 列表
+			const renderAtenTable = () => {
+				atenTableBody.innerHTML = '';
+				if (filteredAten.length === 0) {
+					atenEmptyState.style.display = 'block';
+					atenTable.style.display = 'none';
+					return;
+				}
+
+				atenEmptyState.style.display = 'none';
+				atenTable.style.display = 'table';
+
+				const fragment = document.createDocumentFragment();
+
+				filteredAten.forEach(item => {
+					const tr = document.createElement('tr');
+					
+					// 算子名称
+					const tdName = document.createElement('td');
+					tdName.className = 'font-semibold-gpu';
+					tdName.textContent = item.o;
+					tr.appendChild(tdName);
+
+					// 核心后端
+					CORE_BACKENDS.forEach(be => {
+						const td = document.createElement('td');
+						td.style.textAlign = 'center';
+						
+						const status = item.k[be] || 'o';
+						let badgeClass = 'badge-none';
+						let label = '-';
+						let desc = '未注册分发内核，不支持在此后端加速运行';
+
+						if (status === 'n') {
+							badgeClass = 'badge-all';
+							label = 'Native';
+							desc = `原生内核注册 (Native Kernel): 该算子在此硬件后端有专用底层内核实现，运行效率高。`;
+						} else if (status === 'c') {
+							badgeClass = 'badge-tensor';
+							label = 'Composite';
+							desc = `复合内核支持 (Composite): 该算子在分发器中由其他基础算子组合而成，具有跨硬件通用性。`;
+						} else if (status === 'f') {
+							badgeClass = 'badge-unknown';
+							label = 'Fallback';
+							desc = `后端回退支持 (Backend Fallback): 该算子在此后端未提供专用内核，在运行时会回退执行。`;
+						}
+
+						td.innerHTML = `<span class="capsule-gpu ${badgeClass}" title="${desc}">${label}</span>`;
+						tr.appendChild(td);
+					});
+
+					// 其他后端
+					const tdOthers = document.createElement('td');
+					tdOthers.style.textAlign = 'center';
+					
+					const othersSupported = [];
+					for (const [key, status] of Object.entries(item.k)) {
+						if (!CORE_BACKENDS.includes(key) && (status === 'n' || status === 'c')) {
+							othersSupported.push(`${key}(${status === 'n' ? 'Native' : 'Composite'})`);
+						}
+					}
+
+					if (othersSupported.length > 0) {
+						tdOthers.innerHTML = `<span class="vendor-tag-gpu tag-gpu-intel" title="${othersSupported.join(', ')}">${othersSupported.length} 个后端</span>`;
+					} else {
+						tdOthers.innerHTML = `<span class="none-sub-gpu">-</span>`;
+					}
+					tr.appendChild(tdOthers);
+
+					fragment.appendChild(tr);
+				});
+
+				atenTableBody.appendChild(fragment);
+
+				// 专门为工具箱内算子表格挂载多向粘性表头垂直滚动联动逻辑
+				const handleAtenStickyScroll = () => {
+					const thead = atenTable.querySelector('thead');
+					if (!thead) return;
+					const headerHeight = thead.offsetHeight;
+					const wrapperRect = atenTable.parentElement.getBoundingClientRect();
+					const navbarHeight = navbar ? navbar.offsetHeight : 56;
+					
+					let offsetY = 0;
+					if (wrapperRect.top < navbarHeight) {
+						const maxOffset = wrapperRect.height - headerHeight;
+						offsetY = Math.min(navbarHeight - wrapperRect.top, maxOffset);
+					}
+					
+					const ths = thead.querySelectorAll('th');
+					ths.forEach(th => {
+						th.style.transform = `translateY(${offsetY}px)`;
+					});
+				};
+				
+				window.removeEventListener('scroll', handleAtenStickyScroll);
+				window.addEventListener('scroll', handleAtenStickyScroll, { passive: true });
+				handleAtenStickyScroll();
+			};
+
+			// 6) 事件监听注册
+			atenSearchInput.addEventListener('input', applyAtenFilters);
+			atenNamespaceSelect.addEventListener('change', applyAtenFilters);
+			atenBackendFilter.addEventListener('change', applyAtenFilters);
+			atenVersionSelect.addEventListener('change', (e) => {
+				loadVersionData(e.target.value);
+			});
+
+			// 7) 表头点击排序
+			atenThead.querySelectorAll('th.sortable').forEach(th => {
+				th.addEventListener('click', () => {
+					const field = th.getAttribute('data-sort');
+					if (atenSortField === field) {
+						atenSortOrder = atenSortOrder === 'asc' ? 'desc' : 'asc';
+					} else {
+						atenSortField = field;
+						atenSortOrder = 'asc';
+					}
+
+					atenThead.querySelectorAll('th.sortable').forEach(t => {
+						t.classList.remove('sorted');
+						const icon = t.querySelector('.sort-icon');
+						if (icon) icon.textContent = '↕';
+					});
+
+					th.classList.add('sorted');
+					const currentIcon = th.querySelector('.sort-icon');
+					if (currentIcon) {
+						currentIcon.textContent = atenSortOrder === 'asc' ? '↑' : '↓';
+					}
+
+					sortAtenData();
+					renderAtenTable();
+				});
+			});
+
+			// 8) 启动载入
+			initAtenTool();
 		}
 	});
 </script>

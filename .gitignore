@@ -26,3 +26,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# PyTorch raw massive assets
+public/assets/dispatch_records.jsonl
+public/assets/hardware_matrix.csv
+public/assets/gpu_ai_perf.db
+

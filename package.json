@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "astro dev --host",
     "build": "npm run build:astro && npm run build:search",
-    "build:astro": "npm run export-db && astro build",
+    "build:astro": "npm run export-db && npm run process-aten && astro build",
     "build:search": "pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:hexo": "node scripts/migrate-hexo.mjs",
     "new": "node scripts/new-post.mjs",
     "export-db": "node scripts/export-gpu-db.mjs",
+    "process-aten": "node scripts/process-aten-matrix.mjs",
     "test": "vitest run"
   },
   "dependencies": {
