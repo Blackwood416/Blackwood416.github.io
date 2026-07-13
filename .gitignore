@@ -30,5 +30,6 @@ pnpm-debug.log*
 # PyTorch raw massive assets
 pytorch-raw/dispatch_records.jsonl
 pytorch-raw/hardware_matrix.csv
+pytorch-raw/pytorch_aten_exports/
 public/assets/gpu_ai_perf.db
 

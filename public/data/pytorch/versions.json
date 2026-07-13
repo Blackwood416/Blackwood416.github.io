@@ -1,3 +1,213 @@
 {
-  "v2.11.0-xpu": "2.11.0+xpu"
+  "v2.13.0-xpu": {
+    "raw": "2.13.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.13.0-rocm7.2": {
+    "raw": "2.13.0+rocm7.2",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.13.0-rocm7.1": {
+    "raw": "2.13.0+rocm7.1",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.13.0-cu132": {
+    "raw": "2.13.0+cu132",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.13.0-cu130": {
+    "raw": "2.13.0+cu130",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.13.0-cu126": {
+    "raw": "2.13.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.13.0-cpu": {
+    "raw": "2.13.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  },
+  "v2.12.0-xpu": {
+    "raw": "2.12.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.12.0-rocm7.2": {
+    "raw": "2.12.0+rocm7.2",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.12.0-rocm7.1": {
+    "raw": "2.12.0+rocm7.1",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.12.0-cu132": {
+    "raw": "2.12.0+cu132",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.12.0-cu130": {
+    "raw": "2.12.0+cu130",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.12.0-cu126": {
+    "raw": "2.12.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.12.0-cpu": {
+    "raw": "2.12.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  },
+  "v2.11.0-xpu": {
+    "raw": "2.11.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.11.0-rocm7.2": {
+    "raw": "2.11.0+rocm7.2",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.11.0-rocm7.1": {
+    "raw": "2.11.0+rocm7.1",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.11.0-cu126": {
+    "raw": "2.11.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.11.0-cpu": {
+    "raw": "2.11.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  },
+  "v2.10.0-xpu": {
+    "raw": "2.10.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.10.0-rocm7.1": {
+    "raw": "2.10.0+rocm7.1",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.10.0-cu126": {
+    "raw": "2.10.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.10.0-cpu": {
+    "raw": "2.10.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  },
+  "v2.9.0-xpu": {
+    "raw": "2.9.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.9.0-rocm6.4": {
+    "raw": "2.9.0+rocm6.4",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.9.0-cu126": {
+    "raw": "2.9.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.9.0-cpu": {
+    "raw": "2.9.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  },
+  "v2.8.0-xpu": {
+    "raw": "2.8.0+xpu",
+    "backends": [
+      "CPU",
+      "XPU"
+    ]
+  },
+  "v2.8.0-rocm6.4": {
+    "raw": "2.8.0+rocm6.4",
+    "backends": [
+      "CPU",
+      "HIP"
+    ]
+  },
+  "v2.8.0-cu126": {
+    "raw": "2.8.0+cu126",
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
+  },
+  "v2.8.0-cpu": {
+    "raw": "2.8.0+cpu",
+    "backends": [
+      "CPU"
+    ]
+  }
 }
