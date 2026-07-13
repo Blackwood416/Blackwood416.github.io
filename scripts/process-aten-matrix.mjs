@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-const csvPath = path.resolve('public/assets/hardware_matrix.csv');
+const csvPath = path.resolve('pytorch-raw/hardware_matrix.csv');
 const outputDir = path.resolve('public/data/pytorch');
 const versionsPath = path.resolve('public/data/pytorch/versions.json');
 

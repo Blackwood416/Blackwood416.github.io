@@ -28,7 +28,7 @@ pnpm-debug.log*
 .idea/
 
 # PyTorch raw massive assets
-public/assets/dispatch_records.jsonl
-public/assets/hardware_matrix.csv
+pytorch-raw/dispatch_records.jsonl
+pytorch-raw/hardware_matrix.csv
 public/assets/gpu_ai_perf.db
 
