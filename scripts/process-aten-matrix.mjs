@@ -115,13 +115,46 @@ function processMatrix() {
 		opData.keys[key] = shortStatus;
 	}
 
-	// Prepare data structure
+	// Detect relevant hardware backends based on PyTorch version string
+	let targetBackend = 'CPU';
+	const lowerVersion = rawVersion.toLowerCase();
+	if (lowerVersion.includes('xpu')) {
+		targetBackend = 'XPU';
+	} else if (lowerVersion.includes('cu')) {
+		targetBackend = 'CUDA';
+	} else if (lowerVersion.includes('rocm') || lowerVersion.includes('hip')) {
+		targetBackend = 'HIP';
+	} else if (lowerVersion.includes('xla')) {
+		targetBackend = 'XLA';
+	} else if (lowerVersion.includes('hpu')) {
+		targetBackend = 'HPU';
+	}
+
+	const activeBackends = ['CPU'];
+	if (targetBackend !== 'CPU') {
+		activeBackends.push(targetBackend);
+	}
+
+	console.log(`Filtering matrix keys. Retaining only: ${activeBackends.join(', ')}`);
+
+	// Prepare data structure: Retain only CPU and target backend, filter out 'o' (unsupported)
 	const records = [];
 	for (const [opName, data] of opsMap.entries()) {
-		records.push({
-			o: data.op, // Shortened keys to save traffic
-			k: data.keys
-		});
+		const keys = {};
+		for (const be of activeBackends) {
+			const status = data.keys[be] || 'o';
+			if (status !== 'o') {
+				keys[be] = status;
+			}
+		}
+
+		// Only retain operators that have at least one acceleration backend supported in this build
+		if (Object.keys(keys).length > 0) {
+			records.push({
+				o: data.op,
+				k: keys
+			});
+		}
 	}
 
 	// Output json file
@@ -139,8 +172,11 @@ function processMatrix() {
 		}
 	}
 
-	// We save a mapping: { "v2.11.0-xpu": "2.11.0+xpu" } to represent nicely formatted version titles
-	versionsMapping[safeVersionName] = rawVersion;
+	// Store mapping: { "v2.11.0-xpu": { "raw": "2.11.0+xpu", "backends": ["CPU", "XPU"] } }
+	versionsMapping[safeVersionName] = {
+		raw: rawVersion,
+		backends: activeBackends
+	};
 
 	fs.writeFileSync(versionsPath, JSON.stringify(versionsMapping, null, 2), 'utf-8');
 	console.log('Successfully updated version list mapping at:', versionsPath);
