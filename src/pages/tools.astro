@@ -1900,25 +1900,61 @@ const allSegments = [...new Set(gpuData.map(item => item.segment))].sort();
 		to { opacity: 1; transform: translateY(0); }
 	}
 
-	/* 响应式媒体查询 */
+	/* 响应式媒体查询：移动端升级为现代横向滑动手势胶囊选择器 */
 	@media (max-width: 860px) {
 		.tools-layout {
 			grid-template-columns: 1fr;
+			gap: 1.25rem;
 		}
 
 		.tools-sidebar {
-			position: static;
+			position: sticky;
+			top: 4.5rem;
+			z-index: 20;
+			margin-bottom: 0.5rem;
+		}
+
+		.sidebar-card {
+			padding: 0.45rem 0.65rem;
+			border-radius: 14px;
+			background: var(--glass-bg);
+			backdrop-filter: blur(16px);
+			-webkit-backdrop-filter: blur(16px);
+		}
+
+		.sidebar-title {
+			display: none;
 		}
 
 		.sidebar-nav {
 			flex-direction: row;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			gap: 0.45rem;
+			padding: 0.15rem 0;
+			scrollbar-width: none;
+		}
+
+		.sidebar-nav::-webkit-scrollbar {
+			display: none;
 		}
 
 		.nav-item {
-			flex: 1;
-			justify-content: center;
-			min-width: 150px;
+			flex: 0 0 auto;
+			padding: 0.45rem 0.9rem;
+			font-size: 0.85rem;
+			border-radius: 9999px;
+			white-space: nowrap;
+			background: var(--surface-subtle);
+			border: 1px solid var(--border);
+		}
+
+		.nav-item.active {
+			background: var(--accent);
+			color: #ffffff;
+			border-color: var(--accent);
+			box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
 		}
 	}
 

@@ -46,6 +46,51 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 				))
 			))}
 		</div>
+
+		<!-- 浅色魔法阵 & 深色机械齿轮双背景装饰层 -->
+		<div class="bg-decor-container" aria-hidden="true">
+			<!-- 浅色模式：巨大闪烁魔法阵 -->
+			<svg class="bg-magic-circle" viewBox="0 0 500 500" fill="none">
+				<circle cx="250" cy="250" r="235" stroke="currentColor" stroke-width="1.5" stroke-dasharray="8 4" />
+				<circle cx="250" cy="250" r="215" stroke="currentColor" stroke-width="2" />
+				<circle cx="250" cy="250" r="175" stroke="currentColor" stroke-width="1" />
+				<circle cx="250" cy="250" r="130" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2" />
+				<circle cx="250" cy="250" r="85" stroke="currentColor" stroke-width="2" />
+				<!-- 魔法阵正八角星 -->
+				<polygon points="250,35 402,102 465,250 402,398 250,465 98,398 35,250 98,102" stroke="currentColor" stroke-width="1.2" />
+				<polygon points="250,35 465,250 250,465 35,250" stroke="currentColor" stroke-width="1.5" />
+				<polygon points="402,102 402,398 98,398 98,102" stroke="currentColor" stroke-width="1.5" />
+				<!-- 符线轴心 -->
+				<circle cx="250" cy="250" r="30" stroke="currentColor" stroke-width="1.5" />
+				<line x1="250" y1="20" x2="250" y2="480" stroke="currentColor" stroke-width="0.8" opacity="0.6" />
+				<line x1="20" y1="250" x2="480" y2="250" stroke="currentColor" stroke-width="0.8" opacity="0.6" />
+				<line x1="87" y1="87" x2="413" y2="413" stroke="currentColor" stroke-width="0.8" opacity="0.6" />
+				<line x1="413" y1="87" x2="87" y2="413" stroke="currentColor" stroke-width="0.8" opacity="0.6" />
+			</svg>
+
+			<!-- 深色模式：巨大旋转机械齿轮 -->
+			<svg class="bg-mech-gear" viewBox="0 0 500 500" fill="none">
+				<path d="
+					M 225,20 L 275,20 L 270,55 L 305,65 L 340,35 L 375,70 L 345,105 L 375,125 L 415,100 L 440,140 L 400,170 L 420,200 L 465,190 L 475,240 L 430,255 L 435,290 L 480,310 L 465,355 L 420,345 L 400,375 L 440,410 L 405,445 L 370,415 L 340,435 L 360,480 L 310,490 L 295,445 L 260,450 L 240,495 L 190,485 L 205,440 L 170,430 L 135,465 L 100,430 L 130,395 L 100,375 L 60,400 L 35,360 L 75,330 L 55,300 L 10,310 L 0,260 L 45,245 L 40,210 L 0,190 L 15,145 L 60,155 L 80,125 L 40,90 L 75,55 L 110,85 L 140,65 L 120,20 L 170,10 L 185,55 L 220,50 Z
+				" stroke="currentColor" stroke-width="2.5" />
+				<circle cx="250" cy="250" r="195" stroke="currentColor" stroke-width="2" />
+				<circle cx="250" cy="250" r="160" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4" />
+				<circle cx="250" cy="250" r="100" stroke="currentColor" stroke-width="3" />
+				<circle cx="250" cy="250" r="45" stroke="currentColor" stroke-width="4" />
+				<line x1="250" y1="55" x2="250" y2="445" stroke="currentColor" stroke-width="3" />
+				<line x1="55" y1="250" x2="445" y2="250" stroke="currentColor" stroke-width="3" />
+				<line x1="112" y1="112" x2="388" y2="388" stroke="currentColor" stroke-width="2" />
+				<line x1="388" y1="112" x2="112" y2="388" stroke="currentColor" stroke-width="2" />
+				<circle cx="250" cy="100" r="6" fill="currentColor" />
+				<circle cx="250" cy="400" r="6" fill="currentColor" />
+				<circle cx="100" cy="250" r="6" fill="currentColor" />
+				<circle cx="400" cy="250" r="6" fill="currentColor" />
+				<circle cx="144" cy="144" r="5" fill="currentColor" />
+				<circle cx="356" cy="356" r="5" fill="currentColor" />
+				<circle cx="356" cy="144" r="5" fill="currentColor" />
+				<circle cx="144" cy="356" r="5" fill="currentColor" />
+			</svg>
+		</div>
 		<Header />
 		<main>
 			<slot />
@@ -108,3 +153,24 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 		</svg>
 	</body>
 </html>
+
+<style is:global>
+	/* 默认浅色模式：显示魔法阵，隐藏齿轮 */
+	.bg-decor-container .bg-magic-circle {
+		display: block !important;
+	}
+	.bg-decor-container .bg-mech-gear {
+		display: none !important;
+	}
+
+	/* 深色模式：隐藏魔法阵，显示齿轮 */
+	html.dark .bg-decor-container .bg-magic-circle,
+	.dark .bg-decor-container .bg-magic-circle {
+		display: none !important;
+	}
+
+	html.dark .bg-decor-container .bg-mech-gear,
+	.dark .bg-decor-container .bg-mech-gear {
+		display: block !important;
+	}
+</style>

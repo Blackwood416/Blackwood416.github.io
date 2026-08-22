@@ -9,10 +9,474 @@ if (!about) {
 }
 
 const { Content } = await render(about);
+const data = about.data;
 ---
 
-<BaseLayout title={about.data.title}>
-	<article class="prose">
-		<Content />
-	</article>
+<BaseLayout title={data.title}>
+	<div class="about-page-wrapper">
+		<!-- 1. Hero 名片卡片 -->
+		<section class="glass-card about-hero">
+			<div class="avatar-wrapper">
+				<div class="avatar-glow"></div>
+				<img 
+					src={data.avatar || '/assets/avatar.png'} 
+					alt={data.title} 
+					class="avatar-img" 
+					width="140" 
+					height="140" 
+					style="width: 140px; height: 140px; max-width: 140px; max-height: 140px; object-fit: cover;"
+				/>
+			</div>
+			
+			<div class="hero-info">
+				<div class="hero-header-row">
+					<h1 class="hero-name">Blackwood</h1>
+					{data.status && <span class="status-badge"><span class="status-dot"></span>{data.status}</span>}
+				</div>
+				
+				{data.subtitle && <p class="hero-subtitle">{data.subtitle}</p>}
+				
+				<!-- 社交链接 -->
+				{data.socials && (
+					<div class="social-links">
+						{data.socials.map((social) => (
+							<a href={social.link} target="_blank" rel="noopener noreferrer" class="social-btn">
+								{social.platform === 'GitHub' && (
+									<svg class="social-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+										<path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+									</svg>
+								)}
+								{social.platform === 'RSS 订阅' && (
+									<svg class="social-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+										<path d="M6.18 15.64a2.18 2.18 0 012.18 2.18C8.36 19 7.38 20 6.18 20 5 20 4 19 4 17.82a2.18 2.18 0 012.18-2.18M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56M4 10.1v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+									</svg>
+								)}
+								<span>{social.platform}</span>
+							</a>
+						))}
+					</div>
+				)}
+			</div>
+		</section>
+
+		<!-- 2. 结构化网格模块 -->
+		<div class="about-grid">
+			<!-- 技术栈 & 专长 -->
+			{data.skills && (
+				<section class="glass-card grid-card">
+					<div class="card-header">
+						<span class="card-icon">⚡</span>
+						<h2>技术栈与专长</h2>
+					</div>
+					<div class="skills-container">
+						{data.skills.map((skillGroup) => (
+							<div class="skill-group">
+								<h3 class="skill-group-title">{skillGroup.category}</h3>
+								<div class="badges-wrapper">
+									{skillGroup.items.map((item) => (
+										<span class="tech-badge">{item}</span>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- 常用设备 & 环境 -->
+			{data.equipment && (
+				<section class="glass-card grid-card">
+					<div class="card-header">
+						<span class="card-icon">🛠</span>
+						<h2>常用设备与工具链</h2>
+					</div>
+					<div class="equipment-list">
+						{data.equipment.map((eq) => (
+							<div class="equipment-item">
+								<span class="eq-name">{eq.name}</span>
+								<span class="eq-specs">{eq.specs}</span>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- 兴趣与爱好 -->
+			{data.interests && (
+				<section class="glass-card grid-card full-width">
+					<div class="card-header">
+						<span class="card-icon">🎯</span>
+						<h2>兴趣与探索</h2>
+					</div>
+					<div class="interests-grid">
+						{data.interests.map((interest) => (
+							<div class="interest-chip">
+								<span>{interest}</span>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+		</div>
+
+		<!-- 3. Markdown 正文文章 -->
+		<section class="glass-card about-prose-card">
+			<div class="card-header">
+				<span class="card-icon">📝</span>
+				<h2>关于本站</h2>
+			</div>
+			<article class="prose">
+				<Content />
+			</article>
+		</section>
+	</div>
 </BaseLayout>
+
+<style is:global>
+	.about-page-wrapper {
+		max-width: var(--content-width);
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+	}
+
+	/* Hero 卡片 */
+	.about-page-wrapper .about-hero {
+		display: flex;
+		align-items: center;
+		gap: 2.5rem;
+		padding: 2.5rem;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.about-page-wrapper .avatar-wrapper {
+		position: relative;
+		width: 140px !important;
+		height: 140px !important;
+		min-width: 140px !important;
+		min-height: 140px !important;
+		flex-shrink: 0 !important;
+	}
+
+	.about-page-wrapper .avatar-glow {
+		position: absolute;
+		inset: -4px;
+		border-radius: 24px;
+		background: linear-gradient(135deg, var(--accent), #ec4899, var(--accent-secondary));
+		opacity: 0.65;
+		filter: blur(12px);
+		transition: opacity var(--transition-normal), filter var(--transition-normal);
+		z-index: 0;
+	}
+
+	.about-page-wrapper .avatar-wrapper:hover .avatar-glow {
+		opacity: 0.95;
+		filter: blur(16px);
+	}
+
+	.about-page-wrapper .avatar-img {
+		position: relative;
+		z-index: 1;
+		width: 140px !important;
+		height: 140px !important;
+		max-width: 140px !important;
+		max-height: 140px !important;
+		object-fit: cover !important;
+		border-radius: 20px !important;
+		border: 2px solid rgba(255, 255, 255, 0.4);
+		box-shadow: var(--shadow-lg);
+		transition: transform var(--transition-normal);
+		display: block;
+	}
+
+	.dark .about-page-wrapper .avatar-img {
+		border-color: rgba(255, 255, 255, 0.15);
+	}
+
+	.about-page-wrapper .avatar-wrapper:hover .avatar-img {
+		transform: scale(1.04) rotate(1deg);
+	}
+
+	.about-page-wrapper .hero-info {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.about-page-wrapper .hero-header-row {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.about-page-wrapper .hero-name {
+		margin: 0;
+		font-size: 2.25rem;
+		font-weight: 800;
+		color: var(--text-strong);
+		letter-spacing: -0.02em;
+	}
+
+	.about-page-wrapper .status-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.35rem 0.85rem;
+		border-radius: 9999px;
+		font-size: 0.825rem;
+		font-weight: 600;
+		background: rgba(124, 58, 237, 0.08);
+		border: 1px solid rgba(124, 58, 237, 0.25);
+		color: var(--accent);
+	}
+
+	.dark .about-page-wrapper .status-badge {
+		background: rgba(167, 139, 250, 0.12);
+		border-color: rgba(167, 139, 250, 0.3);
+	}
+
+	.about-page-wrapper .status-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: #10b981;
+		box-shadow: 0 0 8px #10b981;
+		animation: pulse-dot 2s infinite;
+	}
+
+	@keyframes pulse-dot {
+		0%, 100% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.5; transform: scale(0.85); }
+	}
+
+	.about-page-wrapper .hero-subtitle {
+		margin: 0;
+		font-size: 1.05rem;
+		color: var(--text);
+		line-height: 1.6;
+	}
+
+	/* 社交按钮列表 */
+	.about-page-wrapper .social-links {
+		display: flex;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.about-page-wrapper .social-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.45rem 1rem;
+		border-radius: 10px;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--text-strong);
+		background: rgba(255, 255, 255, 0.3);
+		border: 1px solid var(--glass-border);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.dark .about-page-wrapper .social-btn {
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	.about-page-wrapper .social-btn:hover {
+		background: var(--accent);
+		color: #ffffff;
+		border-color: var(--accent);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+	}
+
+	.about-page-wrapper .social-icon {
+		width: 18px !important;
+		height: 18px !important;
+		max-width: 18px !important;
+		max-height: 18px !important;
+		flex-shrink: 0 !important;
+		display: inline-block;
+	}
+
+	/* 2. 结构化网格 */
+	.about-page-wrapper .about-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+	}
+
+	.about-page-wrapper .grid-card {
+		padding: 1.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.about-page-wrapper .grid-card.full-width {
+		grid-column: span 2;
+	}
+
+	.about-page-wrapper .card-header {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		border-bottom: 1px solid var(--border);
+		padding-bottom: 0.85rem;
+	}
+
+	.about-page-wrapper .card-header h2 {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: var(--text-strong);
+	}
+
+	.about-page-wrapper .card-icon {
+		font-size: 1.3rem;
+	}
+
+	/* 技术栈组件 */
+	.about-page-wrapper .skills-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.about-page-wrapper .skill-group-title {
+		margin: 0 0 0.5rem 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.about-page-wrapper .badges-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.about-page-wrapper .tech-badge {
+		display: inline-block;
+		padding: 0.3rem 0.75rem;
+		border-radius: 8px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		background: rgba(124, 58, 237, 0.07);
+		border: 1px solid rgba(124, 58, 237, 0.15);
+		color: var(--accent);
+		transition: all var(--transition-fast);
+	}
+
+	.dark .about-page-wrapper .tech-badge {
+		background: rgba(167, 139, 250, 0.1);
+		border-color: rgba(167, 139, 250, 0.2);
+	}
+
+	.about-page-wrapper .tech-badge:hover {
+		transform: scale(1.05);
+		background: var(--accent);
+		color: #ffffff;
+	}
+
+	/* 设备工具链卡片 */
+	.about-page-wrapper .equipment-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+
+	.about-page-wrapper .equipment-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.65rem 0.85rem;
+		border-radius: 10px;
+		background: rgba(0, 0, 0, 0.025);
+		border: 1px solid var(--border);
+		font-size: 0.9rem;
+	}
+
+	.dark .about-page-wrapper .equipment-item {
+		background: rgba(255, 255, 255, 0.02);
+	}
+
+	.about-page-wrapper .eq-name {
+		font-weight: 600;
+		color: var(--text-strong);
+	}
+
+	.about-page-wrapper .eq-specs {
+		color: var(--text-muted);
+		font-family: monospace;
+		font-size: 0.85rem;
+	}
+
+	/* 兴趣爱好者网格 */
+	.about-page-wrapper .interests-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.85rem;
+	}
+
+	.about-page-wrapper .interest-chip {
+		padding: 0.6rem 1.1rem;
+		border-radius: 12px;
+		background: var(--surface-subtle);
+		border: 1px solid var(--border);
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--text-strong);
+		transition: transform var(--transition-fast);
+	}
+
+	.about-page-wrapper .interest-chip:hover {
+		transform: translateY(-2px);
+		border-color: var(--accent);
+	}
+
+	/* Markdown 文章区卡片 */
+	.about-page-wrapper .about-prose-card {
+		padding: 2rem 2.5rem;
+	}
+
+	.about-page-wrapper .about-prose-card .prose {
+		margin-top: 1rem;
+	}
+
+	/* 响应式调整 */
+	@media (max-width: 768px) {
+		.about-page-wrapper .about-hero {
+			flex-direction: column;
+			text-align: center;
+			padding: 2rem 1.5rem;
+			gap: 1.5rem;
+		}
+
+		.about-page-wrapper .hero-header-row,
+		.about-page-wrapper .social-links {
+			justify-content: center;
+		}
+
+		.about-page-wrapper .about-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.about-page-wrapper .grid-card.full-width {
+			grid-column: span 1;
+		}
+
+		.about-page-wrapper .equipment-item {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+	}
+</style>

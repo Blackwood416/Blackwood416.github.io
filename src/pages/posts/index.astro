@@ -2,42 +2,231 @@
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { encodeHrefSegment, getVisiblePosts } from '../../lib/blog';
+import { countTaxonomy, encodeHrefSegment, getVisiblePosts } from '../../lib/blog';
 
 const posts = getVisiblePosts(await getCollection('blog'));
+const categories = countTaxonomy(posts, 'categories');
+
+// 按年份对文章进行归集，用于时间轴展示
+const postsByYear = new Map<number, typeof posts>();
+for (const post of posts) {
+	const year = post.data.pubDate.getUTCFullYear();
+	if (!postsByYear.has(year)) {
+		postsByYear.set(year, []);
+	}
+	postsByYear.get(year)!.push(post);
+}
+const sortedYears = Array.from(postsByYear.keys()).sort((a, b) => b - a);
 ---
 
 <BaseLayout title="全部文章">
-	<header class="page-header">
-		<h1>全部文章</h1>
-		<p>共 {posts.length} 篇文章。</p>
+	<header class="page-header animate-fade-up">
+		<h1 class="page-title">全部文章</h1>
+		<p class="page-subtitle">
+			已沉淀 <span class="highlight-count">{posts.length}</span> 篇技术笔记与日常心得，涵盖 <span class="highlight-count">{categories.length}</span> 个专题分类。
+		</p>
+
+		<!-- 分类快捷筛选胶囊栏 -->
+		<nav class="category-filter-nav" aria-label="文章分类筛选">
+			<a href="/posts/" class="cat-pill active">
+				<span class="cat-name">全部</span>
+				<span class="cat-count">{posts.length}</span>
+			</a>
+			{categories.map((cat) => (
+				<a href={`/categories/${encodeHrefSegment(cat.name)}/`} class="cat-pill">
+					<span class="cat-name">{cat.name}</span>
+					<span class="cat-count">{cat.count}</span>
+				</a>
+			))}
+		</nav>
 	</header>
 
-	<ul class="post-list">
-		{
-			posts.map((post) => (
-				<li class="post-card">
-					<h2>
-						<a href={`/posts/${post.id}/`}>{post.data.title}</a>
-					</h2>
-					<p class="post-meta">
-						<FormattedDate date={post.data.pubDate} />
-					</p>
-					{
-						(post.data.categories.length > 0 || post.data.tags.length > 0) && (
-							<div class="post-taxonomy">
-								{post.data.categories.map((category) => (
-									<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
-								))}
-								{post.data.tags.map((tag) => (
-									<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
-								))}
-							</div>
-						)
-					}
-					<p>{post.data.description}</p>
-				</li>
-			))
-		}
-	</ul>
+	<!-- 年份时间轴文章列表 -->
+	<div class="timeline-container">
+		{sortedYears.map((year, yearIndex) => (
+			<section class="timeline-year-group" aria-labelledby={`year-${year}`}>
+				<!-- 年份时间轴节点 -->
+				<div class="year-milestone animate-fade-up" style={`--delay: ${yearIndex * 2}`}>
+					<span class="milestone-dot"></span>
+					<h2 id={`year-${year}`} class="year-text">{year}</h2>
+					<span class="year-badge">{postsByYear.get(year)!.length} 篇</span>
+				</div>
+
+				<ul class="post-list">
+					{postsByYear.get(year)!.map((post, postIndex) => (
+						<li class="post-card animate-fade-up" style={`--delay: ${(yearIndex * 2) + postIndex + 1}`}>
+							<h2>
+								<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+							</h2>
+							<p class="post-meta">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
+							{
+								(post.data.categories.length > 0 || post.data.tags.length > 0) && (
+									<div class="post-taxonomy">
+										{post.data.categories.map((category) => (
+											<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
+										))}
+										{post.data.tags.map((tag) => (
+											<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
+										))}
+									</div>
+								)
+							}
+							<p>{post.data.description}</p>
+						</li>
+					))}
+				</ul>
+			</section>
+		))}
+	</div>
 </BaseLayout>
+
+<style>
+	.page-header {
+		margin-bottom: 2.5rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.page-title {
+		font-size: 2.75rem;
+		font-weight: 800;
+		margin: 0 0 0.5rem;
+		background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		letter-spacing: -0.02em;
+	}
+
+	.page-subtitle {
+		font-size: 1.05rem;
+		color: var(--text-muted);
+		margin: 0 0 1.5rem;
+	}
+
+	.highlight-count {
+		font-weight: 700;
+		color: var(--accent);
+	}
+
+	/* 分类胶囊导航栏 */
+	.category-filter-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 1.25rem;
+	}
+
+	.cat-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.35rem 0.85rem;
+		border-radius: 9999px;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--text-muted);
+		background: var(--surface-subtle);
+		border: 1px solid var(--border);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.cat-pill:hover {
+		color: var(--accent);
+		border-color: var(--accent);
+		transform: translateY(-2px);
+		background: rgba(124, 58, 237, 0.08);
+	}
+
+	.cat-pill.active {
+		background: var(--accent);
+		color: #ffffff;
+		border-color: var(--accent);
+		box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+	}
+
+	.cat-count {
+		font-size: 0.75rem;
+		opacity: 0.85;
+		padding: 0.1rem 0.35rem;
+		border-radius: 9999px;
+		background: rgba(0, 0, 0, 0.08);
+	}
+
+	.cat-pill.active .cat-count {
+		background: rgba(255, 255, 255, 0.25);
+	}
+
+	/* 年份时间轴分组 */
+	.timeline-container {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+		position: relative;
+	}
+
+	.timeline-year-group {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.year-milestone {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px dashed rgba(124, 58, 237, 0.2);
+	}
+
+	.milestone-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 10px var(--accent);
+	}
+
+	.year-text {
+		margin: 0;
+		font-size: 1.75rem;
+		font-weight: 800;
+		color: var(--text-strong);
+		letter-spacing: -0.01em;
+	}
+
+	.year-badge {
+		font-size: 0.825rem;
+		font-weight: 600;
+		padding: 0.2rem 0.6rem;
+		border-radius: 8px;
+		background: rgba(124, 58, 237, 0.08);
+		color: var(--accent);
+		border: 1px solid rgba(124, 58, 237, 0.2);
+	}
+
+	:global(.dark) .year-badge {
+		background: rgba(167, 139, 250, 0.12);
+		border-color: rgba(167, 139, 250, 0.25);
+	}
+
+	@media (max-width: 768px) {
+		.page-title {
+			font-size: 2.25rem;
+		}
+
+		.category-filter-nav {
+			overflow-x: auto;
+			flex-wrap: nowrap;
+			-webkit-overflow-scrolling: touch;
+			padding-bottom: 0.5rem;
+		}
+
+		.cat-pill {
+			flex-shrink: 0;
+		}
+	}
+</style>

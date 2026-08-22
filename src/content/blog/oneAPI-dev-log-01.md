@@ -251,7 +251,7 @@ Platform: Intel(R) oneAPI Unified Runtime over Level-Zero
 Platform: Intel(R) OpenCL
   |- Device: Intel(R) Xeon(R) CPU E5-2696 v3 @ 2.30GHz
   |   - Type: CPU
-  |   - Max Compute Units: 16
+  |   - Max Compute Units: 36
   |   - Global Memory Size: 49056 MB
 ========================================
 ```

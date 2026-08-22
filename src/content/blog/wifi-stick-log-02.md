@@ -61,10 +61,61 @@ make menuconfig
 
 1. General setup -> Local version - append to kernel release -> 修改为自己想要显示在内核版本后的内容，比如`-blackwood416`。
 2. General setup -> Automatically append version information to the version string -> 选择`n`，这会让内核版本信息更短，不然后面会加一长串的信息。
+3. Device Drivers -> USB Support -> USB Gadget Support -> USB Gadget functions configurable through configfs 及子项全开，保证usb功能完整。
+4. Power management options -> Suspend to RAM and standby 启用睡眠。
+5. Power management options -> Hibernation (aka 'suspend to disk') 启用休眠。
+6. File systems -> Btrfs filesystem support改成`M`，子项 Btrfs POSIX Access Control Lists启用。
+
+## 超频设置
+
+添加以下代码可以让CPU最高频率达到2.0Ghz。
+
+```diff title='arch/arm64/boot/dts/qcom/msm8916.dtsi'
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -259,7 +259,22 @@ opp-800000000 {
+                opp-998400000 {
+                        opp-hz = /bits/ 64 <998400000>;
+                };
+-       };
++                opp-1363200000 {
++                        opp-hz = /bits/ 64 <1363200000>;
++                };
++                opp-1401600000 {
++                        opp-hz = /bits/ 64 <1401600000>;
++                };
++                opp-1621600000 {
++                        opp-hz = /bits/ 64 <1621600000>;
++                };
++                opp-1841600000 {
++                        opp-hz = /bits/ 64 <1841600000>;
++                };
++                opp-2000000000 {
++                        opp-hz = /bits/ 64 <2000000000>;
++                };
++        };
+
+        firmware {
+                scm: scm {
+```
+
+```diff title='drivers/clk/qcom/a53-pll.c'
+--- a/drivers/clk/qcom/a53-pll.c
++++ b/drivers/clk/qcom/a53-pll.c
+@@ -25,6 +25,9 @@ static const struct pll_freq_tbl a53pll_freq[] = {
+        { 1248000000, 65, 0x0, 0x1, 0 },
+        { 1363200000, 71, 0x0, 0x1, 0 },
+        { 1401600000, 73, 0x0, 0x1, 0 },
++       { 1621600000, 84, 0x0, 0x1, 0 },
++       { 1841600000, 96, 0x0, 0x1, 0 },
++       { 2000000000, 110, 0x0, 0x1, 0 },
+        { }
+ };
+```
 
 ## 编译内核
 
-使用以下命令开始编译，`-j$(nproc)`表示使用全部逻辑处理器来编译，这会使 CPU 满载，如果不希望满载可以根据自己的 CPU 更改为`-j4`或者`-j6`：
+使用以下命令开始编译，`-j$(nproc)`表示使用全部`逻辑处理器`来编译，这会使 CPU 满载，如果不希望满载可以根据自己的 CPU 更改为`-j4`或者`-j6`：
 
 ```bash
 make -j$(nproc)
@@ -82,30 +133,25 @@ make -j$(nproc)
 2. 创建系统镜像文件
    ```bash
    # 创建一个 3372M 的镜像文件以匹配随身 WiFi 的存储空间大小
-   dd if=/dev/zero of=rootfs.img bs=1M count=3372
+   dd if=/dev/zero of=root.img bs=1M count=3372
    ```
 3. 初始化镜像文件的文件系统
    ```bash
-   mkfs.btrfs rootfs.img
+   mkfs.btrfs root.img
    ```
 4. 挂载镜像文件
    ```bash
    mkdir rootfs
-   sudo mount -o compress=zstd:1 rootfs.img rootfs
+   sudo mount -o compress=zstd:1 root.img rootfs
    ```
 5. 解压根文件系统到镜像文件
    ```bash
-   tar -zxpf ArchLinuxARM-aarch64-latest.tar.gz -C rootfs
+   sudo tar -zxpf ArchLinuxARM-aarch64-latest.tar.gz -C rootfs
    ```
-6. 使用 chroot 进入镜像文件
+6. 使用 arch-chroot 进入镜像文件
    ```bash
-    # 需要挂载一些必要的目录
-   sudo mount --bind /dev ~/msm8916/dev
-   sudo mount -t devpts devpts ~/msm8916/rootfs/dev/pts -o gid=5,mode=620
-   sudo mount -t proc proc ~/msm8916/rootfs/proc
-   sudo mount -t sysfs sysfs ~/msm8916/rootfs/sys
-   sudo mount -t tmpfs tmpfs ~/msm8916/rootfs/run
-   sudo chroot ~/msm8916/rootfs
+   # arch-chroot 会自动挂载必要的目录
+   sudo arch-chroot ~/msm8916/rootfs
    ```
 7. 配置 pacman
 
@@ -113,9 +159,12 @@ make -j$(nproc)
 
    ```bash
    nano /etc/pacman.conf
-   # 将下面这两行取消注释
+   # 将下面这两行取消注释以提升pacman使用体验
    Color
    ParallelDownloads = 5
+   # WSL 下可能需要关闭沙盒功能
+   DisableSandboxFilesystem
+   DisableSandboxSyscalls
    # 在文件末尾添加以下软件源
    [arch4edu]
    Server = https://mirrors.bfsu.edu.cn/arch4edu/$arch
@@ -144,7 +193,7 @@ make -j$(nproc)
    更换国内源：
 
    ```bash
-   mv /etc/pacman.d/mirrolist /etc/pacman.d/mirrolist.bak
+   mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrolist.bak
    nano /etc/pacman.d/mirrorlist
     # 更换成以下内容
     ## Archlinux arm
@@ -180,18 +229,22 @@ pacman -Syu
 
 11. 安装必要的软件包
 ```bash
-pacman -S usbutils danctnix-usb-tethering 
+pacman -S usbutils danctnix-usb-tethering networkmanager btrfs-progs
 ```
 12. 开启 systemd 服务
 ```bash
 systemctl enable usb-tethering
 systemctl enable NetworkManager
+systemctl enable sshd
+# 需要配置基带（插卡）的话才开这个
 systemctl enable ModemManager
 ```
 13. 安装 vmlinuz 与内核模块
 14. 制作 initramfs 镜像文件
 
 ```bash
+# 刚才把mkinitcpio也清理掉了，先装回来
+pacman -Sy mkinitcpio
 kerver=$(ls /usr/lib/modules)
 mkinitcpio --generate /boot/initrd.img-$kerver --kernel $kerver
 ```
@@ -202,15 +255,15 @@ sudo cp ~/msm8916/rootfs/boot/initrd.img-* ~/msm8916/initrd.img
 sudo chown $(users):$(groups) ~/msm8916/initrd.img
 ```
 
-15. 取消挂载
+15. 卸载镜像
 
 ```bash
-sudo umount ~/msm8916/rootfs/run
-sudo umount ~/msm8916/rootfs/sys
-sudo umount ~/msm8916/rootfs/proc
-sudo umount ~/msm8916/rootfs/dev/pts
-sudo umount ~/msm8916/rootfs/dev
 sudo umount ~/msm8916/rootfs
+```
+
+16. 打包镜像
+```bash
+img2simg root.img rootfs.img
 ```
 
 ## 制作 boot.img
@@ -241,3 +294,73 @@ mkbootimg --base 0x80000000 \
 --kernel kernel-dtb \
 -o boot.img
 ```
+
+## 刷机脚本
+
+```bat
+@echo off
+@title 一键刷入Archlinux----Blackwood416
+color 3f
+:1
+mode con cols=100 lines=30
+set tm1=%time:~0,2%
+set tm2=%time:~3,2%
+set tm3=%time:~6,2%
+set h=%time:~0,2%
+set h=%h: =0%
+set mknowtime=%date:~0,4%%date:~5,2%%date:~8,2%%h%%time:~3,2%%time:~6,2%
+set pa=%cd%
+ECHO %date% %tm1%点%tm2%分%tm3%秒
+rem 全局变量，包名
+
+@echo fastboot模式刷入-adb重启至fastboot模式中
+adb reboot bootloader
+set /p a=确定执行吗？ （y继续，n退出）
+if /i '%p%'=='y' goto continue
+if /i '%a%'=='n' goto end
+timeout /NOBREAK 3
+fastboot erase boot
+fastboot flash aboot aboot.bin
+fastboot reboot
+fastboot oem dump fsc && fastboot get_staged fsc.bin
+fastboot oem dump fsg && fastboot get_staged fsg.bin
+fastboot oem dump modemst1 && fastboot get_staged modemst1.bin
+fastboot oem dump modemst2 && fastboot get_staged modemst2.bin
+fastboot erase boot
+fastboot reboot bootloader
+timeout /NOBREAK 5
+fastboot flash partition gpt_both0.bin
+fastboot flash hyp hyp.mbn
+fastboot flash rpm rpm.mbn
+fastboot flash sbl1 sbl1.mbn
+fastboot flash tz tz.mbn
+fastboot flash fsc fsc.bin
+fastboot flash fsg fsg.bin
+fastboot flash modemst1 modemst1.bin
+fastboot flash modemst2 modemst2.bin
+fastboot flash aboot aboot.bin
+fastboot flash cdt sbc_1.0_8016.bin
+fastboot erase boot
+fastboot erase rootfs
+fastboot reboot
+@echo   此过程需几分钟请稍等
+fastboot flash boot boot.img
+fastboot -S 100M flash rootfs rootfs.img
+pause
+@echo 刷机完成，重启中……
+timeout 5
+fastboot reboot
+```
+
+> boot.img 和 rootfs.img 外的文件需要自备，可以从随便一个整合包里提取。
+
+## 实际刷入过程
+
+需要先进9008备份，板号不同进入方法不同，一般分为：
+
+1. 按钮法。一般是UFI系列，按住RESET键插入电脑即可进入9008模式。
+2. 短接法。需要使用镊子短接对应的调试触点，并在保持短接的状态下通电，适用于大多数棒子。
+
+然后需要通过adb连接棒子，开启adb的方法也跟具体型号有关，有些型号自带有些则没有，这里就不再赘述了。
+
+连接完成后即可用刷机脚本一键刷机，因为使用了btrfs+zstd压缩，所以刷入会久一点（20分钟或更久）。

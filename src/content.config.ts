@@ -19,6 +19,23 @@ const pages = defineCollection({
 	loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),
 	schema: z.object({
 		title: z.string(),
+		avatar: z.string().optional(),
+		subtitle: z.string().optional(),
+		status: z.string().optional(),
+		skills: z.array(z.object({
+			category: z.string(),
+			items: z.array(z.string()),
+		})).optional(),
+		interests: z.array(z.string()).optional(),
+		equipment: z.array(z.object({
+			name: z.string(),
+			specs: z.string(),
+		})).optional(),
+		socials: z.array(z.object({
+			platform: z.string(),
+			link: z.string(),
+			icon: z.string().optional(),
+		})).optional(),
 	}),
 });
 
