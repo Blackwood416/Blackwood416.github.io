@@ -39,9 +39,9 @@ jobs:
       - name: Check for new digest
         id: check_changes
         run: |
-          if [ -n "$(git status --porcelain src/content/blog/)" ]; then
+          if [ -n "$(git status --porcelain src/content/news/)" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "发现新生成的日报文章"
+            echo "发现新生成的快讯文章"
           else
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "今日无新变动或未生成文章"
@@ -52,7 +52,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/content/blog/
+          git add src/content/news/
           git commit -m "chore: auto-generate intel gpu daily digest [skip ci]"
           git push origin master
 

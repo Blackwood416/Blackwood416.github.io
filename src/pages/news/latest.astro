@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getPostNeighbors, getTableOfContentsItems, getVisiblePosts } from '../../lib/blog';
+
+const allNews = getVisiblePosts(await getCollection('news'));
+const latestNews = allNews[0] ?? null;
+
+if (!latestNews) {
+	return Astro.redirect('/news/');
+}
+
+const neighbors = getPostNeighbors(allNews, latestNews.id);
+const { Content, headings, remarkPluginFrontmatter } = await render(latestNews);
+const tocItems = getTableOfContentsItems(headings);
+const wordCount = remarkPluginFrontmatter?.wordCount || 0;
+const readingTime = remarkPluginFrontmatter?.readingTime || 0;
+---
+
+<BlogPost 
+	{...latestNews.data} 
+	title={`[最新] ${latestNews.data.title}`}
+	tocItems={tocItems} 
+	previous={neighbors.previous} 
+	next={neighbors.next}
+	wordCount={wordCount}
+	readingTime={readingTime}
+	basePath="/news"
+>
+	<div class="latest-banner not-prose">
+		<div class="latest-banner__content">
+			<span class="banner-icon">📌</span>
+			<span class="banner-text">
+				您当前访问的是<strong>固定最新页</strong>，系统已自动呈现最新一期生态日报。
+			</span>
+			<a href="/news/" class="banner-link">查看往期归档 →</a>
+		</div>
+	</div>
+
+	<Content />
+</BlogPost>
+
+<style>
+	.latest-banner {
+		margin-bottom: 2rem;
+		padding: 0.85rem 1.25rem;
+		border-radius: 10px;
+		background: rgba(124, 58, 237, 0.08);
+		border: 1px solid rgba(124, 58, 237, 0.25);
+		color: var(--text);
+		font-size: 0.92rem;
+	}
+
+	:global(.dark) .latest-banner {
+		background: rgba(167, 139, 250, 0.12);
+		border-color: rgba(167, 139, 250, 0.3);
+	}
+
+	.latest-banner__content {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.banner-icon {
+		font-size: 1.1rem;
+	}
+
+	.banner-text {
+		flex: 1;
+	}
+
+	.banner-link {
+		color: var(--accent);
+		font-weight: 600;
+		text-decoration: none;
+		margin-left: auto;
+		white-space: nowrap;
+	}
+
+	.banner-link:hover {
+		text-decoration: underline;
+	}
+</style>

@@ -43,4 +43,21 @@ const pages = defineCollection({
 	}),
 });
 
-export const collections = { blog, pages };
+const news = defineCollection({
+	loader: glob({ base: './src/content/news', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		title: z.string(),
+		description: z.string(),
+		pubDate: z.coerce.date(),
+		updatedDate: z.coerce.date().optional(),
+		updated: z.coerce.date().optional(),
+		tags: z.array(z.string()).default([]),
+		categories: z.array(z.string()).default([]),
+		draft: z.boolean().default(false),
+	}).transform((data) => ({
+		...data,
+		updatedDate: data.updatedDate ?? data.updated,
+	})),
+});
+
+export const collections = { blog, pages, news };

@@ -7,16 +7,17 @@ type NeighborPost = NonNullable<PostNeighbors['previous']>;
 interface Props {
 	previous: NeighborPost | null;
 	next: NeighborPost | null;
+	basePath?: string;
 }
 
-const { previous, next } = Astro.props;
+const { previous, next, basePath = '/posts' } = Astro.props;
 ---
 
 {
 	(previous || next) && (
 		<nav class="post-nav" aria-label="相邻文章">
 			{previous && (
-				<a class="post-nav__link post-nav__link--previous" href={`/posts/${previous.id}/`}>
+				<a class="post-nav__link post-nav__link--previous" href={`${basePath}/${previous.id}/`}>
 					<span class="post-nav__label">上一篇</span>
 					<span class="post-nav__title">{previous.data.title}</span>
 					<span class="post-nav__date">
@@ -25,7 +26,7 @@ const { previous, next } = Astro.props;
 				</a>
 			)}
 			{next && (
-				<a class="post-nav__link post-nav__link--next" href={`/posts/${next.id}/`}>
+				<a class="post-nav__link post-nav__link--next" href={`${basePath}/${next.id}/`}>
 					<span class="post-nav__label">下一篇</span>
 					<span class="post-nav__title">{next.data.title}</span>
 					<span class="post-nav__date">

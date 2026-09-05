@@ -1,14 +1,15 @@
 import type { CollectionEntry } from 'astro:content';
 
 export type BlogPost = CollectionEntry<'blog'>;
+export type NewsPost = CollectionEntry<'news'>;
 export type TaxonomyCount = { name: string; count: number };
 export type ArchiveGroup = { key: string; year: string; month: string; posts: BlogPost[] };
-export type PostNeighbor = BlogPost | null;
-export type PostNeighbors = { previous: PostNeighbor; next: PostNeighbor };
+export type PostNeighbor<T = BlogPost> = T | null;
+export type PostNeighbors<T = BlogPost> = { previous: PostNeighbor<T>; next: PostNeighbor<T> };
 export type TocHeading = { depth: number; slug: string; text: string };
 export type CodeFenceMeta = { language: string | null; title: string | null; label: string };
 
-export function getVisiblePosts(posts: BlogPost[]): BlogPost[] {
+export function getVisiblePosts<T extends { data: { draft?: boolean; pubDate: Date } }>(posts: T[]): T[] {
 	return posts
 		.filter((post) => !post.data.draft)
 		.toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -57,7 +58,7 @@ export function groupPostsByYearMonth(posts: BlogPost[]): ArchiveGroup[] {
 	}).sort((a, b) => b.key.localeCompare(a.key));
 }
 
-export function getPostNeighbors(posts: BlogPost[], currentId: string): PostNeighbors {
+export function getPostNeighbors<T extends { id: string }>(posts: T[], currentId: string): PostNeighbors<T> {
 	const index = posts.findIndex((post) => post.id === currentId);
 
 	if (index === -1) {

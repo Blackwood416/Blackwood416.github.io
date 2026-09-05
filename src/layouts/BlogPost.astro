@@ -9,10 +9,11 @@ import { GISCUS_CONFIG } from '../consts';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	tocItems?: TocHeading[];
-	previous?: PostNeighbors['previous'];
-	next?: PostNeighbors['next'];
+	previous?: PostNeighbors<any>['previous'];
+	next?: PostNeighbors<any>['next'];
 	wordCount?: number;
 	readingTime?: number;
+	basePath?: string;
 };
 
 const {
@@ -27,6 +28,7 @@ const {
 	next = null,
 	wordCount = 0,
 	readingTime = 0,
+	basePath = '/posts',
 } = Astro.props;
 ---
 
@@ -88,7 +90,7 @@ const {
 			<div class="prose">
 				<slot />
 			</div>
-			<PostNavigation previous={previous} next={next} />
+			<PostNavigation previous={previous} next={next} basePath={basePath} />
 			<!-- Giscus 评论区容器 -->
 			<div class="post-comments">
 				<div 

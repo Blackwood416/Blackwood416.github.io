@@ -1,0 +1,302 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { countTaxonomy, encodeHrefSegment, getVisiblePosts } from '../../lib/blog';
+
+const allNews = getVisiblePosts(await getCollection('news'));
+const latestItem = allNews[0] ?? null;
+const categories = countTaxonomy(allNews as any, 'categories');
+
+// 按年份和月份归集快讯
+const newsByYear = new Map<number, typeof allNews>();
+for (const item of allNews) {
+	const year = item.data.pubDate.getUTCFullYear();
+	if (!newsByYear.has(year)) {
+		newsByYear.set(year, []);
+	}
+	newsByYear.get(year)!.push(item);
+}
+const sortedYears = Array.from(newsByYear.keys()).sort((a, b) => b - a);
+---
+
+<BaseLayout title="科技快讯" description="聚焦 Intel GPU、开源算子与前沿硬件生态的每日技术追踪。">
+	<header class="page-header animate-fade-up">
+		<div class="header-badge">
+			<span class="pulse-dot"></span>
+			<span>DAILY DISPATCH</span>
+		</div>
+		<h1 class="page-title">科技快讯</h1>
+		<p class="page-subtitle">
+			每日自动化采集并提炼 Intel GPU、oneAPI、开源推理算子与硬件驱动生态的硬核动态。
+		</p>
+
+		{latestItem && (
+			<div class="latest-callout">
+				<div class="latest-callout__meta">
+					<span class="latest-pill">最新发布</span>
+					<span class="latest-date"><FormattedDate date={latestItem.data.pubDate} /></span>
+				</div>
+				<h2 class="latest-callout__title">
+					<a href="/news/latest/">{latestItem.data.title}</a>
+				</h2>
+				<p class="latest-callout__desc">{latestItem.data.description}</p>
+				<div class="latest-callout__actions">
+					<a href="/news/latest/" class="btn-read-latest">
+						阅读今日最新全文
+						<svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+							<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+						</svg>
+					</a>
+				</div>
+			</div>
+		)}
+	</header>
+
+	<!-- 往期快讯时间轴 -->
+	<div class="timeline-container">
+		<h2 class="history-title">往期快讯归档</h2>
+		{sortedYears.map((year, yearIndex) => (
+			<section class="timeline-year-group" aria-labelledby={`year-${year}`}>
+				<div class="year-milestone animate-fade-up" style={`--delay: ${yearIndex * 2}`}>
+					<span class="milestone-dot"></span>
+					<h3 id={`year-${year}`} class="year-text">{year}</h3>
+					<span class="year-badge">{newsByYear.get(year)!.length} 期</span>
+				</div>
+
+				<ul class="post-list">
+					{newsByYear.get(year)!.map((item, postIndex) => (
+						<li class="post-card animate-fade-up" style={`--delay: ${(yearIndex * 2) + postIndex + 1}`}>
+							<h3>
+								<a href={`/news/${item.id}/`}>{item.data.title}</a>
+							</h3>
+							<p class="post-meta">
+								<FormattedDate date={item.data.pubDate} />
+								{item.data.updatedDate && (
+									<span class="post-meta-updated">
+										· 更新于 <FormattedDate date={item.data.updatedDate} />
+									</span>
+								)}
+							</p>
+							{(item.data.categories.length > 0 || item.data.tags.length > 0) && (
+								<div class="post-taxonomy">
+									{item.data.categories.map((category) => (
+										<span class="tag-static">{category}</span>
+									))}
+									{item.data.tags.map((tag) => (
+										<span class="tag-static">#{tag}</span>
+									))}
+								</div>
+							)}
+							<p>{item.data.description}</p>
+						</li>
+					))}
+				</ul>
+			</section>
+		))}
+	</div>
+</BaseLayout>
+
+<style>
+	.page-header {
+		margin-bottom: 2.5rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.header-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.2rem 0.65rem;
+		border-radius: 9999px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		background: rgba(124, 58, 237, 0.08);
+		border: 1px solid rgba(124, 58, 237, 0.25);
+		color: var(--accent);
+		margin-bottom: 0.75rem;
+	}
+
+	.pulse-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 8px var(--accent);
+		animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	@keyframes pulse {
+		0%, 100% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.4; transform: scale(0.85); }
+	}
+
+	.page-title {
+		font-size: 2.75rem;
+		font-weight: 800;
+		margin: 0 0 0.5rem;
+		background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		letter-spacing: -0.02em;
+	}
+
+	.page-subtitle {
+		font-size: 1.05rem;
+		color: var(--text-muted);
+		margin: 0 0 1.5rem;
+		line-height: 1.6;
+	}
+
+	/* 最新快讯直达卡片 */
+	.latest-callout {
+		background: var(--surface-subtle);
+		border: 1px solid var(--border);
+		border-left: 4px solid var(--accent);
+		border-radius: 12px;
+		padding: 1.25rem 1.5rem;
+		margin-top: 1.5rem;
+		backdrop-filter: blur(10px);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+		transition: all var(--transition-normal);
+	}
+
+	.latest-callout:hover {
+		border-color: var(--accent);
+		box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+	}
+
+	.latest-callout__meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.latest-pill {
+		font-size: 0.75rem;
+		font-weight: 700;
+		padding: 0.15rem 0.5rem;
+		border-radius: 6px;
+		background: var(--accent);
+		color: #ffffff;
+	}
+
+	.latest-date {
+		font-size: 0.85rem;
+		color: var(--text-muted);
+	}
+
+	.latest-callout__title {
+		font-size: 1.35rem;
+		font-weight: 700;
+		margin: 0 0 0.5rem;
+	}
+
+	.latest-callout__title a {
+		color: var(--text-strong);
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+
+	.latest-callout__title a:hover {
+		color: var(--accent);
+	}
+
+	.latest-callout__desc {
+		font-size: 0.95rem;
+		color: var(--text);
+		margin: 0 0 1rem;
+		line-height: 1.5;
+	}
+
+	.btn-read-latest {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: none;
+		transition: gap var(--transition-fast);
+	}
+
+	.btn-read-latest:hover {
+		gap: 0.6rem;
+		text-decoration: underline;
+	}
+
+	/* 历史列表 */
+	.history-title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: var(--text-muted);
+		margin: 0 0 1.5rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.timeline-container {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+		position: relative;
+	}
+
+	.timeline-year-group {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.year-milestone {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px dashed rgba(124, 58, 237, 0.2);
+	}
+
+	.milestone-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+
+	.year-text {
+		margin: 0;
+		font-size: 1.5rem;
+		font-weight: 800;
+		color: var(--text-strong);
+	}
+
+	.year-badge {
+		font-size: 0.8rem;
+		font-weight: 600;
+		padding: 0.15rem 0.5rem;
+		border-radius: 6px;
+		background: rgba(124, 58, 237, 0.08);
+		color: var(--accent);
+		border: 1px solid rgba(124, 58, 237, 0.2);
+	}
+
+	.tag-static {
+		display: inline-block;
+		font-size: 0.8rem;
+		padding: 0.1rem 0.5rem;
+		border-radius: 4px;
+		background: var(--surface-subtle);
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+	}
+
+	@media (max-width: 768px) {
+		.page-title {
+			font-size: 2.25rem;
+		}
+	}
+</style>

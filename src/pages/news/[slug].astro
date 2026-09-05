@@ -1,0 +1,40 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getPostNeighbors, getTableOfContentsItems, getVisiblePosts } from '../../lib/blog';
+
+export async function getStaticPaths() {
+	const allNews = getVisiblePosts(await getCollection('news'));
+
+	return allNews.map((item) => ({
+		params: { slug: item.id },
+		props: {
+			item,
+			neighbors: getPostNeighbors(allNews, item.id),
+		},
+	}));
+}
+
+type Props = {
+	item: CollectionEntry<'news'>;
+	neighbors: ReturnType<typeof getPostNeighbors<CollectionEntry<'news'>>>;
+};
+
+const { item, neighbors } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(item);
+const tocItems = getTableOfContentsItems(headings);
+const wordCount = remarkPluginFrontmatter?.wordCount || 0;
+const readingTime = remarkPluginFrontmatter?.readingTime || 0;
+---
+
+<BlogPost 
+	{...item.data} 
+	tocItems={tocItems} 
+	previous={neighbors.previous} 
+	next={neighbors.next}
+	wordCount={wordCount}
+	readingTime={readingTime}
+	basePath="/news"
+>
+	<Content />
+</BlogPost>

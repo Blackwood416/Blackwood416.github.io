@@ -411,7 +411,11 @@ async function main() {
 	const sanitized = sanitizeMarkdown(generatedContent);
 
 	const outputFileName = `intel-gpu-daily-${todayStr}.md`;
-	const outputPath = path.resolve(`src/content/blog/${outputFileName}`);
+	const newsDir = path.resolve('src/content/news');
+	if (!fs.existsSync(newsDir)) {
+		fs.mkdirSync(newsDir, { recursive: true });
+	}
+	const outputPath = path.join(newsDir, outputFileName);
 
 	fs.writeFileSync(outputPath, sanitized, 'utf-8');
 	console.log(`\x1b[32m[3/4] 成功生成日报文件: ${outputPath}\x1b[0m`);
