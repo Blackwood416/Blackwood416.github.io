@@ -56,8 +56,8 @@ jobs:
           git commit -m "chore: auto-generate intel gpu daily digest [skip ci]"
           git push origin master
 
-      - name: Deploy to Cloudflare Pages (Optional)
-        if: steps.check_changes.outputs.has_changes == 'true' && env.CLOUDFLARE_API_TOKEN != ''
+      - name: Deploy to Cloudflare Pages
+        if: steps.check_changes.outputs.has_changes == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
