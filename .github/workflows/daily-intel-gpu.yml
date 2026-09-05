@@ -1,0 +1,66 @@
+name: Daily Intel GPU Digest
+
+on:
+  schedule:
+    # 每天北京时间 08:30 (UTC 00:30) 定时触发
+    - cron: '30 0 * * *'
+  workflow_dispatch: # 允许在 GitHub Actions 页面手动点击触发
+
+permissions:
+  contents: write
+
+jobs:
+  generate-digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Intel GPU Daily Digest
+        env:
+          RADEON_API_KEY: ${{ secrets.RADEON_API_KEY }}
+          RADEON_BASE_URL: https://developer.amd.com.cn/radeon/api/v1
+          RADEON_MODEL: DeepSeek-V4-Flash
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/generate-intel-daily.mjs
+
+      - name: Check for new digest
+        id: check_changes
+        run: |
+          if [ -n "$(git status --porcelain src/content/blog/)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "发现新生成的日报文章"
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "今日无新变动或未生成文章"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/content/blog/
+          git commit -m "chore: auto-generate intel gpu daily digest [skip ci]"
+          git push origin master
+
+      - name: Deploy to Cloudflare Pages (Optional)
+        if: steps.check_changes.outputs.has_changes == 'true' && env.CLOUDFLARE_API_TOKEN != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npm run build
+          npx wrangler pages deploy dist --project-name blackwood-blog --branch production

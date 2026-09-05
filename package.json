@@ -14,6 +14,7 @@
     "astro": "astro",
     "migrate:hexo": "node scripts/migrate-hexo.mjs",
     "new": "node scripts/new-post.mjs",
+    "daily:intel": "node scripts/generate-intel-daily.mjs",
     "export-db": "node scripts/export-gpu-db.mjs",
     "process-aten": "node scripts/process-aten-matrix.mjs && node scripts/sync-all-versions.mjs",
     "test": "vitest run"
@@ -28,6 +29,7 @@
     "sharp": "^0.34.3"
   },
   "devDependencies": {
+    "fast-xml-parser": "^5.11.1",
     "gray-matter": "^4.0.3",
     "pagefind": "^1.5.2",
     "vitest": "^4.1.9"
