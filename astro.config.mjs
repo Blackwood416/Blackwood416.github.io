@@ -21,7 +21,11 @@ export default defineConfig({
 		remarkPlugins: [remarkMath, remarkReadingTime, remarkCodeBlockMeta],
 		rehypePlugins: [rehypeKatex, rehypeTables, rehypeCodeBlocks],
 		shikiConfig: {
-			theme: 'one-dark-pro',
+			themes: {
+				light: 'one-light',
+				dark: 'one-dark-pro',
+			},
+			defaultColor: false,
 		},
 	},
 	fonts: [

@@ -15,12 +15,32 @@ function isElement(node: HastNode | undefined, tagName?: string): node is HastNo
 	return Boolean(node && node.type === 'element' && (!tagName || node.tagName === tagName));
 }
 
-function readCodeText(codeNode: HastNode): string {
-	if (codeNode.type === 'text') {
-		return codeNode.value ?? '';
+function readCodeText(node: HastNode): string {
+	if (node.type === 'text') {
+		return node.value ?? '';
+	}
+	if (!node.children || node.children.length === 0) {
+		return '';
 	}
 
-	return (codeNode.children ?? []).map((child) => readCodeText(child)).join('');
+	const hasLines = node.children.some(
+		(child) =>
+			isElement(child) &&
+			Array.isArray(child.properties?.className) &&
+			child.properties.className.includes('line'),
+	);
+
+	if (hasLines) {
+		return node.children.map((child) => readCodeText(child)).join('\n');
+	}
+
+	return node.children.map((child) => readCodeText(child)).join('');
+}
+
+function isMermaidCode(codeText: string, language: string | null): boolean {
+	if (language === 'mermaid') return true;
+	const trimmed = codeText.replace(/^\uFEFF/, '').trim();
+	return /^(?:graph\b|flowchart\b|sequenceDiagram\b|classDiagram\b|stateDiagram(?:-v2)?\b|erDiagram\b|journey\b|gantt\b|pie\b|quadrantChart\b|requirementDiagram\b|gitGraph\b|mindmap\b|timeline\b|zenuml\b|sankey\b|block\b)/i.test(trimmed);
 }
 
 function createCodeFigure(preNode: HastNode): HastNode | null {
@@ -38,6 +58,27 @@ function createCodeFigure(preNode: HastNode): HastNode | null {
 	if (language === 'math' || language === 'katex') {
 		return null;
 	}
+
+	const codeText = readCodeText(codeNode);
+	if (isMermaidCode(codeText, language)) {
+		return {
+			type: 'element',
+			tagName: 'div',
+			properties: {
+				className: ['mermaid-wrapper'],
+			},
+			children: [
+				{
+					type: 'element',
+					tagName: 'pre',
+					properties: {
+						className: ['mermaid'],
+					},
+					children: [textNode(codeText.trim())],
+				},
+			],
+		};
+	}
 	const rawMeta = String(
 		codeNode.properties?.['data-code-block-meta'] ??
 			preNode.properties?.['data-code-block-meta'] ??
@@ -47,7 +88,6 @@ function createCodeFigure(preNode: HastNode): HastNode | null {
 	);
 	const meta = parseCodeFenceMeta(rawMeta);
 	const label = meta.title ?? meta.language ?? language ?? 'code';
-	const codeText = readCodeText(codeNode);
 
 	return {
 		type: 'element',

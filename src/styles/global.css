@@ -13,9 +13,13 @@
 	--text: #334155;
 	--text-muted: #64748b;
 	--text-strong: #0f172a;
-	--code-bg: #1e1e24;
-	--code-header: #15151a;
-	--code-border: #2e2e38;
+	--code-bg: #f8fafc;
+	--code-header: #f1f5f9;
+	--code-border: #e2e8f0;
+	--code-header-text: #475569;
+	--code-copy-bg: #ffffff;
+	--code-copy-border: #cbd5e1;
+	--code-copy-text: #475569;
 	--content-width: 1080px;
 	--article-width: 760px;
 	
@@ -55,10 +59,14 @@
 	--text-muted: #9c94c0;
 	--text-strong: #f6f5fa;
 	
-	/* 暗色模式宇宙深紫下让代码块更好融合 */
-	--code-bg: #100b1e;
-	--code-header: #07040d;
-	--code-border: #1f1638;
+	/* 暗色模式宇宙深紫下让代码块更好融合并保持高对比度 */
+	--code-bg: #140f28;
+	--code-header: #0d091a;
+	--code-border: #2e2254;
+	--code-header-text: #a78bfa;
+	--code-copy-bg: #1e153b;
+	--code-copy-border: #3b2a6d;
+	--code-copy-text: #d8d4ec;
 	
 	--glass-bg: rgba(18, 14, 36, 0.30);
 	--glass-border: rgba(167, 139, 250, 0.18);
@@ -730,12 +738,18 @@ html.dark .post-updated-badge,
 }
 
 .code-block {
-	margin: 1.5rem 0;
+	margin: 1.75rem 0;
 	overflow: hidden;
 	border: 1px solid var(--code-border);
-	border-radius: 8px;
+	border-radius: 10px;
 	background: var(--code-bg);
-	transition: background-color var(--transition-normal), border-color var(--transition-normal);
+	box-shadow: var(--shadow-sm);
+	transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.code-block:hover {
+	border-color: var(--border-strong);
+	box-shadow: var(--shadow-md);
 }
 
 .code-block__header {
@@ -743,10 +757,10 @@ html.dark .post-updated-badge,
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
-	padding: 0.55rem 0.75rem;
+	padding: 0.55rem 0.85rem;
 	background: var(--code-header);
 	border-bottom: 1px solid var(--code-border);
-	color: #abb2bf;
+	color: var(--code-header-text);
 	font-size: 0.82rem;
 	transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
@@ -757,43 +771,96 @@ html.dark .post-updated-badge,
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+	font-weight: 600;
+	letter-spacing: 0.02em;
 }
 
 .code-block__copy {
 	flex: 0 0 auto;
-	border: 1px solid #4b5263;
+	border: 1px solid var(--code-copy-border);
 	border-radius: 6px;
-	padding: 0.2rem 0.55rem;
-	background: #2f343f;
-	color: #d7dae0;
+	padding: 0.2rem 0.6rem;
+	background: var(--code-copy-bg);
+	color: var(--code-copy-text);
 	cursor: pointer;
 	font: inherit;
+	font-size: 0.78rem;
+	font-weight: 500;
+	transition: all var(--transition-fast);
 }
 
 .code-block__copy:hover,
 .code-block__copy:focus-visible {
-	border-color: #61afef;
+	border-color: var(--accent);
+	background: var(--accent);
 	color: #ffffff;
+	box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
 }
 
 .code-block__pre {
 	margin: 0;
-	padding: 1rem;
+	padding: 1.15rem 1.25rem;
 	overflow-x: auto;
-	background: var(--code-bg);
+	background: var(--code-bg) !important;
 	border-radius: 0;
 	transition: background-color var(--transition-normal);
+	line-height: 1.6;
 }
 
 .code-block code {
 	padding: 0;
-	background: transparent;
-	color: inherit;
-	font-size: 0.9rem;
+	background: transparent !important;
+	font-size: 0.92rem;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 
 .code-block .line {
 	min-height: 1.45em;
+}
+
+/* Shiki 双主题精准映射：浅色与暗色模式分别应用高对比度配色，文字与背景清晰分明 */
+:root:not(.dark) .code-block code span {
+	color: var(--shiki-light) !important;
+}
+
+html.dark .code-block code span,
+.dark .code-block code span {
+	color: var(--shiki-dark) !important;
+}
+
+/* Mermaid 架构/流程图专用居中展示容器 */
+.mermaid-wrapper {
+	margin: 2rem 0;
+	padding: 1.5rem;
+	border-radius: 14px;
+	overflow-x: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100px;
+	background: var(--glass-bg);
+	border: 1px solid var(--glass-border);
+	backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+	box-shadow: var(--glass-shadow);
+	transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.mermaid-wrapper .mermaid {
+	margin: 0;
+	padding: 0;
+	background: transparent !important;
+	font-family: inherit;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.mermaid-wrapper .mermaid svg {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto;
 }
 
 @media (max-width: 980px) {

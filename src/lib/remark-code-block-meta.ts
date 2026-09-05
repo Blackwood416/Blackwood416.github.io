@@ -17,6 +17,15 @@ function attachCodeMeta(node: MarkdownNode): void {
 	};
 }
 
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
 function transformChildren(node: MarkdownNode): void {
 	if (!Array.isArray(node.children)) {
 		return;
@@ -26,6 +35,13 @@ function transformChildren(node: MarkdownNode): void {
 
 	for (const child of node.children) {
 		if (child.type === 'code') {
+			if (child.lang === 'mermaid') {
+				children.push({
+					type: 'html',
+					value: `<div class="mermaid-wrapper"><pre class="mermaid">${escapeHtml(child.value ?? '')}</pre></div>`,
+				});
+				continue;
+			}
 			attachCodeMeta(child);
 			children.push(child);
 			continue;
