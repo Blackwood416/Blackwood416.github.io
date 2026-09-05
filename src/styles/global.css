@@ -43,6 +43,13 @@
 	--quote-bg: rgba(124, 58, 237, 0.05);
 	--hover-bg: #f5f3ff;
 	--hover-border: rgba(124, 58, 237, 0.4);
+
+	/* 滚动条自适应配色变量 (浅色体系) */
+	color-scheme: light;
+	--scrollbar-track: rgba(0, 0, 0, 0.03);
+	--scrollbar-thumb: rgba(100, 116, 139, 0.32);
+	--scrollbar-thumb-hover: rgba(124, 58, 237, 0.6);
+	--scrollbar-thumb-active: rgba(109, 40, 217, 0.85);
 }
 
 :root.dark {
@@ -77,14 +84,107 @@
 	--quote-bg: rgba(167, 139, 250, 0.06);
 	--hover-bg: #1e153b;
 	--hover-border: rgba(167, 139, 250, 0.45);
+
+	/* 滚动条自适应配色变量 (深色体系：极客宇宙夜紫) */
+	color-scheme: dark;
+	--scrollbar-track: rgba(11, 7, 24, 0.65);
+	--scrollbar-thumb: rgba(167, 139, 250, 0.32);
+	--scrollbar-thumb-hover: rgba(167, 139, 250, 0.7);
+	--scrollbar-thumb-active: rgba(192, 132, 252, 0.95);
+}
+
+/* 兼容 html.dark 与 .dark 保证深色原生滚动条 color-scheme 优先级别 */
+html.dark,
+.dark {
+	color-scheme: dark;
 }
 
 * {
 	box-sizing: border-box;
 }
 
+/* ========================================================
+   滚动条现代化体系：自适应亮暗主题、极客极光质感
+   ======================================================== */
 html {
 	scroll-padding-top: 1rem;
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* 全局 Webkit 滚动条（Chrome, Edge, Safari） */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-thumb);
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+	transition: background-color var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--scrollbar-thumb-active);
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+/* 局部横向滚动容器（代码块、数据表格、Mermaid 流程图、分类胶囊等）纤细滚动条 */
+.code-block__pre,
+.table-wrapper,
+.mermaid-wrapper,
+.category-filter-nav,
+.tools-pills {
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.code-block__pre::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar,
+.mermaid-wrapper::-webkit-scrollbar,
+.category-filter-nav::-webkit-scrollbar,
+.tools-pills::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+}
+
+.code-block__pre::-webkit-scrollbar-track,
+.table-wrapper::-webkit-scrollbar-track,
+.mermaid-wrapper::-webkit-scrollbar-track,
+.category-filter-nav::-webkit-scrollbar-track,
+.tools-pills::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.code-block__pre::-webkit-scrollbar-thumb,
+.table-wrapper::-webkit-scrollbar-thumb,
+.mermaid-wrapper::-webkit-scrollbar-thumb,
+.category-filter-nav::-webkit-scrollbar-thumb,
+.tools-pills::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-thumb);
+	border-radius: 9999px;
+	border: none;
+}
+
+.code-block__pre::-webkit-scrollbar-thumb:hover,
+.table-wrapper::-webkit-scrollbar-thumb:hover,
+.mermaid-wrapper::-webkit-scrollbar-thumb:hover,
+.category-filter-nav::-webkit-scrollbar-thumb:hover,
+.tools-pills::-webkit-scrollbar-thumb:hover {
+	background-color: var(--scrollbar-thumb-hover);
 }
 
 body {
