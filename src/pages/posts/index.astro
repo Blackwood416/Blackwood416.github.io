@@ -60,6 +60,13 @@ const sortedYears = Array.from(postsByYear.keys()).sort((a, b) => b - a);
 							</h2>
 							<p class="post-meta">
 								<FormattedDate date={post.data.pubDate} />
+								{
+									post.data.updatedDate && (
+										<span class="post-meta-updated">
+											· 更新于 <FormattedDate date={post.data.updatedDate} />
+										</span>
+									)
+								}
 							</p>
 							{
 								(post.data.categories.length > 0 || post.data.tags.length > 0) && (

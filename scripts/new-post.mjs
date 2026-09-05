@@ -53,6 +53,7 @@ function createPost(title, slugInput) {
 title: "${title.replace(/"/g, '\\"')}"
 description: "这里是关于 ${title.replace(/"/g, '\\"')} 的简短描述..."
 pubDate: ${dateStr}
+# updatedDate: ${dateStr} # 更新日期 (可选，支持 updatedDate 或 updated)
 categories: []
 tags: []
 draft: true

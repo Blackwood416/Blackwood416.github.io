@@ -9,10 +9,14 @@ const blog = defineCollection({
 		description: z.string(),
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
+		updated: z.coerce.date().optional(),
 		tags: z.array(z.string()).default([]),
 		categories: z.array(z.string()).default([]),
 		draft: z.boolean().default(false),
-	}),
+	}).transform((data) => ({
+		...data,
+		updatedDate: data.updatedDate ?? data.updated,
+	})),
 });
 
 const pages = defineCollection({

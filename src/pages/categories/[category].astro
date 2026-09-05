@@ -34,6 +34,13 @@ const posts = getVisiblePosts(await getCollection('blog')).filter((post) =>
 					</h2>
 					<p class="post-meta">
 						<FormattedDate date={post.data.pubDate} />
+						{
+							post.data.updatedDate && (
+								<span class="post-meta-updated">
+									· 更新于 <FormattedDate date={post.data.updatedDate} />
+								</span>
+							)
+						}
 					</p>
 					<p>{post.data.description}</p>
 				</li>

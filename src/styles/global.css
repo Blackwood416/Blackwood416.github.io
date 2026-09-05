@@ -474,6 +474,39 @@ html.dark .post-card:hover,
 	font-size: 0.95rem;
 }
 
+.post-updated-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.15rem 0.55rem;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	background: rgba(124, 58, 237, 0.08);
+	border: 1px solid rgba(124, 58, 237, 0.2);
+	color: var(--accent);
+	vertical-align: middle;
+}
+
+html.dark .post-updated-badge,
+.dark .post-updated-badge {
+	background: rgba(167, 139, 250, 0.12);
+	border-color: rgba(167, 139, 250, 0.25);
+}
+
+.post-updated-badge svg {
+	width: 13px;
+	height: 13px;
+	flex-shrink: 0;
+}
+
+.post-meta-updated {
+	color: var(--accent);
+	font-size: 0.875rem;
+	font-weight: 500;
+	margin-left: 0.4rem;
+}
+
 .post-taxonomy,
 .taxonomy-list {
 	display: flex;

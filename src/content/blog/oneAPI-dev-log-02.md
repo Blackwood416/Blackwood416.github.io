@@ -2,6 +2,7 @@
 title: "oneAPI 学习日志 02"
 description: "深入了解 oneAPI Base Toolkit 中的各种核心高性能加速组件。探索 oneMKL、oneDNN、oneTBB 等大杀器的定位与设计，并提供手写 GEMM、神经网络 ReLU 算子以及多线程并发的双系统（Windows/Linux）实战示例。"
 pubDate: 2026-07-11
+updated: 2026-09-05
 categories: [oneAPI, SYCL]
 tags: [oneAPI, SYCL, 高性能计算, oneMKL, oneDNN, oneTBB]
 draft: false
