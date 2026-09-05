@@ -1,6 +1,6 @@
 ---
 title: "XPU 算子开发最佳实践：GEMM 高性能优化指南"
-description: "基于 Intel Arc A770 (Xe-HPG DG2) 的高性能 GEMM 算子调优实战：从标准 SYCL 访存分块、XMX 张量核心，到 ESIMD 显式硬件控制与 1D 模拟 2D 异步预取，打造性能逼近官方库的生产级算子。"
+description: "基于 Intel Arc A770 (Xe-HPG DG2) 的高性能 GEMM 算子调优实战：从标准 SYCL 访存分块、XMX 张量核心，到 ESIMD 显式硬件控制与 1D 模拟 2D 异步预取，记录预打包、对齐输入条件下接近官方库的内核调优过程。"
 pubDate: 2026-08-02
 categories: [SYCL, 算子优化, XPU]
 tags: [SYCL, 高性能计算, GPU, XPU, Intel, ESIMD, GEMM]
@@ -9,7 +9,7 @@ draft: false
 
 # XPU 算子开发最佳实践：GEMM 高性能优化指南
 
-Intel GPU 在高性能计算与深度学习算子开发领域的公开调优资料相对有限。本篇作为 XPU 算子优化的工程实战指南，以最经典的矩阵乘法（GEMM）为例，基于 Intel Arc A770（Xe-HPG DG2 架构，16GB 显存）平台，系统介绍如何从基础实现出发，循序渐进地应用共享内存分块、寄存器分块、SIMD 向量化、硬件张量核心（Joint Matrix/XMX），直至直接操控底层指令的手写 ESIMD（Explicit SIMD）与异步软件预取技术，最终构建出性能逼近官方库的生产级算子。
+Intel GPU 在高性能计算与深度学习算子开发领域的公开调优资料相对有限。本篇作为 XPU 算子优化的工程实战指南，以最经典的矩阵乘法（GEMM）为例，基于 Intel Arc A770（Xe-HPG DG2 架构，16GB 显存）平台，系统介绍如何从基础实现出发，循序渐进地应用共享内存分块、寄存器分块、SIMD 向量化、硬件张量核心（Joint Matrix/XMX），直至直接操控底层指令的手写 ESIMD（Explicit SIMD）与异步软件预取技术，最终得到在预打包、对齐输入条件下接近官方库的 GEMM 内核。
 
 # 一、GEMM 算子定义与基础基准
 
@@ -27,7 +27,7 @@ $$
 - $C$ 为 $M \times N$ 矩阵
 - $\alpha, \beta$ 为标量缩放因子
 
-在初始调优阶段，为排除标量计算与回写分支的干扰，专注于核心计算与内存交互，我们首先令 $\alpha = 1.0, \beta = 0.0$，即计算简化的 $C = A \times B$。后续章节会进一步将内核扩展为支持任意 $\alpha, \beta$ 与动态维度的生产级形式。
+在初始调优阶段，为排除标量计算与回写分支的干扰，专注于核心计算与内存交互，我们首先令 $\alpha = 1.0, \beta = 0.0$，即计算简化的 $C = A \times B$。后续章节会加入标量系数与运行时对齐维度支持；具体输入契约和未覆盖的边界见泛化章节。
 
 运算过程与数据流图示如下：
 
@@ -56,6 +56,26 @@ flowchart LR
     %% 使用不可见连接线让它们水平居中排列
     A ~~~ Op1 ~~~ B ~~~ Op2 ~~~ C
 ```
+
+## 阅读约定、计时口径与修订状态
+
+本文保留逐步调优的历史耗时和失败实验。**本次修订修正了代码示例与结论表述，尚未在 A770 上重新编译、对拍或采集性能；原有数值不代表修订后代码的验证结果。** 原始基准使用默认乱序队列连续写同一个 USM 输出，未显式建立迭代依赖，需按下述口径重测后才能确认各版本的串行调用表现。
+
+- **执行依赖**：本文基准统一使用 `property::queue::in_order`，使同一队列内的 GEMM、拷贝和输出重置按提交顺序执行；乱序队列的 USM 调用必须显式传递 event 依赖。循环末尾的 `wait_and_throw()` 只等待完成并报告异步错误，不能替代迭代间依赖。参见 [Khronos SYCL 队列说明](https://github.khronos.org/syclacademy/Lesson_Materials/In_Order_Queue/)。
+- **计时口径**：`chrono` 包围提交循环再同步，所得是包含主机提交与调度影响的连续调用平均时间。设备时间应在单独启用 `enable_profiling` 的采集中，以 event 的 `command_end - command_start` 统计；oneDNN/oneMKL 若发射多个 kernel，需统计完整调用，不能只挑其中一个事件。总批次耗时与单次平均耗时分开列示。
+- **布局成本**：VNNI B 打包，以及后续 ESIMD 的 A 操作数重排，均在原有内核计时之外。固定权重 B 可复用打包结果；运行时激活 A 通常需每次转换，除非上游直接生成目标布局。“接近官方库”的历史比例仅适用于这里的预打包基准，不能代表原始 row-major 输入的端到端表现。
+- **复现信息**：每轮应记录源码 commit、完整编译参数、编译器/驱动/库版本、队列属性、USM 类型、输入形状及布局、预热与迭代次数，并在同一轮交替测量基线与候选。区分复用相同输入的热缓存实验与轮换工作集的实验，报告多轮中位数及波动范围。
+- **证据等级**：实测变慢、寄存器压力增加、发生 Device Lost 分别是观测结果；溢出、缓存置换、occupancy 下降等原因需要编译产物或硬件计数器佐证。单一配置的结果不自动成为整代架构的限制。
+
+建议补齐三种对照，统一库与手写实现的输入、输出和同步条件：
+
+| 比较口径 | 纳入的工作 | 适用问题 |
+|---|---|---|
+| 预打包内核 | 已就绪的 A/B 布局 + GEMM | 内核本身的优化效果 |
+| 固定权重推理 | 每次 A 转换 + GEMM，B 打包摊销另列 | 运行时激活输入是否划算 |
+| 原始输入端到端 | A/B 转换 + GEMM，必要传输另列 | 一次性调用是否划算 |
+
+初期常量输入和 `C[0]` 仅作冒烟检查。正式对拍应先量化输入为 bf16，再用相同输入计算高精度 CPU 参考；记录随机种子、正负混合与消去用例、全量或抽样规则、`atol/rtol`、最大绝对/相对误差和非有限值处理。`errors=0` 表示测试判据下未检出错误，不等于逐位一致。还应覆盖 `beta=0` 且旧 C 为 NaN、最小对齐尺寸，以及非对齐/空维度的拒绝或回退策略。
 
 ## 朴素（Naive）实现
 
@@ -88,7 +108,7 @@ void gemm(size_t M, size_t N, size_t K, bf16* A, bf16* B, float* C, queue q)
 int main()
 {
     // 创建 SYCL 队列，指定 GPU 执行
-    queue q{gpu_selector_v};
+    queue q{gpu_selector_v, property::queue::in_order{}};
 
     // 测试矩阵基准规模
     constexpr size_t M = 1024;
@@ -112,14 +132,14 @@ int main()
     for (size_t i = 0; i < warmup_iters; i++) {
         gemm(M, N, K, A, B, C, q);
     }
-    q.wait();
+    q.wait_and_throw();
 
-    auto run_start = std::chrono::high_resolution_clock::now();
+    auto run_start = std::chrono::steady_clock::now();
     for (size_t i = 0; i < run_iters; i++) {
         gemm(M, N, K, A, B, C, q);
     }
-    q.wait();
-    auto run_end = std::chrono::high_resolution_clock::now();
+    q.wait_and_throw();
+    auto run_end = std::chrono::steady_clock::now();
     double run_total = std::chrono::duration<double, std::milli>(run_end - run_start).count();
 
     std::cout << "Naive spent " << run_total << " ms\n" << run_total / run_iters << " ms per Run\n";
@@ -141,7 +161,7 @@ Naive spent 1951.73 ms
 C[0] = 1024 (Expected: 1024)
 ```
 
-单次迭代耗时约 **1.9517 ms**。由于每个线程在计算 $C$ 的单个元素时，均需要沿 $K$ 维度分别从全局内存加载一次对应的 $A$ 元素与 $B$ 元素，全局数据复用率极低，访存总线负载饱和导致内核性能严重受制于显存带宽。
+历史连续调用平均耗时约 1.9517 ms。每个 work-item 独立沿 K 读取 A/B，缺少显式分块复用；但源代码中的 global load 不等于实际 DRAM 事务，缓存与访问合并可能复用数据。是否显存带宽饱和，需要结合实际流量、缓存命中与停顿指标判断。
 
 ## 建立官方基线：oneMKL 性能参考
 
@@ -157,7 +177,7 @@ using namespace sycl;
 using bf16 = oneapi::mkl::bfloat16;
 
 int main() {
-    queue q{gpu_selector_v};
+    queue q{gpu_selector_v, property::queue::in_order{}};
 
     constexpr size_t M = 1024;
     constexpr size_t N = 1536;
@@ -196,10 +216,10 @@ int main() {
             C, ldc
         );
     }
-    q.wait();
+    q.wait_and_throw();
 
     // 正式测试
-    auto run_start = std::chrono::high_resolution_clock::now();
+    auto run_start = std::chrono::steady_clock::now();
     for (size_t i = 0; i < run_iters; i++) {
         oneapi::mkl::blas::row_major::gemm(
             q,
@@ -213,9 +233,9 @@ int main() {
             C, ldc
         );
     }
-    q.wait();
+    q.wait_and_throw();
 
-    auto run_end = std::chrono::high_resolution_clock::now();
+    auto run_end = std::chrono::steady_clock::now();
     double run_total = std::chrono::duration<double, std::milli>(run_end - run_start).count();
 
     std::cout << "oneMKL spent " << run_total << " ms\n" << run_total / run_iters << " ms per Run\n";
@@ -244,7 +264,7 @@ C[0] = 1024 (Expected: 1024)
 | Naive 朴素实现 | 1.95174 ms | 2.75% |
 | oneMKL 官方基线 | **0.05370 ms** | **100.00%** |
 
-两者存在高达 **36 倍** 的性能差距。Naive 版本的主要瓶颈在于每个线程独立访问全局显存（Global Memory），缺乏局部性缓存机制。针对这一问题，后续将通过引入分块（Tiling）技术，利用片上缓存阶梯式改善数据复用率。
+历史耗时比约为 **36 倍**，需在修正队列依赖后复测。Naive 版本缺少显式的数据复用，后续通过 Tiling 观察协作加载是否能降低访存与指令开销。
 
 # 二、标准 SYCL 框架下的通用访存优化
 
@@ -909,7 +929,7 @@ C[0] = 1024 (Expected: 1024)
 |单次耗时|1.95174 ms|1.49231 ms|0.430648 ms|0.273737 ms|0.430931 ms|0.629883 ms|0.660607 ms|0.0536976 ms|
 |相对效率|2.75%|3.59%|12.46%|19.61%|12.46%|8.52%|8.13%|100%|
 
-可以看到 prefetch 没有带来收益，反而比基础 SLM 版本慢了约 5%（同一会话中重新测量基础 SLM 版本约为 640 ms，结论一致）。原因在于这个测试规模太小：A（1024x512）和 B（512x1536）都是 bf16，加起来只有约 2.5MB，而 A770 的 L2 有 16MB，预热之后全部数据本来就常驻 L2，DRAM 延迟已经不是主要瓶颈，多出来的 prefetch 指令反而增加了指令开销。要让 prefetch 真正发挥作用，要么把矩阵规模放大到远超 L2 容量，要么改用 **Double Buffering + 软件流水线**，把下一个 K 块的 SLM 加载与当前块的计算彻底重叠。
+本轮 prefetch 没有带来收益，反而比基础 SLM 版本慢约 5%（同一会话重测基础 SLM 约 640 ms）。A/B bf16 输入合计约 2.5 MiB，小于 A770 的 16 MiB L2，反复使用相同输入可能使 DRAM 延迟不再主导；但容量能容纳不等于已确认全部常驻。额外预取指令开销是候选解释，应结合缓存命中和消息指令统计验证。下一步尝试 Double Buffering，为下一块加载与当前块计算创造重叠机会；实际重叠程度仍取决于生成指令和依赖关系。
 
 ## Joint Matrix + SLM + Double Buffering（软件流水线）实现
 
@@ -1193,11 +1213,11 @@ A770 的关键硬件规格：
 |Number of General Register File per Thread|128|
 |Register Width|256 bits (32B)|
 
-根据这些规格，一个 8x8 的 float 累加器占 `64 floats x 4B = 256B = 8` 个 GRF，一个 8x16 的 bf16 A 切片和 16x8 的 bf16 B 切片各占 8 个 GRF。我们按 GRF 预算做了三组调参：
+按数据字节数估算，一个 8x8 float 累加器为 256B，即 8 个 32B GRF 的数据量；8x16 bf16 A 切片和 16x8 bf16 B 切片也各为 256B。下述 GRF 数值只是操作数数据量估算，不包含临时量、地址、填充和编译器分配，不能据此确认实际寄存器占用或溢出。Joint Matrix 的 subgroup 协作布局与 ESIMD work-item 的显式向量布局也不能混为一谈。我们尝试了三组参数：
 
-1. **16x32 寄存器块**：8 个累加器 + 2 个 A 切片 + 4 个 B 切片，数据占用约 `112/128` GRF，实测 444.701 ms，接近上限后寄存器压力反而拖慢性能。
+1. **16x32 寄存器块**：8 个累加器 + 2 个 A 切片 + 4 个 B 切片，操作数数据量约 112 个 GRF，实测 444.701 ms；是否发生 spill 需检查编译报告或反汇编。
 2. **16x16 + BK=32**：4 个累加器 + 8 个 A/B 切片，数据占用约 `96/128` GRF，实测 455.252 ms，SLM 占用翻倍到 16KB/Work-Group，也没有提升。
-3. **最终方案**：保持 16x16 寄存器块（约 `64/128` GRF，留足余量），把 `BM` 增大到 128、`BN` 保持 64，Work-Group 为 512 线程；总线程数 `8 x 24 x 512 = 98304 = 24 x 4096`，正好是硬件线程数的整数倍（24 个满波次），实测最快。
+3. **最终方案**：保持 16x16 寄存器块，把 `BM` 增大到 128、`BN` 保持 64，每组 512 个 SYCL work-item；本轮实测最快。共 `8 × 24 × 512 = 98304` 个 work-item，在 subgroup size=8 的划分下为 12288 个 subgroup。不能把 work-item 数直接除以 4096 个硬件线程槽称作“24 个满波次”；实际 SIMD 映射、工作组分配及资源限制需另行核对。
 
 ```cpp
 // ···
@@ -1344,7 +1364,7 @@ C[0] = 1024 (Expected: 1024)
 |单次耗时|1.95174 ms|1.49231 ms|0.430648 ms|0.273737 ms|0.430931 ms|0.629883 ms|0.660607 ms|0.669505 ms|0.356372 ms|0.307633 ms|0.0536976 ms|
 |相对效率|2.75%|3.59%|12.46%|19.61%|12.46%|8.52%|8.13%|8.02%|15.07%|17.46%|100%|
 
-最终调参结果稳定在 305 ~ 308 ms，比上一版 16x16 + 64x64（356.372 ms）再快约 16%，相对 oneMKL 的效率也来到了 17.46%。这次实验说明：匹配硬件规格的关键是两点，一是让总线程数是 4096 硬件线程数的整数倍（本配置为 24 个满波次），二是 GRF 占用要留出余量（64/128）；一味把寄存器块撑到 96 ~ 112 个 GRF 反而会因寄存器压力和 SLM 占用上升而变慢。
+历史调参结果在 305 ~ 308 ms，比上一版 356.372 ms 的耗时低约 14%，相对 oneMKL 的比例为 17.46%。这说明本轮增大工作组 tile 有收益；不能由此推出“work-item 总数是硬件线程数整数倍”是必要条件，也不能仅凭操作数估算确认实际 GRF 占用。
 
 ## Joint Matrix + SLM + VNNI Packed Data 实现
 
@@ -1671,7 +1691,7 @@ C[0] = 1024 (Expected: 1024)
 |16x32 + Large GRF|约 112/256|180.3 ms|慢 25%|
 |32x32 + Large GRF|约 192/256|193.9 ms|慢 35%|
 
-三组配置全部比 16x16 默认更慢，且结果正确（`C[0] = 1024`）。原因是 Large GRF Mode 会把每个 Vector Engine 的硬件线程数从 8 降到 4，占用率直接减半；在 A770（DG2）上，XMX 并不是这个规模的唯一瓶颈，更多寄存器带来的计算复用收益盖不住占用率损失。官方 32x64x16 的建议主要针对 PVC（硬件形状 8x16x16），DG2 的 8x8x16 形状放大寄存器块后收益不明显。结论：当前最优仍是 VNNI + 向量化 A 加载（143.731 ms），Large GRF / 大寄存器块方向在 A770 上暂不推荐。
+三组配置全部比 16x16 默认更慢，`C[0] = 1024` 冒烟检查通过。增加寄存器预算可能改变并发线程容量和实际驻留，但编译选项是否生效、真实 GRF 分配、spill 与 occupancy 应由当前 DG2 编译产物及计数器确认，不能仅从耗时推断占用率减半。本轮保留 VNNI + 向量化 A 加载（143.731 ms）；该结论限于测试形状、布局和软件版本，不排除其他配置从 Large GRF 获益。
 
 ## Joint Matrix + SLM + VNNI + Vec + K 拆分 + N 优先遍历实现
 
@@ -1679,12 +1699,12 @@ C[0] = 1024 (Expected: 1024)
 
 1. **A 预打包**：把 A 按 8x16 微块重排，让 Sub-Group 的 A 切片连续。实测 154 ~ 169 ms，索引计算开销盖过了布局收益，无效。
 2. **K 首/尾拆分**：主循环去掉“是否还有下一个 K 块”的分支，把最后一个块单独处理。实测 142 ~ 146 ms，与基线基本持平，无回归。
-3. **N 优先遍历**：交换 Work-Group 的 M/N group 索引，让硬件按 N 方向优先调度相邻 tile。实测 118.2 ~ 119.6 ms，再快约 17%，是这次唯一有效的手段。
+3. **N 优先遍历**：交换 Work-Group 的 M/N group 索引，改变线性 group ID 对应的 tile 排列（不保证硬件执行顺序）。实测 118.2 ~ 119.6 ms，再快约 17%，是这次唯一有效的手段。
 
 关键改动只有两处：
 
 ```cpp
-// 1) N 优先遍历：交换 M/N 的 group 索引，改变 L2 调度顺序
+// 1) 交换 M/N 的 group 索引；global/local range 的对应维度也需交换
 int wg_row = item.get_group(1);
 int wg_col = item.get_group(0);
 
@@ -1717,20 +1737,20 @@ C[0] = 1024 (Expected: 1024)
 |单次耗时|1.95174 ms|1.49231 ms|0.430648 ms|0.273737 ms|0.430931 ms|0.629883 ms|0.660607 ms|0.669505 ms|0.356372 ms|0.307633 ms|0.23417 ms|0.143731 ms|0.11831 ms|0.0536976 ms|
 |相对效率|2.75%|3.59%|12.46%|19.61%|12.46%|8.52%|8.13%|8.02%|15.07%|17.46%|22.93%|37.36%|45.39%|100%|
 
-N 优先遍历把 143.731 ms 降到 118.31 ms（多次运行稳定在 118 ~ 120 ms，再快约 17%），相对效率来到 45.39%，与 oneMKL（53.6976 ms）的差距缩小到约 2.2 倍。原因在于 A 只有 1MB、B 打包后约 0.75MB，N 优先的 tile 调度让相邻 Work-Group 尽量共享已经在 L2 中的 A/B 数据，减少重复访存；这也印证了 oneDNN `walk_orders.hpp` 里 tile 遍历顺序对性能的影响。
+N 优先遍历把 143.731 ms 降到 118.31 ms（多次运行稳定在 118 ~ 120 ms，再快约 17%），相对效率来到 45.39%，与 oneMKL（53.6976 ms）的差距缩小到约 2.2 倍。A 为 1 MiB、B 为 1.5 MiB；bf16 两两打包为 uint32 不改变 B 的总字节数。改变 tile 索引映射可能改善缓存局部性，但 SYCL 不保证各工作组按线性 ID 顺序实际执行，具体缓存收益需采集验证。
 
 ## Tile 调度顺序与流水线深度的进一步探索
 
 参考 oneDNN 的设计思路，我们针对调度策略与共享内存流水进一步测试了三项探索方案：
 
-|实验方案|单次实测耗时|实验结论|
+|实验方案|1000 次累计耗时|实验结论|
 |:---:|:---:|:---:|
 |N 优先遍历（N-first）|**118.31 ms**|基准最优|
 |蛇形遍历（Boustrophedon）|118.50 ms|与 N 优先基本持平，无显著额外收益|
-|SLM 行填充（Bank Padding）|156.40 ms|破坏了 `joint_matrix_load` 的对齐约束，导致性能退化|
-|3 级 SLM 流水线缓冲|125.00 ms|SLM 占用量升至 18KB/WG，降低了并发驻留的 Work-Group 数量|
+|SLM 行填充（Bank Padding）|156.40 ms|该 padding 配置实测退化；对齐、地址开销及资源分配需分别核对|
+|3 级 SLM 流水线缓冲|125.00 ms|SLM 占用量升至 18KB/WG；是否跨越驻留阈值待验证|
 
-测试表明，N 优先遍历已经获取了 L2 缓存调度的主要收益；蛇形遍历需要配合底层指令生成器才能进一步减少转折边缘的开销；而在标准 SYCL 抽象下，人为填充（Padding）会破坏 `joint_matrix_load` 的连续硬件对齐，多级缓冲也会因局部内存容量膨胀反噬并发占用率。
+本轮蛇形遍历没有显著收益，padding 和 3 级缓冲变慢。索引计算、访问布局和 SLM 分配均可能参与影响，不能仅靠耗时确定缓存命中或驻留组数的变化，也不能概括为 padding 在标准 SYCL 下必然无效。
 
 ## oneDNN vs oneMKL 同机实测
 
@@ -1846,20 +1866,20 @@ for (size_t bk = 0; bk < K; bk += BK) {
 | BK=32 + 4 级 SLM + GRF 双副本展开 | 深度缓冲与寄存器双副本协同 | 0.37410 ms |
 
 实验分析：
-oneDNN 的这套底层流水结构在 SYCL Joint Matrix 抽象层并不能直接迁移。显式声明双份 `joint_matrix` 句柄会显著加重 IGC（Intel Graphics Compiler）的寄存器分配压力，导致寄存器溢出（Spill）；而 BK=32 配合 4 级缓冲虽然降低了屏障频率，但 SLM 容量翻倍降低了硬件占用率。
+本轮未能通过直接套用 oneDNN 的缓冲参数改善 Joint Matrix 内核。双份 `joint_matrix` 句柄增加活跃数据量，4 级 SLM 增加资源需求；是否发生 spill 或实际 occupancy 下降，需要附编译报告或对应计数器，不能仅从变慢反推。
 
-至此，在标准 SYCL Joint Matrix 框架下能够探索的参数空间已基本穷尽，内核性能定格在 **0.1183 ms**（约为 oneMKL 的 45.4%）。剩余约 2.2 倍的差距受限于 SYCL 编译器的通用代码生成、固定 16x16 抽象与无法精确调度寄存器指令的固有边界。为了真正触及硬件性能天花板，必须转向能够直接操控底层硬件的工具——**ESIMD**。
+至此，本轮已尝试的 Joint Matrix 配置最好为 **0.1183 ms**（历史 oneMKL 比例约 45.4%），尚有约 2.2 倍差距。它不是 Joint Matrix 的性能上限，也不代表参数空间已穷尽。接下来选择 ESIMD，探索更直接的数据布局与加载控制。
 
 # 四、显式控制硬件：手写 ESIMD (Explicit SIMD) 深度调优
 
 ## 为什么需要转向 ESIMD
 
 在标准 SYCL Joint Matrix 框架下，编译器（IGC）在后端负责将 `joint_matrix_load`、`joint_matrix_mad` 映射到底层硬件指令。然而这种高级抽象存在若干难以规避的约束：
-1. **固化形状抽象**：`joint_matrix` 的硬件块尺寸被严格绑定在 $8 \times 8 \times 16$，无法灵活组合跨寄存器复用。
+1. **硬件形状约束**：本文 DG2 路径使用 $8 \times 8 \times 16$ 微块；可以组合多个 `joint_matrix` 构建更大 tile，前文已展示这种复用，实际收益取决于代码生成与寄存器分配。
 2. **寄存器重组黑盒**：数据在 SLM 与硬件寄存器之间的搬运往往伴随着编译器自动生成的掩码（Mask）与重排指令，产生大量不可见开销。
 3. **指令调度缺乏确定性**：开发者无法显式控制内存加载与 DPAS 计算指令的乱序发射窗口。
 
-为了直接控制通用寄存器文件（GRF）并直接调用硬件点积指令，我们转向 Intel oneAPI 的低级扩展——**ESIMD（Explicit SIMD）**。
+为了更明确地表达向量布局与硬件点积操作，我们转向 Intel oneAPI 的低级扩展——**ESIMD（Explicit SIMD）**。ESIMD 仍由编译器分配物理寄存器和调度指令，不能保证源码顺序就是最终机器指令顺序。
 
 ## ESIMD 基础验证：DPAS 指令与操作数对齐
 
@@ -1894,7 +1914,7 @@ SMOKE PASSED
 ```
 
 实验结论：
-- `esimd::dpas` 在 A770 上运行正常，计算结果与 CPU 主机基准严格一致（0 误差）。这证明通过 ESIMD 可以绕过 SYCL 矩阵抽象层，直接生成 XMX 指令。
+- `esimd::dpas` 在 A770 上运行正常，当前冒烟用例与 CPU 主机基准比较未检出错误（`errors=0/64`）。这证明通过 ESIMD 可以绕过 SYCL 矩阵抽象层，直接生成 XMX 指令。
 - VNNI 格式要求：$B$ 矩阵在 32 位整型字视角下索引为 $(k/2) \times N + j$，在线性 bf16 视角下为两行交错存储。
 
 ## 共享内存双缓冲微架构验证
@@ -1958,7 +1978,7 @@ for (size_t bk = 0; bk < K; bk += BK) {
 }
 ```
 
-测试结果表明：手写 ESIMD 完整内核首次突破了 SYCL Joint Matrix 的性能极限（从 118.31 ms 降至 **99.21 ms**，提速约 16%），相对 oneMKL 的效率达到 54.1%。进一步测试显示，每个 Work-Item 分配 16x16 寄存器 Tile、配合 32 线程 Work-Group，是 A770 显卡在当前配置下的最优几何参数。
+测试结果表明：手写 ESIMD 完整内核首次超过了本轮已测 Joint Matrix 配置（从 118.31 ms 降至 **99.21 ms**，提速约 16%），相对 oneMKL 的效率达到 54.1%。进一步测试显示，每个 Work-Item 分配 16x16 寄存器 Tile、配合 32 线程 Work-Group，是 A770 显卡在当前配置下的最优几何参数。
 
 ## 基于 VTune 热点分析的宽加载优化
 
@@ -2032,7 +2052,7 @@ auto load_grf = [=](int buf, simd<bf16, 128> &a0,
 | 硬件占用率（Occupancy） | 58.4% | 28.7% | - |
 | L3 带宽受限度（Bandwidth Bound） | 0.2% | 0.2% | - |
 
-硬件采集数据显示：内核并未受制于显存带宽（L3 带宽绑定仅 0.2%），且硬件占用率（58.4%）显著高于 oneDNN（28.7%）。性能滞后的核心原因在于指令冗余：单次内核发射的辅助指令约为 oneDNN 的 2.1 倍。冗余指令主要来源于 `load_grf` 中的 64 次 `select`/`bit_cast` 寄存器内部重排、B 矩阵的细碎消息发送、以及循环内高频计算的内存偏移量。XMX 脉动计算由于缺乏有效供给，被外围 ALU 与 Send 指令稀释。
+本次采集的 L3 Bandwidth Bound 为 0.2%，不支持“该指标对应的带宽饱和是主因”的判断；它不能单独排除访存延迟或其他层级的瓶颈。手写内核 occupancy 为 58.4%，高于 oneDNN 的 28.7%，但速度仍较慢，说明提高 occupancy 并非充分条件。表中 ALU0+ALU1 计数约为 oneDNN 的 4 倍、Send 约为 2.36 倍；统计范围和执行次数必须一致才能比较。结合后续布局实验，我们优先减少 `load_grf` 的重排、细碎消息及地址计算。
 
 接着对宽加载优化方案复采 `instruction-count`（1100 次），与 16x16 基础分块内核对比：
 
@@ -2060,7 +2080,7 @@ auto load_grf = [=](int buf, simd<bf16, 128> &a0,
 所有阶段均严格通过数值对拍校验（`C[0]=3`，0 错误）。
 在阶段 2 中，将 SLM 内部的 B 矩阵划分为 4 个操作数段，使 `load_grf` 从 16 次 64B 读取转换为 4 次 256B 读取，彻底消除了 64 次寄存器 `select` 拼接指令；
 在阶段 3 中，在主机端将 A 矩阵打包为操作数布局，内核内直接以 4 次 256B 全局 `block_load` 直读，A 矩阵完全绕过 SLM，使得单个工作组的 SLM 占用从 24KB 降至 8KB。
-内核单次耗时推进至 0.0734 ms，相较 oneMKL（0.0529 ms）达到 72.5% 性能，差距缩减至 1.33 倍。
+内核单次耗时推进至 0.0734 ms，相较 oneMKL（0.0529 ms）达到 72.5% 性能，耗时比约为 1.39 倍。
 
 主机端 A 矩阵操作数重排打包（每个 Work-Item 对应 4 个 256B 操作数段）：
 
@@ -2073,7 +2093,7 @@ for (int wg_row = 0; wg_row < M / BM; wg_row++)
                     for (int cc = 0; cc < 16; cc++) {
                         const int m = wg_row * BM + wi * 16 + rr + (o / 2) * 8;
                         const int k = kb * BK + cc + (o % 2) * 16;
-                        Ap[((((wg_row * 16 + kb) * 8 + wi) * 4 + o) * 8 +
+                        Ap[((((wg_row * (K / BK) + kb) * 8 + wi) * 4 + o) * 8 +
                             rr) * 16 + cc] = A[m * K + k];
                     }
 ```
@@ -2131,7 +2151,7 @@ b2 = wb2.bit_cast_view<bf16>();
 ```cpp
 // 启动阶段：预填两个 K 块的数据
 load_block(0, brow);
-load_block(1, brow + 16 * N);
+load_block(1, brow + size_t{16} * N);
 barrier();
 
 // 主循环：按成对步长迭代，屏障频次减半
@@ -2171,26 +2191,26 @@ ALU1 指令数已低于 oneDNN，Send 指令基本打平，同步屏障开销削
 |---|---|---:|---|
 | 4 级缓冲基线 | 当前最优流水线 | 0.0628 ~ 0.0646 ms | 性能基线 |
 | A 矩阵下一块 L1 预取 | 提前发射 A 矩阵软件预取指令 | 0.0707 ~ 0.0715 ms | **负收益**：每对计算块增加 8 条 `prefetch` 消息指令，开销超出延迟隐藏收益 |
-| 8 级缓冲（32KB）+ 每 4 块同步 | 进一步摊薄工作组屏障开销 | 0.0690 ~ 0.0703 ms | **负收益**：SLM 占用升至 32KB，降低活跃工作组驻留数（Occupancy 损失反噬） |
-| $16 \times 8$ 几何 + 64 线程工作组 | 减半单线程累加寄存器压力 | 0.0832 ~ 0.0835 ms | **负收益**：A 矩阵全局直读冗余由 4 倍剧增至 8 倍，显存总线压力击穿性能 |
+| 8 级缓冲（32KB）+ 每 4 块同步 | 进一步摊薄工作组屏障开销 | 0.0690 ~ 0.0703 ms | **负收益**：SLM 占用升至 32KB；实际驻留组数变化待采集确认 |
+| $16 \times 8$ 几何 + 64 线程工作组 | 减半单线程累加寄存器压力 | 0.0832 ~ 0.0835 ms | **负收益**：A 的逻辑 global load 重复度由 4 倍增至 8 倍；实际 DRAM 流量取决于缓存 |
 
 结合硬件行为的量化归因如下：
 1. **指令开销反噬**：A 矩阵软件预取使每对计算块额外发射 8 条内存消息指令。在显存带宽并未饱和的情形下，指令管线被预取指令抢占，导致总体耗时上升。
-2. **硬件占用率约束（Occupancy Cliff）**：将 SLM 扩充至 8 级缓冲（32KB）使得单个 Xe-Core Subslice 无法并发容纳 2 个活跃工作组，硬件线程槽位占用率腰斩，抵消了屏障减半带来的增益。
-3. **访存放大倍数暴增**：调整为 64 线程工作组（$16 \times 8$ 几何）虽然降低了累加寄存器开销，但由于同一工作组内对 A 矩阵的复用线程翻倍，全局直读导致显存总线读取放大暴增至 8 倍。
+2. **资源驻留假设**：8 级缓冲占用 32KB SLM，但不能由此断言无法驻留两个工作组或 occupancy 腰斩。Intel 的 [Xe-HPG 架构说明](https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-the-xe-hpg-architecture.html) 描述每个 Xe-core 最高 128KB SLM，与 L1 共享资源；这不同于单工作组可申请上限。实际驻留还受分配粒度、线程槽、GRF、barrier 等限制，需要结合编译产物与采集数据判断。
+3. **逻辑读取重复增加**：64 线程、$16 \times 8$ tile 配置使 A 的组内逻辑 global load 重复度升至 8 倍；缓存命中可能避免同倍数 DRAM 读取。应分别比较请求数量、缓存流量和显存流量。
 
 ## A 矩阵片上缓存中转与全局流量权衡
 
-在进一步探索前，我们首先对硬件底层的边界特性进行了严格核验：
+在进一步探索前，我们检查了当前软件栈下若干 API 路径。以下失败记录用于界定本实现的可用路径，不能独立证明硬件 ISA 缺失：
 
-| 硬件特性核验项 | 实测结果与边界结论 |
+| 特性验证项 | 当前实验结果与验证边界 |
 |---|---|
-| DPAS ExecutionSize=16 验证 | 虽可通过编译，但计算产生 78/128 数值错误，A770 (DG2) 硬件仅支持原生 ExecutionSize=8 |
-| 硬件 2D Block 读写（`load_2d`） | 驱动执行挂起；官方转置加载仅支持 32/64 位类型，`bf16` 格式编译期拒绝，DG2 架构不可用 |
-| Large GRF 模式（`-ze-opt-large-register-file`） | 硬件线程数由 8 降至 4，线程级并行度损失导致执行失败或严重回退 |
+| DPAS ExecutionSize=16 验证 | 该测试可编译但产生 78/128 错误；本文保留已通过测试的 ExecutionSize=8 路径，ISA 支持需另据架构规范核对 |
+| 硬件 2D Block 读写（`load_2d`） | 该软件栈测试挂起；bf16 转置测试另有类型约束。使用前应查询 API 支持并核对参数，不能据此概括所有硬件 2D 消息 |
+| Large GRF 模式（`-ze-opt-large-register-file`） | 本轮发生执行失败或性能回退；失败需单独复现和定位，不能归因于并发线程容量下降 |
 | A 矩阵 `block_load` 缓存提示微调 | 实测 0.0641 ~ 0.0659 ms，性能中性无明显收益 |
 
-在排除上述无效路径后，我们重新评估全局显存流量的本质瓶颈：在当前方案中，A 矩阵由每个 Work-Item 直接自全局显存加载，导致同一行数据被同一个工作组内的 4 个线程重复读取，产生了 4 倍的全局内存带宽冗余。
+在保留当前可用路径后，我们重新评估 A 的读取：同一数据由组内 4 个 work-item 重复发出 global load，逻辑读取量是唯一数据量的 4 倍；实际 DRAM 流量取决于缓存命中，不能直接称为 4 倍显存带宽冗余。
 
 为此，我们设计了**“A 矩阵片上 SLM 协作中转”**架构：由工作组内 32 个线程协作单次将 8KB 的 A 矩阵块拉入 SLM，随后各线程由 SLM 读取自身所需的操作数片段。
 
@@ -2220,7 +2240,7 @@ a3 = slm_block_load<bf16, 128>(offA + wi_row * 1024 + 3 * 256,
 ```
 
 VTune 硬件数据复采表明：
-- 尽管由于协作中转增加了数据搬运指令，总指令数上升了 26%（由 8.58M 增至 10.83M），但由于彻底消除了全局显存的 4 倍重复读取，全局显存带宽与访存延迟显著降低，内核单次净耗时提速 3.3%。
+- 协作中转增加了搬运指令，总指令数由 8.58M 增至 10.83M（约 26%），同时减少组内对 A 的重复 global load。历史净耗时降低约 3.3%；要确认收益来自哪个缓存/访存层级，还需对应流量与停顿指标。
 - 内核平均执行耗时缩减至 59.7 µs，**XMX Pipeline Active 达到 20.7%，首次超越 oneDNN 的 19.1%**；XMX 指令发射速率达到约 86B/s（超越 oneDNN 的 75B/s）。手写内核性能达到官方 oneDNN 的 90%、oneMKL 的 87%。
 
 ## 线程几何尺寸与 Bank Padding 的边界验证
@@ -2230,35 +2250,37 @@ VTune 硬件数据复采表明：
 | 探索实验 | 实现说明 | 单次迭代耗时 | 验证结论 |
 |---|---|---:|---|
 | 双中转基准 | 32 线程 $\times 16 \times 16$ + A/B 双中转 | 0.0613 ~ 0.0615 ms | 最优配置 |
-| 64 线程工作组（$16 \times 8$ 几何） | 扩充工作组规模以期复用 | 0.0780 ~ 0.0791 ms | **负收益**：A 在 SLM 读取放大达 8 倍，硬件驻留受限 |
-| SLM Bank Padding 填充 | A 槽位 1056B / B 槽位 288B 隔离 | 0.0698 ~ 0.0704 ms | **负收益**：破坏 256B 对齐节奏且 SLM 膨胀至 26.1KB |
+| 64 线程工作组（$16 \times 8$ 几何） | 扩充工作组规模以期复用 | 0.0780 ~ 0.0791 ms | **负收益**：A 的 SLM 逻辑读取重复度达 8 倍；驻留变化待验证 |
+| SLM Bank Padding 填充 | A 槽位 1056B / B 槽位 288B 隔离 | 0.0698 ~ 0.0704 ms | **负收益**：改变步长且 SLM 膨胀至 26.1KB；具体对齐与 bank 影响待验证 |
 
 实验表明：
-1. **64 线程工作组在 A770 上不适用**：即使配合 A 矩阵 SLM 中转，64 线程依然会导致 A 在 SLM 内部的读取放大达到 8 倍，结合工作组驻留限制，吞噬了寄存器缩小的收益。
-2. **显式 Bank Padding 破坏硬件调度节律**：Xe 架构的 LSC 256B 块传输本身具备高效的跨 Bank 流水线调度，人为插入填充字节不仅破坏了 256 字节的对齐节律，还导致 SLM 总容量由 24KB 攀升至 26.1KB。
+1. **本轮 64 线程配置未获益**：所测 $16 \times 8$ tile 配合 64 个 ESIMD work-item 的配置更慢，A 在 SLM 中的读取重复度增加。这同时改变了 tile 复用和资源需求，不能推出 64 线程工作组在 A770 上普遍不适用。
+2. **本轮 padding 配置退化**：填充改变了 SLM 步长、寻址与总分配量（24KB 增至 26.1KB）。需检查具体消息的对齐要求、bank 行为和资源分配，不能把 256B 载荷大小直接当作所有地址必须 256B 对齐的证据，也不能推出 padding 必然有害。
 
-**阶段性收敛结论**：在 Intel Arc A770 (DG2) 硬件上，**32 线程工作组 $\times 16 \times 16$ 寄存器 Tile + A/B 双 SLM 协作中转（24KB 容量）+ 操作数直通布局 + 常量地址步进**构成了该芯片上的微架构平衡甜点。
+**阶段性收敛结论**：在 Intel Arc A770 (DG2) 硬件上，**32 线程工作组 $\times 16 \times 16$ 寄存器 Tile + A/B 双 SLM 协作中转（24KB 容量）+ 操作数直通布局 + 常量地址步进**是本轮测试配置中的较优组合，迁移到其他形状需重新选择。
 
-## 生产级算子泛化：通用公式与动态维度支持
+## 算子泛化：标量系数与运行时对齐维度支持
 
-在微架构性能调优达到稳定收敛后，我们将双缓冲片上中转架构进一步泛化为支持完整 GEMM 线性组合公式与运行时动态维度的生产级算子内核：
+在当前配置收敛后，我们加入标量系数与运行时对齐维度支持。此处仍是预打包输入的受限内核，不是完整 BLAS GEMM 替代品：
 
 1. **通用线性组合支持（$C = \alpha A B + \beta C$）**：
    - 将累加器专职用于矩阵乘累加，在写回阶段按需重读旧 C 矩阵计算 $\alpha \cdot \text{acc} + \beta \cdot C_{\text{old}}$。
-   - 针对常见的 $\alpha = 1.0, \beta = 0.0$ 场景，采用 C++ 模板参数 `if constexpr (Plain)` 进行编译期静态分派，生成无冗余读写的分支直写路径，避免内核内动态运行时条件分支引发的控制流发散或执行异常。
+   - 使用独立的 `BetaZero` 与 `AlphaOne` 模板参数：所有 `beta==0` 路径均不读取旧 C，`alpha==1` 再省去缩放。BLAS 允许 beta 为零时不初始化 C，不能以 `0 * old_C` 替代“不读取”，否则旧 C 的 NaN 会污染结果。参见 [Netlib GEMM 定义](https://www.netlib.org/lapack/explore-html/d4/de2/sgemm_8f_source.html)。
 2. **运行时动态 $M/N/K$ 维度**：
    - 将矩阵维度解耦为内核运行时参数，输入数据的操作数重排与 Work-Group 分配在运行时按矩阵大小动态计算，维度满足硬件对齐约束（$M \% 128 = 0, N \% 64 = 0, K \% 32 = 0$）。
 
-生产级泛化内核的核心实现如下：
+输入契约：M/N/K 必须为正并满足上述整除关系；A/B 已按本文布局打包，C 为连续 row-major float，指针满足示例声明的 16B 对齐且分配完整。调用方须在打包前检查维度与大小乘法；不满足条件的输入应明确拒绝或交给独立 fallback，不能直接向下整除后启动。本文未实现转置、任意 leading dimension、尾块、空维度及完整 BLAS 的特殊值/quick-return 语义（包括 `alpha==0` 时跳过 A/B）。
+
+以下为修订后的核心片段，沿用前文 `load_block`/`load_grf` 等定义。它需要在实际 A770 工程中编译和对拍，不能把下方历史 PASSED 表当成此次修订的验证记录。
 
 ```cpp
-template <bool Plain>
+template <bool BetaZero, bool AlphaOne>
 void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                             int K, float alpha, float beta, queue q) {
     const int wgs_m = M / BM;
     const int wgs_n = N / BN;
     const int kb_total = K / BK;
-    const int wgs = wgs_m * wgs_n;
+    const size_t wgs = static_cast<size_t>(wgs_m) * wgs_n;
 
     q.submit([&](handler &h) {
         h.parallel_for(
@@ -2267,8 +2289,8 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                 slm_init<SLM_TOTAL_BYTES>();
 
                 const uint32_t lid = it.get_local_id(0);
-                const uint32_t wg = it.get_group_linear_id();
-                const int wg_row = wg % wgs_m; // N-first 调度次序
+                const size_t wg = it.get_group_linear_id();
+                const int wg_row = wg % wgs_m; // 线性 ID 增大时，M tile 索引先变化
                 const int wg_col = wg / wgs_m;
                 const int wi_row = lid / 4;    // 每线程负责 16 行
                 const int wi_col = lid % 4;    // 每线程负责 16 列
@@ -2279,7 +2301,7 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                 const int rh = r2 / 8;
                 const int hp = lid % 2;
                 const uint32_t b_op_base = (uint32_t)(wi_col * 256);
-                const bf16 *apb = Ap + (size_t)(wg_row * kb_total) * 4096;
+                const bf16 *apb = Ap + static_cast<size_t>(wg_row) * kb_total * 4096;
                 const uint32_t *brow = Bp + (size_t)r2 * N + wg_col * BN + hp * 32;
 
                 simd<bf16, 128> a0, a1, a2, a3;
@@ -2293,7 +2315,7 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                     const int cur = b & 1;
                     const int nxt = cur ^ 1;
                     if (b + 1 < kb_total)
-                        load_block(nxt, nxt, apb + 4096, brow + 16 * N);
+                        load_block(nxt, nxt, apb + 4096, brow + size_t{16} * N);
 
                     load_grf(cur, cur, a0, a1, a2, a3, b0, b1, b2, b3);
                     // 8 次 8x8x16 DPAS 计算 (16x16 累加块)
@@ -2307,15 +2329,21 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                     c11 = dpas<8, 8, float>(c11, b3, a3);
 
                     barrier();
-                    apb += 4096;
-                    brow += 16 * N;
+                    // 最后一轮不再形成超出 B 分配范围的指针
+                    if (b + 1 < kb_total) {
+                        apb += 4096;
+                        brow += size_t{16} * N;
+                    }
                 }
 
                 // C 矩阵写回：支持 alpha * (A*B) + beta * C
                 const int gr = wg_row * BM + wi_row * 16;
                 const int gc = wg_col * BN + wi_col * 16;
-                if constexpr (Plain) {
-                    // alpha=1, beta=0 快速直写路径
+                if constexpr (!AlphaOne) {
+                    c00 *= alpha; c01 *= alpha; c10 *= alpha; c11 *= alpha;
+                }
+                if constexpr (BetaZero) {
+                    // 任意 alpha、beta=0：不读取旧 C
                     for (int r = 0; r < 8; r++) {
                         simd<float, 16> row0, row1;
                         row0.select<8, 1>(0) = c00.select<8, 1>(r * 8);
@@ -2326,8 +2354,7 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
                         block_store<float, 16>(C + (size_t)(gr + 8 + r) * N + gc, row1, overaligned_tag<16>{});
                     }
                 } else {
-                    // 带缩放因子的通用累加写回路径
-                    c00 *= alpha; c01 *= alpha; c10 *= alpha; c11 *= alpha;
+                    // beta!=0：读取旧 C；alpha 缩放已在上方完成
                     for (int r = 0; r < 8; r++) {
                         simd<float, 16> old0 = block_load<float, 16>(C + (size_t)(gr + r) * N + gc, overaligned_tag<16>{});
                         simd<float, 16> row0;
@@ -2347,7 +2374,28 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
 }
 ```
 
-全套测试用例均通过 CPU 参考对拍（`errors = 0`，覆盖各类长宽比与系数组合）：
+主机端先完成输入契约检查，再根据运行时系数选择模板实例，且保持同一 in-order 队列（或显式建立依赖）。下面的维度检查应在打包与分配前执行；分配大小乘法、缓冲区容量和对齐检查由实际工程补齐：
+
+```cpp
+// 需要 #include <stdexcept>
+if (M <= 0 || N <= 0 || K <= 0 || M % 128 || N % 64 || K % 32)
+    throw std::invalid_argument("GEMM requires positive, aligned M/N/K");
+
+// 在通过完整输入检查并完成打包后分派
+if (beta == 0.0f) {
+    if (alpha == 1.0f)
+        gemm_esimd_generalized<true, true>(Ap, Bp, C, M, N, K, alpha, beta, q);
+    else
+        gemm_esimd_generalized<true, false>(Ap, Bp, C, M, N, K, alpha, beta, q);
+} else {
+    if (alpha == 1.0f)
+        gemm_esimd_generalized<false, true>(Ap, Bp, C, M, N, K, alpha, beta, q);
+    else
+        gemm_esimd_generalized<false, false>(Ap, Bp, C, M, N, K, alpha, beta, q);
+}
+```
+
+原版本历史对拍记录如下（`errors = 0`；原始容差与覆盖方式仍需补充，尚未验证上述新分派）：
 
 | 测试矩阵形状 ($M \times N \times K$) | 线性组合参数 ($\alpha, \beta$) | 单次迭代耗时 | 验证状态 |
 |---|---|---:|---|
@@ -2359,39 +2407,39 @@ void gemm_esimd_generalized(bf16 *Ap, uint32_t *Bp, float *C, int M, int N,
 | 最小对齐边界：$128 \times 64 \times 32$ | $\alpha=0.0, \beta=1.0$ | 0.0114 ms | `PASSED` (0 错误) |
 | 混合尺寸：$512 \times 1024 \times 512$ | $\alpha=-2.0, \beta=0.25$ | 0.0350 ms | `PASSED` (0 错误) |
 
-在工程落地过程中，总结出两点关键经验：
-- **计时对拍的数据纯净性**：测试循环中若存在 $\beta \ne 0$，必须在每次迭代后将 C 矩阵重置为初始状态，否则 $\beta \cdot C$ 会在连续迭代中级联累积，破坏数值正确性。
-- **分支分派的静态化**：ESIMD 内核对运行时分支分派极其敏感，动态条件分支易引发管线停顿甚至执行死锁。使用 `if constexpr` 生成独立的分支执行实体是保证性能稳定的基石。
-- **动态开销与通用性的权衡**：由于解耦了维度硬编码并引入动态循环调度，基准耗时由 0.0613 ms 略微增至 0.0656 ms（约 7% 动态开销），但获得了对生产级任意合法维度的普适支持。
+在工程落地过程中，总结出以下关键经验：
+- **区分独立调用与递推**：若要每次验证同一个初始 C，需在每次调用前重置 C，并确保重置与计算的依赖。若有意连续执行 `C = alpha*AB + beta*C`，它是合法递推，参考结果也必须递推，不能比较单次结果。重置时间需单独统计；若计入批次时间，应标注口径。
+- **分支分派的静态化**：模板分派可减少不必要的运行时计算与读写，但统一的标量条件不一定导致线程发散。动态分支下若出现挂起，应检查 barrier 一致性、依赖与编译器/驱动问题，不能概括为 ESIMD 的动态分支会导致死锁。
+- **动态开销与适用范围**：历史基准由 0.0613 ms 增至 0.0656 ms（约 7%），但这是当时两个版本的整体差异，不能隔离为纯维度动态化成本。当前接口支持运行时对齐维度，未覆盖的输入应明确拒绝或回退。
 
 ## 访存延迟隐藏：基于 1D 模拟 2D 的异步软件预取
 
-在双缓冲片上中转流水线中，虽然实现了“SLM 搬运与 DPAS 硬件计算”的并发重叠，但当全局显存向 SLM 搬运数据遇到 L2 缓存未命中（Cache Miss）时，硬件线程依然需要等待显存总线的高昂延迟。
+双缓冲为 SLM 搬运与 DPAS 计算提供重叠机会，但没有保证全局加载延迟全部隐藏。若缓存未命中或预取提前量不足，仍可能出现等待。
 
-为进一步压榨 A770 存储子系统的吞吐潜力，我们引入**异步软件预取（Asynchronous Software Prefetching）**：在计算当前第 $b$ 块时，提前将未来第 $b + \text{dist}$ 个 K 块的数据自 DRAM 预热至 L2 缓存，构建 **“DRAM $\to$ L2 Cache $\to$ SLM $\to$ GRF”** 的全流水线访存掩盖。
+为探索进一步隐藏访存延迟的空间，我们尝试软件预取：在第 $b$ 轮发出未来第 $b + \text{dist}$ 块的缓存请求。它不返回数据，也不提供“已经驻留”的保证；是否降低 DRAM、缓存或后续加载等待，需要通过对照实验判断。
 
-### 1. A770 硬件与驱动对 Prefetch 的真实支持现状
+### 1. 当前 A770 软件栈的 Prefetch 支持记录
 
-在设计预取方案前，我们针对 Intel Arc A770 (Xe-HPG DG2) 显卡展开了底层的微基准实测，厘清了关键的硬件边界事实：
+在设计预取方案前，我们针对 Intel Arc A770 (Xe-HPG DG2) 显卡展开了底层的微基准实测，记录了当前 API 路径的可用性：
 
-1. **A770 不支持硬件 2D Block IO（`prefetch_2d` / `load_2d`）**：
+1. **当前软件栈查询不支持 ESIMD 2D Block IO（`prefetch_2d` / `load_2d`）**：
    - 官方扩展设备属性查询：
      ```cpp
      bool has_2d = dev.get_info<sycl::ext::intel::esimd::info::device::has_2d_block_io_support>();
-     // 在 A770 (DG2) 上返回: FALSE
+     // 本文测试的 A770 + oneAPI/驱动组合返回 FALSE；为 false 时不调用该 API
      ```
    - 强行调用 `prefetch_2d<bf16, BW, BH>(...)` 运行时会直接崩溃并报告：
      `level_zero backend failed with error: 20 (UR_RESULT_ERROR_DEVICE_LOST)`。
-   - 硬件 2D Block 读写与预取指令是面向数据中心级架构（如 Ponte Vecchio / Xe-HPC）设计的特性，A770 消费级架构并未搭载该硬件指令单元。
-2. **A770 完备支持 1D 连续与 Gather 散射预取**：
-   - 经过微基准验证，1D 指针预取 `prefetch<T, N>` 在 A770 上原生完备支持，且所有 5 种缓存提示（Cache Hints）全部安全通过：
+   - [ESIMD 扩展文档](https://github.com/intel/llvm/blob/sycl/sycl/doc/extensions/supported/sycl_ext_intel_esimd/sycl_ext_intel_esimd_functions.md) 要求支持属性为 true。属性为 false 和强行调用失败，只能支持本软件栈下该 API 路径不可用的结论，不能单独证明芯片不存在所有类型的 2D 硬件消息；ISA、编译器、驱动和参数限制应分别核对。
+2. **本轮 1D 预取用例可执行**：
+   - 本轮 1D 指针预取 `prefetch<T, N>` 测试可执行，下列 5 种缓存提示组合未触发错误。这不等于验证所有类型/长度/Gather 变体，也不能仅靠未报错证明缓存提示已按预期生效：
      - `L1: uncached, L2: cached`
      - `L1: cached, L2: uncached`
      - `L1: cached, L2: cached`
      - `L1: streaming, L2: uncached`
      - `L1: streaming, L2: cached`
 
-因此，在缺少硬件 2D 预取指令的 Xe-HPG (A770) 上，二维矩阵块的异步预取必须通过软件协同拆解为 **“1D 连续/跨行 Prefetch 模拟 2D 矩阵块预取”**。
+因此，本文在当前可用的软件路径上选择协作发射 1D 预取，覆盖二维 tile 的地址集合；称为“1D 模拟 2D”不意味着复现了硬件 2D 消息的布局变换或边界语义。
 
 ### 2. 1D 模拟 2D Prefetch 核心设计方案
 
@@ -2401,9 +2449,9 @@ graph TD
     A --> C["B 矩阵: 2D 跨行 (BK/2 x BN = 16x64, 4KB)"]
     B --> D["32 个 Work-Item 协同发起 1D 连续 Prefetch<br/><code>prefetch&lt;uint32_t, 64&gt;(pf_a, cached/cached)</code>"]
     C --> E["各 Work-Item 按行跨度发起 1D 跨行 Prefetch<br/><code>prefetch&lt;uint32_t, 32&gt;(pf_b, cached/cached)</code>"]
-    D --> F["提前 1 个 K-block 预热 DRAM -> L2 Cache"]
+    D --> F["请求未来 b+dist 块进入缓存"]
     E --> F
-    F --> G["XMX DPAS 计算与双缓冲 SLM 搬运彻底重叠运行"]
+    F --> G["为后续加载与 DPAS 计算提供重叠机会"]
 ```
 
 #### 核心实现机制
@@ -2412,17 +2460,17 @@ graph TD
    ```cpp
    prefetch<uint32_t, 64>(pf_a, properties{alignment<16>, cache_hint_L1<cached>, cache_hint_L2<cached>});
    ```
-   并发发射 1D 预取，使下一个 K 块的整个 2D A 瓦片在执行当前计算时被提前拉入 L2 缓存。
+   并发发射 1D 预取，请求未来块的数据进入缓存；A 此时已经预打包为连续 tile，不能把这段连续地址公式直接用于原始 row-major A。
 2. **B 矩阵 2D 跨行预取**：
    B 矩阵在显存中以跨行存储（行跨度为 $N$）。每个线程按行偏移量发射：
    ```cpp
    prefetch<uint32_t, 32>(pf_b, properties{alignment<16>, cache_hint_L1<cached>, cache_hint_L2<cached>});
    ```
-   实现跨行 2D 矩形块的非阻塞提前加载。
+   让不同 work-item 的行偏移共同覆盖 B 的未来 tile；该调用是缓存请求，不保证在后续 load 前完成。
 3. **软件边界安全防御（Boundary Safe Prefetching）**：
-   在硬件 2D Block IO 中，硬件会自动忽略越界访问；但 **1D 指针预取若越界访问非法页面，在 A770 上会直接触发 `UR_RESULT_ERROR_DEVICE_LOST`**。因此在发射预取前必须加入严格的边界守卫：
+   某些 2D 消息对描述符界定的 surface 有边界语义，但不能将其等同于任意无效指针都安全。本文 1D 预取应确保整个访问范围有效；测试中非法访问出现过 Device Lost，但这一错误码本身不能唯一定位到越界。以下 K 守卫仅在输入已满足维度、布局与分配契约时才充分：
    ```cpp
-   if (cur_b + dist < kb_total) {
+   if (dist > 0 && dist < kb_total - cur_b) {
        // 仅在合法 K-block 范围内发射预取
    }
    ```
@@ -2434,21 +2482,22 @@ graph TD
 ```cpp
 // 1D 模拟 2D Prefetch 核心实现
 auto prefetch_2d_sim = [=](int dist, int cur_b, const bf16 *cur_apb, const uint32_t *cur_brow) SYCL_ESIMD_FUNCTION {
-    if (cur_b + dist < kb_total) {
+    if (dist > 0 && dist < kb_total - cur_b) {
         // A 矩阵 1D 瓦片连续预取 (每个线程 256B = 64 uint32, 32 线程覆盖 8KB)
-        const uint32_t *pf_a = reinterpret_cast<const uint32_t*>(cur_apb + dist * 4096 + lid * 128);
+        const uint32_t *pf_a = reinterpret_cast<const uint32_t*>(cur_apb + static_cast<size_t>(dist) * 4096 + lid * 128);
         prefetch<uint32_t, 64>(pf_a, 
             properties{alignment<16>, cache_hint_L1<cache_hint::cached>, cache_hint_L2<cache_hint::cached>});
         
         // B 矩阵 1D 跨行步进预取 (每个线程 128B = 32 uint32, 覆盖跨行 4KB)
-        const uint32_t *pf_b = cur_brow + (dist * 16) * N;
+        const uint32_t *pf_b = cur_brow + static_cast<size_t>(dist) * 16 * N;
         prefetch<uint32_t, 32>(pf_b, 
             properties{alignment<16>, cache_hint_L1<cache_hint::cached>, cache_hint_L2<cache_hint::cached>});
     }
 };
 
 // --- 流水线启动阶段 (Prologue) ---
-// 提前向显存总线预取未来 K 块
+// 第 0 轮预取只在这里发出一次；PF_DIST 为正的编译期常量
+static_assert(PF_DIST > 0);
 prefetch_2d_sim(PF_DIST, 0, apb, brow);
 
 load_block(0, 0, apb, brow);
@@ -2459,11 +2508,12 @@ for (int b = 0; b < kb_total; b++) {
     const int cur = b & 1;
     const int nxt = cur ^ 1;
 
-    // 在计算当前块时，异步预取未来第 b + PF_DIST 块
-    prefetch_2d_sim(PF_DIST, b, apb, brow);
+    // apb/brow 此时指向第 b 块；跳过启动阶段已发出的第 0 轮请求
+    if (b != 0)
+        prefetch_2d_sim(PF_DIST, b, apb, brow);
 
     if (b + 1 < kb_total)
-        load_block(nxt, nxt, apb + 4096, brow + 16 * N);
+        load_block(nxt, nxt, apb + 4096, brow + size_t{16} * N);
 
     load_grf(cur, cur, a0, a1, a2, a3, b0, b1, b2, b3);
     
@@ -2478,61 +2528,81 @@ for (int b = 0; b < kb_total; b++) {
     c11 = dpas<8, 8, float>(c11, b3, a3);
 
     barrier();
-    apb += 4096;
-    brow += 16 * N;
+    // 最后一轮不再形成超出 B 分配范围的指针
+    if (b + 1 < kb_total) {
+        apb += 4096;
+        brow += size_t{16} * N;
+    }
 }
 ```
 
-### 4. A770 真实硬件基准实测数据对比
+### 4. A770 历史硬件基准记录与算术核对
 
-测试环境：**Intel Arc A770 (16GB), oneAPI 2026.1, Driver 32.0.101.8974, Windows 11 25H2**。
+该节历史测试环境：Intel Arc A770 (16GB), oneAPI 2026.1, Driver 32.0.101.8974, Windows 11 25H2。未据此推定前文所有实验也使用完全相同版本。
 
-| 测试矩阵形状 ($M \times N \times K$, $\alpha, \beta$) | 双缓冲片上中转内核 | 1D 模拟 2D 异步预取内核 | 性能提升 / 吞吐收益 | 正确性校验（CPU 参考） |
-| :--- | :---: | :---: | :---: | :---: |
-| **Deep ($512 \times 512 \times 1024$, $a=3, b=0.5$)** | `0.04290 ms` (12.51 TFLOPS) | **`0.04107 ms` (13.07 TFLOPS)** | **+4.3% ~ +18.3%** | `errors: 0/262144 (PASSED)` |
-| **Baseline ($1024 \times 1536 \times 512$, $a=1, b=0$)** | `0.06565 ms` (24.54 TFLOPS) | **`0.06170 ~ 0.06701 ms` (24.04 ~ 26.10 TFLOPS)** | **+8.9%** | `errors: 0/262144 (PASSED)` |
-| **Wide ($1024 \times 2048 \times 256$, $a=1, b=-1$)** | `0.08376 ms` (12.82 TFLOPS) | **`0.07836 ms` (13.70 TFLOPS)** | **+6.5%** | `errors: 0/262144 (PASSED)` |
-| **Small ($256 \times 512 \times 128$, $a=2, b=1$)** | `0.01534 ms` (2.19 TFLOPS) | **`0.01636 ms` (2.05 TFLOPS)** | 小形状延迟主导 | `errors: 0/131072 (PASSED)` |
-| **Tall ($2048 \times 512 \times 512$, $a=0.5, b=0$)** | `0.05514 ms` (19.46 TFLOPS) | **`0.05111 ms` (21.01 TFLOPS)** | **+7.3%** | `errors: 0/262144 (PASSED)` |
-| **Large ($2048 \times 2048 \times 1024$, $a=1, b=0$)** | `0.21889 ms` (39.24 TFLOPS) | **`0.21448 ms` (40.05 TFLOPS)** | **+2.0%** | `errors: 0/262144 (PASSED)` |
-| **Huge ($2048 \times 2048 \times 2048$, $a=1, b=0$)** | `0.38800 ms` (44.28 TFLOPS) | **`0.36596 ~ 0.38799 ms` (44.28 ~ 46.94 TFLOPS)** | **+5.7%** | `errors: 0/262144 (PASSED)` |
+以下保留历史耗时与错误计数，只按表内耗时统一重算两项指标：耗时降低率 `1 - t_new/t_old`，吞吐提高率 `t_old/t_new - 1`；负值表示退化。TFLOPS 按 `2*M*N*K / (耗时毫秒 * 10^9)` 计算。范围是记录端点的算术换算，不是置信区间，也不是修订后内核的复测结果。
 
-> **官方库基线对照**（基准形状 $1024 \times 1536 \times 512$）：
+| 形状 (M×N×K; alpha, beta) | 双缓冲历史耗时 / TFLOPS | 预取历史耗时 / TFLOPS | 耗时降低率 / 吞吐提高率 | 原始错误计数 |
+|---|---|---|---|---|
+| Deep (512×512×1024; 3, 0.5) | 0.04290 ms / 12.51 | 0.04107 ms / 13.07 | +4.3% / +4.5% | `errors: 0/262144` |
+| Baseline (1024×1536×512; 1, 0) | 0.06565 ms / 24.53 | 0.06170 ~ 0.06701 ms / 24.04 ~ 26.10 | -2.1 ~ +6.0% / -2.0 ~ +6.4% | `errors: 0/262144` |
+| Wide (1024×2048×256; 1, -1) | 0.08376 ms / 12.82 | 0.07836 ms / 13.70 | +6.4% / +6.9% | `errors: 0/262144` |
+| Small (256×512×128; 2, 1) | 0.01534 ms / 2.19 | 0.01636 ms / 2.05 | -6.6% / -6.2% | `errors: 0/131072` |
+| Tall (2048×512×512; 0.5, 0) | 0.05514 ms / 19.47 | 0.05111 ms / 21.01 | +7.3% / +7.9% | `errors: 0/262144` |
+| Large (2048×2048×1024; 1, 0) | 0.21889 ms / 39.24 | 0.21448 ms / 40.05 | +2.0% / +2.1% | `errors: 0/262144` |
+| Huge (2048×2048×2048; 1, 0) | 0.38800 ms / 44.28 | 0.36596 ~ 0.38799 ms / 44.28 ~ 46.94 | +0.0 ~ +5.7% / +0.0 ~ +6.0% | `errors: 0/262144` |
+
+注意：Baseline、Wide、Tall、Large、Huge 的原始错误计数分母 262144 小于各自的 M×N。现有记录未说明是抽样还是记录遗漏，因此不能将其视为全量正确性验证；需回查测试程序、采样规则与原始日志。Small 的预取版本变慢，Baseline 范围也包含退化，当前表不能支持“普遍稳定加速”。
+
+> **官方库历史基线对照**（基准形状 $1024 \times 1536 \times 512$）：
 > - **oneDNN** 官方库耗时：`0.0525 ~ 0.0552 ms`
 > - **oneMKL** 官方库耗时：`0.0512 ~ 0.0537 ms`
-> - 手写 ESIMD 从朴素版本的 `1.9517 ms` 经过系统调优持续推进至 **`0.0587 ~ 0.0617 ms`**，已高度逼近官方底层汇编实现。
+> - 本节 Baseline 记录为预打包条件下 `0.06170 ~ 0.06701 ms`。其他阶段还有不同记录，不能挑选跨轮次最佳值组成最终区间；接近官方库的比例需在相同输入契约、正确依赖和同轮计时下重新确认。
 
 ### 5. 关键调优经验与防御性准则
 
 1. **预取距离（Prefetch Distance）的最佳选择**：
-   - 在中等与深度 K 形状上，`PF_DIST = 1` 效果最佳（即在当前计算块 $b$ 时，Prefetch 下下块 $b+2$，同时 Double-Buffer 搬运 $b+1$）。
-   - 实测增大到 `PF_DIST >= 3` 会导致 Cache Line 过早被置换（Cache Trashing），收益趋于平缓甚至反噬。
+   - 按本节代码，循环第 b 轮的 `apb/brow` 指向第 b 块，所以 `PF_DIST=1` 请求的是 b+1，而随后 `load_block` 也加载 b+1；它不是“预取 b+2”。若要请求 b+2，应测试 `PF_DIST=2`，不能沿用 dist=1 的历史成绩。启动阶段与第 0 轮的重复预取已去重，效果需重测。
+   - 历史记录中增大到 `PF_DIST >= 3` 未带来进一步收益；缓存置换、消息开销、提前量变化均是候选解释，需采集后才能归因。
 2. **数据类型与 DWORD 对齐规约**：
-   - ESIMD 1D 预取在处理 16-bit 类型（如 `bf16`）时强制要求 DWORD（32-bit）对齐。直接以 `uint32_t` 视图（$256\text{B} = 64 \times \text{uint32}$）配合 `alignment<16>` 发起预取，兼具最高的内存总线吞吐与最纯净的代码生成。
+   - 本例以 `uint32_t` 视图配合 `alignment<16>` 请求 256B/128B 数据。alignment 是调用方对真实地址的承诺，不会自动对齐指针；需核对当前 API 的类型、长度及对齐约束，不能只靠强制转换判断合法，也不能由此声称吞吐必然最高。
 3. **软件边界检查必不可少**：
-   - 切勿省略 `cur_b + dist < kb_total` 检查。A770 对非法指针预取的鲁棒性较低，未越界保护的预取是引发随机 Device Lost 的主要诱因之一。
+   - 保留 `dist > 0 && dist < kb_total - cur_b` 检查，并要求 dist 为正、维度对齐、指针与分配范围合法。对非对齐输入，这一个 K 条件不能替代所有边界检查。遇到 Device Lost 应保留最小复现，并检查越界、同步及软件栈错误。
 
 # 五、Intel XPU (A770) 算子优化最佳实践总结
 
-回顾从最初 1.9517 ms 的朴素内核，到最终稳定在 0.061 ms 级别并支持任意动态维度的生产级 GEMM 算子，在 Intel Arc A770 (Xe-HPG DG2) 架构上的算子开发沉淀出以下五条核心工程准则：
+这组历史实验展示了从朴素实现逐步减少访存与辅助指令开销的过程。约 0.061 ms 的阶段性记录建立在预打包、对齐输入条件下；修订后的队列依赖、系数分派和预取代码仍待硬件重测。可迁移的方法是明确契约、测量瓶颈和逐项验证，而不是固定参数本身。
 
-### 1. 存储层级与计算流水的深度重叠
-- **双缓冲流水线是性能底线**：单纯依赖编译器的指令调度无法消除显存停顿，必须显式构建 SLM 双缓冲或 4 级缓冲机制，将下一次迭代的数据搬运与当前迭代的 DPAS 计算完全重叠。
-- **软件异步预取进一步隐藏延迟**：在 SLM 双缓冲的基础上，通过 1D Prefetch 提前将数据自全局显存拉取至 L2 缓存。在 DG2 架构上，预取距离 `dist=1` 配合 `cache_hint_L1<cached>` 与 `cache_hint_L2<cached>` 能取得最稳定的延迟隐藏收益。
+### 1. 存储层级与计算流水的重叠
 
-### 2. 硬件波次与线程几何的最佳匹配
-- **工作组规格与硬件占用率（Occupancy）**：在 A770 上，32 线程的工作组规格（每个线程分配 $16 \times 16$ 累加输出）展现出最佳的硬件适配度。
-- **大寄存器模式（Large GRF）的审慎取舍**：开启 256 GRF 模式会直接使 Vector Engine 的并发硬件线程数由 8 降至 4。在计算与带宽并存的 GEMM 算子中，硬件占用率减半带来的吞吐损失通常远大于增加寄存器带来的循环展开收益。默认 128 GRF 下通过精细的生命周期管理是更优解。
+- **比较缓冲方案**：双缓冲或多级 SLM 能为搬运与计算创造重叠机会，也会增加资源与同步需求。比较单缓冲、双缓冲和多级方案，结合生成指令确认实际依赖；不保证完全重叠，也不要求所有算子都使用 SLM。
+- **验证软件预取收益**：预取距离以当前指针对应的块为基准定义。结合工作集、缓存提示与消息开销测试各距离，保留变慢和无显著变化的结果，不把本轮 dist=1 经验当作 DG2 通用最优值。
 
-### 3. 指令稀释率与发射开销的严密控制
-- **数据直通与消除寄存器重排**：避免在内核热循环中执行跨通道提取（如 `select` 或 `bit_cast` 拼接）。通过数据准备阶段将张量组织为 DPAS 原生支持的操作数连续布局，使硬件加载指令直接喂入算力核心。
-- **地址计算外提与常量步进**：GPU 的 64 位整数与指针计算开销显著。将所有基地址计算外提至主循环外部，循环内部仅保留低开销的固定常量加法步进，能显著降低 ALU0/ALU1 指令对计算单元的抢占。
+### 2. 工作组几何与寄存器预算
 
-### 4. 片上存储（SLM）容量与并发驻留的平衡
-- **容量预算红线**：Subslice 的 SLM 容量上限（64KB）决定了并发驻留的工作组上限。单个工作组的 SLM 占用应严格控制在 24KB 以内，以保证每个硬件单元至少能驻留 2 个活跃工作组，提供充足的线程级延迟隐藏能力。
-- **数据重复读取与中转的权衡**：当多个工作项频繁读取同一全局数据块时，协作将其一次性拉入 SLM 中转所节省的全局显存带宽收益，显著高于在 SLM 内二次中转所引入的指令开销。
+- **明确线程单位**：区分 SYCL work-item、subgroup、ESIMD work-item 和硬件线程槽。本文 32 个 ESIMD work-item、每项 16×16 输出是所测配置中的较优组合；工作组实际执行顺序和驻留数量不能只由线性 ID 或全局线程总数推导。
+- **核对实际 GRF 分配**：操作数字节数不是完整寄存器报告。Large GRF 的收益取决于是否生效、实际分配、spill 和驻留情况；保留默认与 Large GRF 的对照，而非直接排除一种模式。
 
-### 5. 架构边界规约与防御性编程
-- **硬件指令特性的实证核查**：不同世代的 Xe 架构存在显著的指令集差异（如 Xe-HPG DG2 不支持硬件 2D Block 读写与 `prefetch_2d`，不支持 DPAS ExecutionSize=16）。算子设计必须以微基准实测为准绳，避免依赖未经验证的驱动文档假设。
-- **越界预取的防御性守卫**：1D 软件预取缺乏硬件边界保护，越界访问未映射内存页会直接触发驱动层 Device Lost。在一切预取发射前，必须施加严格的边界谓词保护。
+### 3. 用编译产物解释辅助指令开销
 
+- **操作数布局与转换成本一起评估**：减少最终生成的重排和细碎消息，允许上游直接产出目标布局时优先考虑融合。`select`/`bit_cast` 本身不必然生成昂贵指令，应依据反汇编判断；打包成本须按运行时复用方式计入。
+- **地址计算外提**：尝试循环外计算基址、循环内常量步进，并检查整数范围与指针合法性。确认实际指令减少后，再以同轮性能数据判断收益。
+
+### 4. SLM 容量与驻留的联合预算
+
+- **区分容量层次**：Xe-HPG 架构资料给出每个 Xe-core 最高 128KB SLM；单工作组限制、分配粒度和实际驻留是不同问题。24KB 是本文较优配置的用量，不是保证两个工作组驻留的红线。
+- **区分逻辑请求和物理流量**：重复 global load 可能命中缓存；SLM 中转则引入自己的读取、写入及同步开销。分别观察指令数、各层缓存/显存流量与停顿，验证具体配置的净收益。
+
+### 5. API 支持、正确性与复现边界
+
+- **逐层核对可用性**：先查询 API 支持与参数约束，再用合法的最小用例验证；接口不可用或测试失败，不能独立证明硬件缺少某种 ISA。动态分支、Large GRF 下的错误应单独定位。
+- **对拍后再比较性能**：明确打包布局、尺寸、对齐及系数契约，beta 为零时不读取旧 C；记录全量/抽样方式、容差和特殊值测试。保护完整预取地址范围，所有 USM 调用建立必要依赖。
+
+## 参考与待补验证
+
+- [Khronos：SYCL 队列顺序与依赖](https://github.khronos.org/syclacademy/Lesson_Materials/In_Order_Queue/)。
+- [Intel：Xe-HPG 架构与 L1/SLM](https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-the-xe-hpg-architecture.html)。
+- [Intel LLVM：ESIMD 函数及 2D Block IO 支持条件](https://github.com/intel/llvm/blob/sycl/sycl/doc/extensions/supported/sycl_ext_intel_esimd/sycl_ext_intel_esimd_functions.md)。
+- [Netlib：GEMM 参数与 beta=0 语义](https://www.netlib.org/lapack/explore-html/d4/de2/sgemm_8f_source.html)。
+
+下一轮硬件验证优先完成：修订示例的编译与全量对拍；正确依赖下的 oneMKL/oneDNN 同轮基线；beta=0 且旧 C 为 NaN 的回归；去重后各预取距离的比较；打包成本与设备执行时间分列；SLM/GRF 实际分配及驻留数据；回查历史表的错误计数覆盖范围。完成后再将对应历史数据替换为可复现的新记录。
