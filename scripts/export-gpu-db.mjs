@@ -12,6 +12,15 @@ try {
 		fs.mkdirSync(dir, { recursive: true });
 	}
 
+	if (!fs.existsSync(dbPath)) {
+		if (fs.existsSync(outputPath)) {
+			console.log(`Source SQLite DB not found at ${dbPath}, but pre-exported JSON exists at ${outputPath}. Skipping export.`);
+			process.exit(0);
+		}
+		console.error(`Error: Source SQLite DB not found at: ${dbPath}`);
+		process.exit(1);
+	}
+
 	console.log('Exporting SQLite data from:', dbPath);
 	const rawJson = execSync(`sqlite3 -json "${dbPath}" "SELECT * FROM gpu_ai_perf ORDER BY id ASC"`).toString();
 	
@@ -36,6 +45,10 @@ try {
 	fs.writeFileSync(outputPath, JSON.stringify(data, null, 2), 'utf-8');
 	console.log(`Successfully generated GPU JSON data (${data.length} records) at:`, outputPath);
 } catch (error) {
+	if (fs.existsSync(outputPath)) {
+		console.warn(`Export from SQLite failed (${error.message}), but pre-exported JSON exists. Falling back to existing data.`);
+		process.exit(0);
+	}
 	console.error('Error exporting SQLite database:', error);
 	process.exit(1);
 }

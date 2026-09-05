@@ -34,6 +34,10 @@ function detectTorchVersion() {
 
 function processMatrix() {
 	if (!fs.existsSync(csvPath)) {
+		if (fs.existsSync(versionsPath)) {
+			console.log(`Source CSV not found at ${csvPath}, but pre-processed PyTorch matrices exist. Skipping processing.`);
+			process.exit(0);
+		}
 		console.error(`Error: Source CSV not found at: ${csvPath}`);
 		process.exit(1);
 	}
