@@ -2,8 +2,8 @@ name: Daily Intel GPU Digest
 
 on:
   schedule:
-    # 每天北京时间 08:30 (UTC 00:30) 定时触发
-    - cron: '30 0 * * *'
+    # 每天北京时间 08:25 (UTC 00:25) 定时触发，避开整点/半点调度高峰
+    - cron: '25 0 * * *'
   workflow_dispatch: # 允许在 GitHub Actions 页面手动点击触发
 
 permissions:
