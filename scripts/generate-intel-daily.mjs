@@ -47,9 +47,51 @@ if (process.env.GITHUB_TOKEN) {
 	FETCH_HEADERS['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
 }
 
-// 时间窗口：默认拉取过去 48 小时
-const TIME_WINDOW_HOURS = 48;
+// 时间窗口：拉取过去 28 小时（覆盖一天并留 4 小时容错，杜绝抓取前天内容）
+const TIME_WINDOW_HOURS = 28;
 const cutoffDate = new Date(Date.now() - TIME_WINDOW_HOURS * 60 * 60 * 1000);
+
+// 从历史已发布的日报中提取已收录的链接与关键特征
+function loadReportedHistory(currentDateStr) {
+	const newsDir = path.resolve('src/content/news');
+	const seenUrls = new Set();
+	const seenKeys = new Set();
+	let yesterdayHighlights = '';
+
+	if (!fs.existsSync(newsDir)) return { seenUrls, seenKeys, yesterdayHighlights };
+
+	const files = fs.readdirSync(newsDir)
+		.filter(f => f.startsWith('intel-gpu-daily-') && f.endsWith('.md') && f !== `intel-gpu-daily-${currentDateStr}.md`)
+		.sort((a, b) => b.localeCompare(a)); // 倒序，第一篇是昨天的
+
+	for (let i = 0; i < files.length; i++) {
+		const filePath = path.join(newsDir, files[i]);
+		const content = fs.readFileSync(filePath, 'utf-8');
+
+		// 提取所有 markdown 链接: [text](URL)
+		const urlMatches = content.matchAll(/\((https?:\/\/[^\s\)]+)\)/g);
+		for (const match of urlMatches) {
+			const cleanUrl = match[1].replace(/\/+$/, '').toLowerCase();
+			seenUrls.add(cleanUrl);
+
+			// 提取 PR 或 commit 特征，如 /pull/12345 或 /commit/abc1234
+			const prMatch = cleanUrl.match(/\/pull\/(\d+)/);
+			if (prMatch) seenKeys.add(`pr:${prMatch[1]}`);
+			const commitMatch = cleanUrl.match(/\/commit\/([a-f0-9]{7,40})/);
+			if (commitMatch) seenKeys.add(`commit:${commitMatch[1].slice(0, 7)}`);
+		}
+
+		// 提取最新一期（即昨日）的核心速览部分
+		if (i === 0) {
+			const coreMatch = content.match(/## 核心速览([\s\S]*?)(?=##|$)/);
+			if (coreMatch) {
+				yesterdayHighlights = coreMatch[1].trim();
+			}
+		}
+	}
+
+	return { seenUrls, seenKeys, yesterdayHighlights };
+}
 
 // --- 1. 抓取逻辑 ---
 
@@ -250,7 +292,7 @@ async function fetchRedditArc() {
 }
 
 // --- 2. 汇总与组装 ---
-async function collectAllUpdates() {
+async function collectAllUpdates(history) {
 	console.log('[1/4] 正在并发采集 Intel GPU 生态动态...');
 	const rawItems = [];
 
@@ -272,23 +314,49 @@ async function collectAllUpdates() {
 		rawItems.push(...prs);
 	}
 
-	// 按 URL 去重
+	// 按 URL 与历史已报道记录进行深度去重
 	const seenUrls = new Set();
 	const deduplicated = [];
+	let skippedHistoryCount = 0;
+
 	for (const item of rawItems) {
-		if (item.url && !seenUrls.has(item.url)) {
-			seenUrls.add(item.url);
+		if (!item.url) continue;
+		const cleanUrl = item.url.replace(/\/+$/, '').toLowerCase();
+
+		// 1. 检查是否在历史日报中已引用该链接
+		if (history.seenUrls.has(cleanUrl)) {
+			skippedHistoryCount++;
+			continue;
+		}
+
+		// 2. 检查 PR 编号是否已被收录
+		const prMatch = cleanUrl.match(/\/pull\/(\d+)/);
+		if (prMatch && history.seenKeys.has(`pr:${prMatch[1]}`)) {
+			skippedHistoryCount++;
+			continue;
+		}
+
+		// 3. 检查 commit hash 是否已被收录
+		const commitMatch = cleanUrl.match(/\/commit\/([a-f0-9]{7,40})/);
+		if (commitMatch && history.seenKeys.has(`commit:${commitMatch[1].slice(0, 7)}`)) {
+			skippedHistoryCount++;
+			continue;
+		}
+
+		// 4. 本次采集内部去重
+		if (!seenUrls.has(cleanUrl)) {
+			seenUrls.add(cleanUrl);
 			deduplicated.push(item);
 		}
 	}
 
-	console.log(`[1/4] 采集完成，共清洗出 ${deduplicated.length} 条有效信源条目。`);
+	console.log(`[1/4] 采集完成: 原始抓取 ${rawItems.length} 条，过滤历史已报道 ${skippedHistoryCount} 条，最终清洗出 ${deduplicated.length} 条今日新增动态。`);
 	return deduplicated;
 }
 
 // --- 3. 调用 Radeon Cloud LLM 生成 Markdown ---
-async function generateSummaryWithLLM(items, todayStr) {
-	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 进行高信息密度技术提炼...`);
+async function generateSummaryWithLLM(items, todayStr, history) {
+	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 进行高信息密度技术提炼 (已排除历史重复)...`);
 
 	const promptData = items.map((it, idx) => `[${idx + 1}] 来源: ${it.source}
 标题: ${it.title}
@@ -297,16 +365,21 @@ async function generateSummaryWithLLM(items, todayStr) {
 摘要: ${it.summary.replace(/\s+/g, ' ')}
 ---`).join('\n');
 
+	const yesterdayHighlightsPrompt = history.yesterdayHighlights
+		? `\n【往期（昨日）已报道核心速览 - 严禁重复！】\n以下是上一期日报已报道的关键内容，今天绝对禁止再次作为主要新闻重复报道：\n${history.yesterdayHighlights}\n`
+		: '';
+
 	const systemPrompt = `你是一名精通底层系统编程、GPU 架构与深度学习编译器的工程师，深度关注 Intel GPU（Arc 独显如 Battlemage/Alchemist、核显如 Lunar Lake/Arrow Lake、数据中心 GPU）及其 AI 软件栈（oneAPI、SYCL、XPU、oneDNN、OpenVINO、vLLM、SGLang、ComfyUI、llama.cpp、Linux drm/xe 驱动）。
 
-你的任务：根据提供的过去 24~48 小时内的信源列表，撰写一篇专业、严谨、低“AI味”的《Intel GPU 技术生态日报》。
-
-【语言纪律与反“AI味”原则 - 严格执行】
-1. 严禁使用任何宣传公关套话（如“重磅来袭”、“里程碑”、“颠覆性”、“赋予新生命”、“赋能”等）。
-2. 严禁使用“不是……而是……”、“不仅如此……”、“总的来说……”、“正如大家所知……”等机械说教句式。
-3. 严禁任何文学比喻，禁止进行虚浮的升华总结或主观抒情。
-4. 客观陈述技术事实：讲清楚做了什么具体改动（算子优化、寄存器分配、死锁修复、指令集拓展等）、适配的具体架构代号（如 BMG、LNL、ARL、PTL、PVC 等）、实测基准数据，保留精确术语（如 ESIMD, Subgroup, XMX, Level Zero, SYCL, USM, DP, MTP, KV Cache, drm/xe, ANV）。
-5. 条目格式必须紧凑：
+你的任务：根据提供的过去 24 小时内真正新增的信源列表，撰写一篇专业、严谨、低“AI味”的《Intel GPU 技术生态日报》。
+${yesterdayHighlightsPrompt}
+【严格去重与反“炒冷饭”原则 - 核心红线】
+1. 严禁炒冷饭：今日日报只报道今天新发生的代码改动、新 PR 或新基准。如果某事件在往期已报道列表中已出现，坚决不准再次将其作为重点展开。
+2. 宁缺毋滥：若某个板块今天确实没有产生新的有效 PR 或特性，请直接忽略该二级标题，切勿无中生有或复述旧闻凑字数。
+3. 严禁宣传公关套话（如“重磅来袭”、“里程碑”、“颠覆性”、“赋予新生命”、“赋能”等）。
+4. 严禁使用“不是……而是……”、“不仅如此……”、“总的来说……”、“正如大家所知……”等机械说教句式与任何文学比喻。
+5. 客观陈述技术事实：保留精确术语（如 ESIMD, Subgroup, XMX, Level Zero, SYCL, USM, DP, MTP, KV Cache, drm/xe, ANV）。
+6. 条目格式：
    - **[组件/模块] 改动主题**：核心技术分析与改动动机。[[PR/Release 简写](链接)]
 
 【文章结构规范】
@@ -328,26 +401,23 @@ categories:
 draft: false
 ---
 
-正文必须使用清晰的二级标题组织（以触发博客右侧 TOC 目录导航）：
+正文使用清晰的二级标题组织（以触发博客右侧 TOC 目录导航，无更新的板块直接省略）：
 ## 核心速览
-(用 2~3 条极为简炼的要点概括当日最关键的技术变动)
+(用 2~3 条极为简炼的要点概括今日最关键的技术新进展)
 
 ## 下游优化与加速库 (intel/llm-scaler)
-(重点分析 intel/llm-scaler 专为 Intel GPU 提交的 patch，包括 vLLM/SGLang/Omni 中的 ESIMD 算子、INT4/FP8 支持、调度优化)
+(分析 intel/llm-scaler 今日新提交的 patch)
 
 ## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp)
-(分析合并至官方上游的 XPU / SYCL PR，说明具体修改模块与效果)
+(分析今日合并至上游官方仓的 XPU / SYCL PR)
 
 ## 驱动、内核与图形栈 (Linux drm/xe / Mesa ANV)
-(分析内核驱动改进、Mesa Vulkan 进展等)
+(分析今日内核驱动或 Mesa 的新技术变动)
 
 ## 社区实测与生态动态
-(精选社区内有技术价值的基准测试、工具更新或驱动调优经验)
+(精选今日社区有技术价值的新测试、新工具或真实反馈)`;
 
-【注意】
-若某个版块完全没有对应信源更新，请保持极客原则直接忽略该二级标题，切勿无中生有编造虚假内容！`;
-
-	const userPrompt = `以下是今日收集到的原始信源列表，请严格按照上述要求提炼并生成完整 Markdown：\n\n${promptData}`;
+	const userPrompt = `以下是今日收集到的去重后最新信源列表，请严格按照上述要求提炼并生成完整 Markdown：\n\n${promptData}`;
 
 	const response = await fetch(`${RADEON_BASE_URL}/chat/completions`, {
 		method: 'POST',
@@ -380,16 +450,23 @@ draft: false
 	return content;
 }
 
-// 清理 Markdown 代码块外框（有些 LLM 喜欢在整个输出外套一层 ```markdown ... ```）
+// 清理 Markdown 代码块外框及多余包裹标记
 function sanitizeMarkdown(text) {
 	let cleaned = text.trim();
-	if (cleaned.startsWith('```markdown')) {
-		cleaned = cleaned.replace(/^```markdown\r?\n/, '');
-		cleaned = cleaned.replace(/\r?\n```$/, '');
-	} else if (cleaned.startsWith('```')) {
-		cleaned = cleaned.replace(/^```\r?\n/, '');
-		cleaned = cleaned.replace(/\r?\n```$/, '');
+	// 剔除可能存在的最外层 ```markdown 或 ``` 标记
+	cleaned = cleaned.replace(/^```(?:markdown)?\s*\r?\n/i, '');
+	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
+
+	// 处理偶然出现的嵌套异常包装，如 "---\n```markdown\n---"
+	cleaned = cleaned.replace(/^---\s*\r?\n```(?:markdown)?\s*\r?\n---/i, '---');
+	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
+
+	// 确保严格以 --- Frontmatter 开头
+	const firstYamlIndex = cleaned.indexOf('---');
+	if (firstYamlIndex > 0) {
+		cleaned = cleaned.slice(firstYamlIndex);
 	}
+
 	return cleaned.trim();
 }
 
@@ -401,13 +478,16 @@ async function main() {
 	const dd = String(today.getDate()).padStart(2, '0');
 	const todayStr = `${yyyy}-${mm}-${dd}`;
 
-	const items = await collectAllUpdates();
+	const history = loadReportedHistory(todayStr);
+	console.log(`[Deduplicate] 从历史日报中提取了 ${history.seenUrls.size} 个已报道链接和 ${history.seenKeys.size} 个特征键。`);
+
+	const items = await collectAllUpdates(history);
 	if (items.length === 0) {
-		console.log('[Notice] 过去 48 小时内没有检测到新的 Intel GPU 动态，跳过日报生成。');
+		console.log('[Notice] 过去 28 小时内所有动态均已在往期日报中报道，今日无新增动态，跳过日报生成。');
 		return;
 	}
 
-	const generatedContent = await generateSummaryWithLLM(items, todayStr);
+	const generatedContent = await generateSummaryWithLLM(items, todayStr, history);
 	const sanitized = sanitizeMarkdown(generatedContent);
 
 	const outputFileName = `intel-gpu-daily-${todayStr}.md`;
