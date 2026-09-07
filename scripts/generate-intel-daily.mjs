@@ -461,11 +461,17 @@ function sanitizeMarkdown(text) {
 	cleaned = cleaned.replace(/^---\s*\r?\n```(?:markdown)?\s*\r?\n---/i, '---');
 	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
 
-	// 确保严格以 --- Frontmatter 开头
+	// 确保定位到首个 --- Frontmatter 起始
 	const firstYamlIndex = cleaned.indexOf('---');
 	if (firstYamlIndex > 0) {
 		cleaned = cleaned.slice(firstYamlIndex);
 	}
+
+	// 核心安全强化：如果开头连续出现多个 --- 分隔符（如 ---\n---），仅保留单个 ---
+	cleaned = cleaned.replace(/^(\s*---\s*\r?\n)+/, '---\n');
+
+	// 剔除尾部可能残留的代码块闭合标记
+	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
 
 	return cleaned.trim();
 }
