@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cron-intel-daily",
+  "main": "src/index.js",
+  "compatibility_date": "2024-11-06",
+  "triggers": {
+    "crons": [
+      // 每天北京时间 08:25 (UTC 00:25) 准时唤醒 GitHub Actions
+      "25 0 * * *"
+    ]
+  },
+  "vars": {
+    "REPO_OWNER": "Blackwood416",
+    "REPO_NAME": "Blackwood416.github.io",
+    "WORKFLOW_ID": "daily-intel-gpu.yml",
+    "BRANCH": "master"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
