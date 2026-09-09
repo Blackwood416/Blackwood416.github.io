@@ -116,6 +116,22 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 						dockedPosition: 'right', // 靠右侧锚定放置
 						mobileLimit: true, // 屏幕宽度小于 768px 时自动隐藏
 						primaryColor: 'var(--primary)', // 修改 OML 面板配色为符合模型的极光紫
+						menus: {
+							items: (defaultItems) => {
+								return defaultItems.map((item) => {
+									if (item.id === 'About') {
+										return {
+											...item,
+											title: '关于博主',
+											onClick: () => {
+												window.location.href = '/about/';
+											}
+										};
+									}
+									return item;
+								});
+							}
+						},
 						tips: {
 							style: {
 								fontSize: '13px',
