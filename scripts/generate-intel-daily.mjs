@@ -98,11 +98,15 @@ function loadReportedHistory(currentDateStr) {
 // 1.1 GitHub Atom Releases
 const ATOM_REPOS = [
 	'intel/llm-scaler',
+	'intel/intel-xpu-backend-for-triton',
 	'intel/compute-runtime',
 	'intel/intel-graphics-compiler',
 	'intel/llvm',
 	'oneapi-src/oneDNN',
+	'oneapi-src/oneMKL',
+	'oneapi-src/level-zero',
 	'openvinotoolkit/openvino',
+	'openvinotoolkit/openvino.genai',
 ];
 
 async function fetchAtomReleases(repo) {
@@ -136,7 +140,7 @@ async function fetchAtomReleases(repo) {
 	}
 }
 
-// 1.2 intel/llm-scaler 最新 Commits
+// 1.2.1 intel/llm-scaler 最新 Commits
 async function fetchLlmScalerCommits() {
 	const sinceStr = cutoffDate.toISOString();
 	const url = `https://api.github.com/repos/intel/llm-scaler/commits?since=${sinceStr}&per_page=20`;
@@ -164,27 +168,62 @@ async function fetchLlmScalerCommits() {
 	}
 }
 
-// 1.3 上游框架 PR
+// 1.2.2 intel/intel-xpu-backend-for-triton 最新 Commits
+async function fetchTritonXpuCommits() {
+	const sinceStr = cutoffDate.toISOString();
+	const url = `https://api.github.com/repos/intel/intel-xpu-backend-for-triton/commits?since=${sinceStr}&per_page=20`;
+	try {
+		const res = await fetch(url, { headers: FETCH_HEADERS });
+		if (!res.ok) return [];
+		const commits = await res.json();
+		if (!Array.isArray(commits)) return [];
+		return commits
+			.filter(c => {
+				const msg = c.commit?.message || '';
+				return !/^update readme/i.test(msg) && !/^merge /i.test(msg);
+			})
+			.map(c => ({
+				source: 'intel/intel-xpu-backend-for-triton (Commit/Patch)',
+				title: c.commit?.message?.split('\n')[0] || 'Untitled commit',
+				url: c.html_url,
+				updated: c.commit?.author?.date,
+				summary: c.commit?.message?.slice(0, 250),
+			}));
+	} catch (err) {
+		console.warn('[triton commits] 抓取警告:', err.message);
+		return [];
+	}
+}
+
+// 1.3 上游框架与模型生态 PR
 const SEARCH_QUERIES = [
 	{
 		label: 'PyTorch (torch.xpu)',
 		query: `repo:pytorch/pytorch is:pr is:merged label:"module: xpu" merged:>=${cutoffDate.toISOString().split('T')[0]}`,
 	},
 	{
-		label: 'vLLM (upstream)',
-		query: `repo:vllm-project/vllm is:pr is:merged xpu in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		label: 'vLLM (upstream XPU)',
+		query: `repo:vllm-project/vllm is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
 	},
 	{
-		label: 'llama.cpp (sycl/openvino)',
-		query: `repo:ggerganov/llama.cpp is:pr is:merged sycl in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		label: 'llama.cpp (sycl/openvino/intel)',
+		query: `repo:ggerganov/llama.cpp is:pr is:merged (sycl OR openvino OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
 	},
 	{
 		label: 'SGLang (XPU)',
-		query: `repo:sgl-project/sglang is:pr is:merged xpu in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:sgl-project/sglang is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
 	},
 	{
 		label: 'ComfyUI (Intel/XPU)',
-		query: `repo:comfyanonymous/ComfyUI is:pr is:merged xpu in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:comfyanonymous/ComfyUI is:pr is:merged (xpu OR intel) in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+	},
+	{
+		label: 'Ollama (SYCL/Intel)',
+		query: `repo:ollama/ollama is:pr is:merged (sycl OR intel OR oneapi) in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+	},
+	{
+		label: 'DeepSpeed (XPU)',
+		query: `repo:microsoft/DeepSpeed is:pr is:merged xpu in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
 	},
 ];
 
@@ -253,6 +292,71 @@ async function fetchPhoronix() {
 	}
 }
 
+// 1.5 TechPowerUp News RSS (Windows Intel 显卡驱动与硬件发布第一时间监控)
+async function fetchTechPowerUpDrivers() {
+	const url = 'https://www.techpowerup.com/rss/news';
+	const intelKeywords = ['intel', 'arc', 'battlemage', 'alchemist'];
+	const driverKeywords = ['driver', 'drivers', 'whql', 'game on', 'graphics'];
+	try {
+		const res = await fetch(url, { headers: FETCH_HEADERS });
+		if (!res.ok) return [];
+		const xml = await res.text();
+		const parsed = parser.parse(xml);
+		const items = parsed.rss?.channel?.item;
+		if (!items) return [];
+
+		const itemList = Array.isArray(items) ? items : [items];
+		const results = [];
+		for (const item of itemList) {
+			const pubDate = new Date(item.pubDate);
+			if (pubDate < cutoffDate) continue;
+
+			const titleLower = (item.title || '').toLowerCase();
+			const descLower = (item.description || '').toLowerCase();
+			const fullText = `${titleLower} ${descLower}`;
+
+			const hasIntel = intelKeywords.some(k => titleLower.includes(k));
+			const hasDriver = driverKeywords.some(k => fullText.includes(k));
+			if (hasIntel && hasDriver) {
+				results.push({
+					source: 'TechPowerUp (Windows 驱动与硬件)',
+					title: item.title,
+					url: item.link,
+					updated: pubDate.toISOString(),
+					summary: (item.description || '').replace(/<[^>]+>/g, '').slice(0, 300),
+				});
+			}
+		}
+		return results;
+	} catch (err) {
+		console.warn('[TechPowerUp] 抓取警告:', err.message);
+		return [];
+	}
+}
+
+// 1.6 Intel GPU Community Issue Tracker (IGCIT) (监控 Windows 驱动实际 Bug/BSOD 与修复进展)
+async function fetchIGCITIssues() {
+	const sinceStr = cutoffDate.toISOString();
+	const url = `https://api.github.com/repos/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues?since=${sinceStr}&per_page=10`;
+	try {
+		const res = await fetch(url, { headers: FETCH_HEADERS });
+		if (!res.ok) return [];
+		const issues = await res.json();
+		if (!Array.isArray(issues)) return [];
+
+		return issues.map(item => ({
+			source: 'Intel 官方社区驱动追踪 (IGCIT)',
+			title: item.title,
+			url: item.html_url,
+			updated: item.updated_at,
+			summary: item.body ? item.body.replace(/<[^>]+>/g, '').slice(0, 250) : '',
+		}));
+	} catch (err) {
+		console.warn('[IGCIT] 抓取警告:', err.message);
+		return [];
+	}
+}
+
 // 1.5 Reddit r/IntelArc (过滤硬核测试、工具更新和特定驱动讨论)
 async function fetchRedditArc() {
 	const url = 'https://www.reddit.com/r/IntelArc/.rss';
@@ -296,16 +400,22 @@ async function collectAllUpdates(history) {
 	console.log('[1/4] 正在并发采集 Intel GPU 生态动态...');
 	const rawItems = [];
 
-	const [atoms, commits, phoronix, reddit] = await Promise.all([
+	const [atoms, llmCommits, tritonCommits, phoronix, techpowerup, igcit, reddit] = await Promise.all([
 		Promise.all(ATOM_REPOS.map(fetchAtomReleases)),
 		fetchLlmScalerCommits(),
+		fetchTritonXpuCommits(),
 		fetchPhoronix(),
+		fetchTechPowerUpDrivers(),
+		fetchIGCITIssues(),
 		fetchRedditArc(),
 	]);
 
 	for (const a of atoms) rawItems.push(...a);
-	rawItems.push(...commits);
+	rawItems.push(...llmCommits);
+	rawItems.push(...tritonCommits);
 	rawItems.push(...phoronix);
+	rawItems.push(...techpowerup);
+	rawItems.push(...igcit);
 	rawItems.push(...reddit);
 
 	// 上游 PR 逐个执行（微小间隔防 403）
@@ -330,7 +440,7 @@ async function collectAllUpdates(history) {
 		}
 
 		// 2. 检查 PR 编号是否已被收录
-		const prMatch = cleanUrl.match(/\/pull\/(\d+)/);
+		const prMatch = cleanUrl.match(/\/(?:pull|issues)\/(\d+)/);
 		if (prMatch && history.seenKeys.has(`pr:${prMatch[1]}`)) {
 			skippedHistoryCount++;
 			continue;
@@ -369,7 +479,7 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 		? `\n【往期（昨日）已报道核心速览 - 严禁重复！】\n以下是上一期日报已报道的关键内容，今天绝对禁止再次作为主要新闻重复报道：\n${history.yesterdayHighlights}\n`
 		: '';
 
-	const systemPrompt = `你是一名精通底层系统编程、GPU 架构与深度学习编译器的工程师，深度关注 Intel GPU（Arc 独显如 Battlemage/Alchemist、核显如 Lunar Lake/Arrow Lake、数据中心 GPU）及其 AI 软件栈（oneAPI、SYCL、XPU、oneDNN、OpenVINO、vLLM、SGLang、ComfyUI、llama.cpp、Linux drm/xe 驱动）。
+	const systemPrompt = `你是一名精通底层系统编程、GPU 架构与深度学习编译器的工程师，深度关注 Intel GPU（Arc 独显如 Battlemage/Alchemist、核显如 Lunar Lake/Arrow Lake、数据中心 GPU）及其 AI 软件栈（oneAPI、SYCL、XPU、Triton、oneDNN、oneMKL、OpenVINO GenAI、vLLM、SGLang、ComfyUI、llama.cpp、Ollama、Windows 驱动、Linux drm/xe 驱动）。
 
 你的任务：根据提供的过去 24 小时内真正新增的信源列表，撰写一篇专业、严谨、低“AI味”的《Intel GPU 技术生态日报》。
 ${yesterdayHighlightsPrompt}
@@ -405,36 +515,59 @@ draft: false
 ## 核心速览
 (用 2~3 条极为简炼的要点概括今日最关键的技术新进展)
 
-## 下游优化与加速库 (intel/llm-scaler)
-(分析 intel/llm-scaler 今日新提交的 patch)
+## 下游优化与加速库 (intel/llm-scaler / Triton / OpenVINO)
+(分析 intel/llm-scaler、Triton XPU 后端、OpenVINO GenAI 今日新提交的 patch 或 Release)
 
-## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp)
+## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp / Ollama)
 (分析今日合并至上游官方仓的 XPU / SYCL PR)
 
-## 驱动、内核与图形栈 (Linux drm/xe / Mesa ANV)
-(分析今日内核驱动或 Mesa 的新技术变动)
+## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)
+(分析今日 Windows 显卡驱动发布、Bug 修复追踪、Linux 内核驱动或 Mesa 的新技术变动)
 
 ## 社区实测与生态动态
 (精选今日社区有技术价值的新测试、新工具或真实反馈)`;
 
 	const userPrompt = `以下是今日收集到的去重后最新信源列表，请严格按照上述要求提炼并生成完整 Markdown：\n\n${promptData}`;
 
-	const response = await fetch(`${RADEON_BASE_URL}/chat/completions`, {
-		method: 'POST',
-		headers: {
-			'Authorization': `Bearer ${RADEON_API_KEY}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			model: RADEON_MODEL,
-			messages: [
-				{ role: 'system', content: systemPrompt },
-				{ role: 'user', content: userPrompt },
-			],
-			temperature: 0.2, // 保持低温度以确保严谨无幻觉
-			max_tokens: 3000,
-		}),
-	});
+	let response;
+	let attempts = 0;
+	const maxAttempts = 3;
+	while (attempts < maxAttempts) {
+		attempts++;
+		try {
+			response = await fetch(`${RADEON_BASE_URL}/chat/completions`, {
+				method: 'POST',
+				headers: {
+					'Authorization': `Bearer ${RADEON_API_KEY}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					model: RADEON_MODEL,
+					messages: [
+						{ role: 'system', content: systemPrompt },
+						{ role: 'user', content: userPrompt },
+					],
+					temperature: 0.2, // 保持低温度以确保严谨无幻觉
+					max_tokens: 3000,
+				}),
+			});
+
+			if (response.status === 429 || response.status >= 500) {
+				const errBody = await response.text();
+				console.warn(`[Radeon Cloud] 收到 ${response.status} 状态，准备进行重试 (${attempts}/${maxAttempts})... 响应: ${errBody.slice(0, 100)}`);
+				if (attempts < maxAttempts) {
+					await new Promise(r => setTimeout(r, attempts * 4000));
+					continue;
+				}
+				throw new Error(`Radeon Cloud API 请求失败 (${response.status}): ${errBody}`);
+			}
+			break;
+		} catch (err) {
+			if (attempts >= maxAttempts) throw err;
+			console.warn(`[Radeon Cloud] 请求异常，重试中 (${attempts}/${maxAttempts}): ${err.message}`);
+			await new Promise(r => setTimeout(r, attempts * 4000));
+		}
+	}
 
 	if (!response.ok) {
 		const errText = await response.text();
