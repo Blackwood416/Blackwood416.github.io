@@ -14,6 +14,7 @@ type Props = CollectionEntry<'blog'>['data'] & {
 	wordCount?: number;
 	readingTime?: number;
 	basePath?: string;
+	canonicalPath?: string;
 };
 
 const {
@@ -29,10 +30,11 @@ const {
 	wordCount = 0,
 	readingTime = 0,
 	basePath = '/posts',
+	canonicalPath,
 } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
 	<div class="post-shell">
 		<article class="post">
 			<header class="post-header">
@@ -86,7 +88,7 @@ const {
 					)
 				}
 			</header>
-			<TableOfContents items={tocItems} />
+			<TableOfContents items={tocItems} variant="mobile" />
 			<div class="prose">
 				<slot />
 			</div>
@@ -111,7 +113,7 @@ const {
 				></div>
 			</div>
 		</article>
-		<TableOfContents items={tocItems} />
+		<TableOfContents items={tocItems} variant="desktop" />
 	</div>
 	<script is:inline>
 		const parseCodeMeta = (source) => {

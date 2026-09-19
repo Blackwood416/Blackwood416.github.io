@@ -1,6 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { XMLParser } from 'fast-xml-parser';
+import {
+	loadNewsThreads,
+	filterAndRankItems,
+	buildDailyPrompts,
+	sanitizeDailyMarkdown,
+	validateDailyMarkdown,
+} from './daily-lib.mjs';
 
 // 读取本地 .env 文件（若存在）
 function loadEnv() {
@@ -466,68 +473,9 @@ async function collectAllUpdates(history) {
 
 // --- 3. 调用 Radeon Cloud LLM 生成 Markdown ---
 async function generateSummaryWithLLM(items, todayStr, history) {
-	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 进行高信息密度技术提炼 (已排除历史重复)...`);
+	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 进行高信息密度技术提炼 (已接入 v2 事实分层与技术纪律)...`);
 
-	const promptData = items.map((it, idx) => `[${idx + 1}] 来源: ${it.source}
-标题: ${it.title}
-链接: ${it.url}
-时间: ${it.updated}
-摘要: ${it.summary.replace(/\s+/g, ' ')}
----`).join('\n');
-
-	const yesterdayHighlightsPrompt = history.yesterdayHighlights
-		? `\n【往期（昨日）已报道核心速览 - 严禁重复！】\n以下是上一期日报已报道的关键内容，今天绝对禁止再次作为主要新闻重复报道：\n${history.yesterdayHighlights}\n`
-		: '';
-
-	const systemPrompt = `你是一名精通底层系统编程、GPU 架构与深度学习编译器的工程师，深度关注 Intel GPU（Arc 独显如 Battlemage/Alchemist、核显如 Lunar Lake/Arrow Lake、数据中心 GPU）及其 AI 软件栈（oneAPI、SYCL、XPU、Triton、oneDNN、oneMKL、OpenVINO GenAI、vLLM、SGLang、ComfyUI、llama.cpp、Ollama、Windows 驱动、Linux drm/xe 驱动）。
-
-你的任务：根据提供的过去 24 小时内真正新增的信源列表，撰写一篇专业、严谨、低“AI味”的《Intel GPU 技术生态日报》。
-${yesterdayHighlightsPrompt}
-【严格去重与反“炒冷饭”原则 - 核心红线】
-1. 严禁炒冷饭：今日日报只报道今天新发生的代码改动、新 PR 或新基准。如果某事件在往期已报道列表中已出现，坚决不准再次将其作为重点展开。
-2. 宁缺毋滥：若某个板块今天确实没有产生新的有效 PR 或特性，请直接忽略该二级标题，切勿无中生有或复述旧闻凑字数。
-3. 严禁宣传公关套话（如“重磅来袭”、“里程碑”、“颠覆性”、“赋予新生命”、“赋能”等）。
-4. 严禁使用“不是……而是……”、“不仅如此……”、“总的来说……”、“正如大家所知……”等机械说教句式与任何文学比喻。
-5. 客观陈述技术事实：保留精确术语（如 ESIMD, Subgroup, XMX, Level Zero, SYCL, USM, DP, MTP, KV Cache, drm/xe, ANV）。
-6. 条目格式：
-   - **[组件/模块] 改动主题**：核心技术分析与改动动机。[[PR/Release 简写](链接)]
-
-【文章结构规范】
-你必须直接输出完整的 Markdown 文件内容，包含合规的 YAML Frontmatter：
----
-title: "Intel GPU 技术生态日报 (${todayStr})"
-description: "今日 Intel GPU 动态速览：包含驱动内核演进、算子与推理引擎适配进展。"
-pubDate: "${todayStr}T08:30:00.000Z"
-tags:
-  - Intel
-  - GPU
-  - Arc
-  - oneAPI
-  - XPU
-  - 日报
-categories:
-  - 技术日报
-  - 显卡
-draft: false
----
-
-正文使用清晰的二级标题组织（以触发博客右侧 TOC 目录导航，无更新的板块直接省略）：
-## 核心速览
-(用 2~3 条极为简炼的要点概括今日最关键的技术新进展)
-
-## 下游优化与加速库 (intel/llm-scaler / Triton / OpenVINO)
-(分析 intel/llm-scaler、Triton XPU 后端、OpenVINO GenAI 今日新提交的 patch 或 Release)
-
-## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp / Ollama)
-(分析今日合并至上游官方仓的 XPU / SYCL PR)
-
-## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)
-(分析今日 Windows 显卡驱动发布、Bug 修复追踪、Linux 内核驱动或 Mesa 的新技术变动)
-
-## 社区实测与生态动态
-(精选今日社区有技术价值的新测试、新工具或真实反馈)`;
-
-	const userPrompt = `以下是今日收集到的去重后最新信源列表，请严格按照上述要求提炼并生成完整 Markdown：\n\n${promptData}`;
+	const { systemPrompt, userPrompt } = buildDailyPrompts(items, todayStr, history);
 
 	let response;
 	let attempts = 0;
@@ -583,32 +531,6 @@ draft: false
 	return content;
 }
 
-// 清理 Markdown 代码块外框及多余包裹标记
-function sanitizeMarkdown(text) {
-	let cleaned = text.trim();
-	// 剔除可能存在的最外层 ```markdown 或 ``` 标记
-	cleaned = cleaned.replace(/^```(?:markdown)?\s*\r?\n/i, '');
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-
-	// 处理偶然出现的嵌套异常包装，如 "---\n```markdown\n---"
-	cleaned = cleaned.replace(/^---\s*\r?\n```(?:markdown)?\s*\r?\n---/i, '---');
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-
-	// 确保定位到首个 --- Frontmatter 起始
-	const firstYamlIndex = cleaned.indexOf('---');
-	if (firstYamlIndex > 0) {
-		cleaned = cleaned.slice(firstYamlIndex);
-	}
-
-	// 核心安全强化：如果开头连续出现多个 --- 分隔符（如 ---\n---），仅保留单个 ---
-	cleaned = cleaned.replace(/^(\s*---\s*\r?\n)+/, '---\n');
-
-	// 剔除尾部可能残留的代码块闭合标记
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-
-	return cleaned.trim();
-}
-
 // --- 4. 主流程执行 ---
 async function main() {
 	const today = new Date();
@@ -620,14 +542,20 @@ async function main() {
 	const history = loadReportedHistory(todayStr);
 	console.log(`[Deduplicate] 从历史日报中提取了 ${history.seenUrls.size} 个已报道链接和 ${history.seenKeys.size} 个特征键。`);
 
-	const items = await collectAllUpdates(history);
-	if (items.length === 0) {
+	const rawItems = await collectAllUpdates(history);
+	if (rawItems.length === 0) {
 		console.log('[Notice] 过去 28 小时内所有动态均已在往期日报中报道，今日无新增动态，跳过日报生成。');
 		return;
 	}
 
+	const threads = loadNewsThreads();
+	console.log(`[Threads] 载入了 ${threads.length} 个长期追踪技术事件。`);
+
+	const items = filterAndRankItems(rawItems, threads, 5, 35);
+	console.log(`[Rank] 经过技术重要性打分，从 ${rawItems.length} 条中筛选出 Top ${items.length} 条高价值动态输入研报生成模型。`);
+
 	const generatedContent = await generateSummaryWithLLM(items, todayStr, history);
-	const sanitized = sanitizeMarkdown(generatedContent);
+	const sanitized = sanitizeDailyMarkdown(generatedContent);
 
 	const outputFileName = `intel-gpu-daily-${todayStr}.md`;
 	const newsDir = path.resolve('src/content/news');
@@ -639,11 +567,15 @@ async function main() {
 	fs.writeFileSync(outputPath, sanitized, 'utf-8');
 	console.log(`\x1b[32m[3/4] 成功生成日报文件: ${outputPath}\x1b[0m`);
 
-	console.log('[4/4] 正在验证生成内容格式...');
-	if (sanitized.includes('---') && sanitized.includes('title:')) {
-		console.log('\x1b[32m✔ Frontmatter 验证通过\x1b[0m');
+	console.log('[4/4] 正在根据研报 v2 规范深度校验生成内容...');
+	const validation = validateDailyMarkdown(sanitized);
+	if (validation.isValid) {
+		console.log('\x1b[32m✔ Frontmatter 与核心结构校验通过\x1b[0m');
 	} else {
-		console.warn('\x1b[33m⚠ 警告: 生成的文章可能缺少标准 Frontmatter！\x1b[0m');
+		console.error('\x1b[31m✖ 校验未通过:\x1b[0m', validation.errors.join(', '));
+	}
+	if (validation.warnings.length > 0) {
+		console.warn('\x1b[33m⚠ 格式规范告警:\x1b[0m\n  - ' + validation.warnings.join('\n  - '));
 	}
 }
 

@@ -57,11 +57,24 @@ describe('production site shell', () => {
   it('wires article pages to table of contents and previous-next navigation', async () => {
     const route = await read('src/pages/posts/[slug].astro');
     const layout = await read('src/layouts/BlogPost.astro');
+    const toc = await read('src/components/TableOfContents.astro');
 
     expect(route).toContain('getPostNeighbors');
     expect(route).toContain('getTableOfContentsItems');
     expect(route).toContain('headings');
     expect(layout).toContain('TableOfContents');
     expect(layout).toContain('PostNavigation');
+    expect(layout).toContain('variant="mobile"');
+    expect(layout).toContain('variant="desktop"');
+    expect(toc).toContain("variant?: 'desktop' | 'mobile' | 'both'");
+  });
+
+  it('sets canonical path on latest news page to avoid duplicate indexing', async () => {
+    const latestPage = await read('src/pages/news/latest.astro');
+    const baseHead = await read('src/components/BaseHead.astro');
+
+    expect(latestPage).toContain('canonicalPath={`/news/${latestNews.id}/`}');
+    expect(baseHead).toContain('canonicalPath?: string;');
+    expect(baseHead).toContain('finalCanonicalURL = canonicalPath ? new URL(canonicalPath, Astro.site) : canonicalURL');
   });
 });

@@ -7,15 +7,16 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 interface Props {
 	title?: string;
 	description?: string;
+	canonicalPath?: string;
 }
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, canonicalPath } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="zh-CN">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} canonicalPath={canonicalPath} />
 		<!-- 不蒜子浏览量统计 JS -->
 		<script is:inline async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 		<script is:inline>

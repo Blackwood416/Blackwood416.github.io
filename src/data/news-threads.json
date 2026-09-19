@@ -1,0 +1,58 @@
+[
+  {
+    "id": "vllm-qwen-dflash-k-norm",
+    "title": "vLLM Qwen DFlash K-norm 导致 XPU 崩溃问题",
+    "keywords": ["dflash", "k-norm", "knorm", "qwen", "56250"],
+    "status": "workaround",
+    "lastUpdated": "2026-09-18",
+    "history": [
+      {
+        "date": "2026-09-18",
+        "stage": "Workaround",
+        "note": "vLLM 上层添加条件分支临时规避 K-norm 异常，非底层 Triton XPU 内核真正修复"
+      }
+    ]
+  },
+  {
+    "id": "b580-cold-boot-screen-freeze",
+    "title": "Arc B580 锁屏唤醒与冷启动冻结问题",
+    "keywords": ["b580", "cold boot", "lock screen", "freeze", "black screen", "1560"],
+    "status": "investigating",
+    "lastUpdated": "2026-09-19",
+    "history": [
+      {
+        "date": "2026-09-19",
+        "stage": "Community Issue",
+        "note": "社区多位用户报告 B580 冷启动失败与 4K 60Hz 限制，IGCIT #1560 持续跟进"
+      }
+    ]
+  },
+  {
+    "id": "sglang-xpu-mtp",
+    "title": "SGLang XPU MTP (多 Token 预测) 适配演进",
+    "keywords": ["sglang", "mtp", "multi-token", "xpu"],
+    "status": "in-progress",
+    "lastUpdated": "2026-09-17",
+    "history": [
+      {
+        "date": "2026-09-17",
+        "stage": "PR Merged",
+        "note": "初步支持 DeepSeek MTP 结构在 XPU 上的推理"
+      }
+    ]
+  },
+  {
+    "id": "triton-xpu-grf-spill",
+    "title": "Triton XPU LTS 驱动 GRF 溢出重建稳定性",
+    "keywords": ["grf", "spill", "rebuild", "8115", "7959", "pyhpc_isoneutral_mixing"],
+    "status": "reverted-for-safety",
+    "lastUpdated": "2026-09-19",
+    "history": [
+      {
+        "date": "2026-09-19",
+        "stage": "Revert",
+        "note": "回退此前对微小 spill 跳过重建的优化，优先保障 torchbench 二进制计算正确性"
+      }
+    ]
+  }
+]
