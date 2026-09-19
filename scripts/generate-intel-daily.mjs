@@ -496,7 +496,7 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 						{ role: 'user', content: userPrompt },
 					],
 					temperature: 0.2, // 保持低温度以确保严谨无幻觉
-					max_tokens: 3000,
+					max_tokens: 4500,
 				}),
 			});
 
@@ -551,7 +551,7 @@ async function main() {
 	const threads = loadNewsThreads();
 	console.log(`[Threads] 载入了 ${threads.length} 个长期追踪技术事件。`);
 
-	const items = filterAndRankItems(rawItems, threads, 5, 35);
+	const items = filterAndRankItems(rawItems, threads, 8, 20);
 	console.log(`[Rank] 经过技术重要性打分，从 ${rawItems.length} 条中筛选出 Top ${items.length} 条高价值动态输入研报生成模型。`);
 
 	const generatedContent = await generateSummaryWithLLM(items, todayStr, history);
