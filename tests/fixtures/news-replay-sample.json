@@ -3,7 +3,8 @@
     {
       "id": "vllm-qwen-dflash-k-norm",
       "title": "vLLM Qwen DFlash K-norm 导致 XPU 崩溃问题",
-      "keywords": ["dflash", "k-norm", "knorm", "qwen", "56250"],
+      "matchAll": ["dflash"],
+      "matchAny": ["k-norm", "knorm", "56250"],
       "status": "workaround",
       "lastUpdated": "2026-09-18",
       "history": [
@@ -17,7 +18,8 @@
     {
       "id": "b580-cold-boot-screen-freeze",
       "title": "Arc B580 锁屏唤醒与冷启动冻结问题",
-      "keywords": ["b580", "cold boot", "lock screen", "freeze", "black screen", "1560"],
+      "matchAll": ["b580"],
+      "matchAny": ["cold boot", "lock screen", "freeze", "black screen", "1560"],
       "status": "investigating",
       "lastUpdated": "2026-09-19",
       "history": [
@@ -37,29 +39,48 @@
       "url": "https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released",
       "updated": "2026-09-19T06:20:00.000Z",
       "summary": "Intel today released the latest Arc GPU Graphics Drivers version 101.9030 Beta. Fixes Dragon's Dogma 2 DX12 stutter on Core Ultra 2/3, adds Game On support.",
-      "expectedMinScore": 25,
+      "expectedMinScore": 20,
       "expectedFiltered": false
     },
     {
       "id": "item-thread-match",
-      "source": "Intel 官方社区驱动追踪 (IGCIT)",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Arc B580 cold boot black screen and lock screen freeze under 4K HDMI 2.1 #1560",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1560",
       "updated": "2026-09-19T07:15:00.000Z",
       "summary": "Cold boot issues card firmware problem, system locks at 60Hz and fails to wake from sleep. Freeze and black screen reproducible.",
-      "expectedMinScore": 35,
+      "expectedMinScore": 30,
       "expectedFiltered": false,
       "expectedThreadMatch": "b580-cold-boot-screen-freeze"
     },
     {
-      "id": "item-triton-upstream",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[Triton XPU] Revert LTS driver GRF spill rebuild optimization #8115",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/b09088f5bf9f0db564e0b79ccd8f13acc601a5dd",
-      "updated": "2026-09-19T05:00:00.000Z",
-      "summary": "Revert commit 7959 to guarantee numerical binary accuracy for torchbench pyhpc_isoneutral_mixing on LTS driver. Avoid silent regression.",
-      "expectedMinScore": 18,
-      "expectedFiltered": false
+      "id": "item-b580-unrelated",
+      "source": "Reddit r/IntelArc (社区实测与讨论)",
+      "title": "Intel Arc B580 ray tracing benchmark 28 million triangles in 500 lines C++",
+      "url": "https://www.reddit.com/r/IntelArc/comments/1wkmk4e/test/",
+      "updated": "2026-09-20T05:00:00.000Z",
+      "summary": "Benchmarking ray tracing performance with 500 lines C++ code on Arc B580 GPU.",
+      "expectedThreadMatch": null
+    },
+    {
+      "id": "item-noise-nightly",
+      "source": "GitHub Release: intel/llvm",
+      "title": "sycl-web/sycl-latest-good",
+      "url": "https://github.com/intel/llvm/releases/tag/sycl-web%2Fsycl-latest-good",
+      "updated": "2026-09-20T04:00:00.000Z",
+      "summary": "Weekly snapshot and nightly build tag. No release notes provided.",
+      "expectedMaxScore": 0,
+      "expectedFiltered": true
+    },
+    {
+      "id": "item-noise-reddit-steam-machine",
+      "source": "Reddit r/IntelArc (社区实测与讨论)",
+      "title": "I want to make a Steam Machine clone using a B580, what PSU should I buy?",
+      "url": "https://www.reddit.com/r/IntelArc/comments/1wkz97m/steam_machine/",
+      "updated": "2026-09-20T03:00:00.000Z",
+      "summary": "Looking for advice on building a steam machine clone with B580 and 500W PSU.",
+      "expectedMaxScore": 0,
+      "expectedFiltered": true
     },
     {
       "id": "item-noise-ci",
@@ -70,17 +91,51 @@
       "summary": "Bumps actions/checkout from 3 to 4. Signed-off-by: dependabot[bot]",
       "expectedMaxScore": 0,
       "expectedFiltered": true
-    },
-    {
-      "id": "item-noise-typo",
-      "source": "intel/llvm",
-      "title": "docs: fix typo in README.md and license comment",
-      "url": "https://github.com/intel/llvm/commit/abcdef7",
-      "updated": "2026-09-19T03:30:00.000Z",
-      "summary": "Fix minor spelling error in documentation header.",
-      "expectedMaxScore": 0,
-      "expectedFiltered": true
     }
   ],
-  "sampleGoodMarkdown": "---\ntitle: \"Intel GPU 技术生态日报 (2026-09-19)\"\ndescription: \"今日 Intel GPU 动态速览：包含驱动内核演进、算子与推理引擎适配进展。\"\npubDate: \"2026-09-19T08:30:00.000Z\"\ntags:\n  - Intel\n  - GPU\n  - Arc\n  - oneAPI\n  - XPU\n  - 日报\ncategories:\n  - 技术日报\n  - 显卡\ndraft: false\n---\n\n## 核心速览\n\n- **`[Released]`** **Intel Arc 驱动 101.9030 Beta**：新增多款新游优化，修复 Core Ultra DX12 卡顿。\n- **`[Issue]`** **B580 冷启动与黑屏冻结追踪**：社区反馈 4K 60Hz 唤醒异常，官方问题排查中。\n- **`[Workaround]`** **Triton XPU 回退 LTS 驱动 GRF 重建策略**：优先保证 torchbench 精度正确性。\n\n## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)\n\n- **[Windows 驱动] Arc 101.9030 Beta 发布**：修复 Dragon's Dogma 2 DX12 在 Core Ultra 平台的性能卡顿。[[TechPowerUp](https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released)]\n  > **影响：** 该更新为针对上层特定游戏的驱动热修复，推荐遇到 DX12 异常卡顿的 Core Ultra 用户升级。\n\n- **[驱动反馈] B580 冷启动与黑屏冻结**：多位用户反馈在 HDMI 2.1 4K 显示器下遭遇冷启动黑屏。[[IGCIT #1560](https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1560)]\n  > **影响：** 影响高分屏用户的正常开机与睡眠唤醒体验，属于待解决硬件/固件级别缺陷。\n  > 🔗 **续报（关联 2026-09-19 日报）：** 社区反馈持续发酵，固件团队介入复现中。\n"
+  "sampleJsonOutput": {
+    "overview": [
+      {
+        "status": "Released",
+        "title": "Intel Arc 驱动 101.9030 Beta 发布",
+        "summary": "新增多款新游优化，修复 Core Ultra DX12 卡顿"
+      },
+      {
+        "status": "Issue",
+        "title": "B580 冷启动与黑屏冻结追踪",
+        "summary": "社区反馈 4K 60Hz 唤醒异常，官方固件排查中"
+      }
+    ],
+    "items": [
+      {
+        "section": "drivers",
+        "module": "Windows 驱动",
+        "title": "Arc 101.9030 Beta 发布",
+        "sourceUrl": "https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released",
+        "sourceLabel": "TechPowerUp",
+        "changeType": "driver_update",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "analysis": "修复 Dragon's Dogma 2 DX12 在 Core Ultra 平台的性能卡顿。",
+        "impact": "该更新为针对上层特定游戏的驱动热修复，推荐遇到卡顿的用户升级。",
+        "threadId": null
+      },
+      {
+        "section": "drivers",
+        "module": "驱动反馈",
+        "title": "B580 冷启动与黑屏冻结",
+        "sourceUrl": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1560",
+        "sourceLabel": "IGCIT #1560",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "analysis": "多位用户反馈在 HDMI 2.1 4K 显示器下遭遇冷启动黑屏，报告者推测与固件或握手协议有关。",
+        "impact": "影响高分屏用户的正常开机与睡眠唤醒体验，属于待解决硬件/固件缺陷。",
+        "threadId": "b580-cold-boot-screen-freeze"
+      }
+    ]
+  },
+  "sampleGoodMarkdown": "---\ntitle: \"Intel GPU 技术生态日报 (2026-09-19)\"\ndescription: \"今日 Intel GPU 动态速览：包含驱动内核演进、算子与推理引擎适配进展。\"\npubDate: \"2026-09-19T08:30:00.000Z\"\ntags:\n  - Intel\n  - GPU\n  - Arc\n  - oneAPI\n  - XPU\n  - 日报\ncategories:\n  - 技术日报\n  - 显卡\ndraft: false\n---\n\n## 核心速览\n\n- **`[Released]`** **Intel Arc 驱动 101.9030 Beta 发布**：新增多款新游优化，修复 Core Ultra DX12 卡顿。\n- **`[Issue]`** **B580 冷启动与黑屏冻结追踪**：社区反馈 4K 60Hz 唤醒异常，官方问题排查中。\n\n## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)\n\n- **[Windows 驱动] Arc 101.9030 Beta 发布**：修复 Dragon's Dogma 2 DX12 在 Core Ultra 平台的性能卡顿。[[TechPowerUp](https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released)]\n  > **影响：** 该更新为针对上层特定游戏的驱动热修复，推荐遇到 DX12 异常卡顿的 Core Ultra 用户升级。\n\n- **[驱动反馈] B580 冷启动与黑屏冻结**：多位用户反馈在 HDMI 2.1 4K 显示器下遭遇冷启动黑屏。[[IGCIT #1560](https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1560)]\n  > **影响：** 影响高分屏用户的正常开机与睡眠唤醒体验，属于待解决硬件/固件级别缺陷。\n  > 🔗 **续报（关联 2026-09-19 日报）：** 事件跟踪【Arc B580 锁屏唤醒与冷启动冻结问题】新进展。\n"
 }

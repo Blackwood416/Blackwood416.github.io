@@ -5,7 +5,9 @@ import {
 	loadNewsThreads,
 	filterAndRankItems,
 	buildDailyPrompts,
-	sanitizeDailyMarkdown,
+	parseDailyJsonOutput,
+	validateDailyJson,
+	renderDailyMarkdown,
 	validateDailyMarkdown,
 } from './daily-lib.mjs';
 
@@ -344,20 +346,37 @@ async function fetchTechPowerUpDrivers() {
 // 1.6 Intel GPU Community Issue Tracker (IGCIT) (监控 Windows 驱动实际 Bug/BSOD 与修复进展)
 async function fetchIGCITIssues() {
 	const sinceStr = cutoffDate.toISOString();
-	const url = `https://api.github.com/repos/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues?since=${sinceStr}&per_page=10`;
+	const url = `https://api.github.com/repos/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues?since=${sinceStr}&per_page=15`;
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
 		if (!res.ok) return [];
 		const issues = await res.json();
 		if (!Array.isArray(issues)) return [];
 
-		return issues.map(item => ({
-			source: 'Intel 官方社区驱动追踪 (IGCIT)',
-			title: item.title,
-			url: item.html_url,
-			updated: item.updated_at,
-			summary: item.body ? item.body.replace(/<[^>]+>/g, '').slice(0, 250) : '',
-		}));
+		const results = [];
+		for (const item of issues) {
+			// 排除 PR
+			if (item.pull_request) continue;
+
+			const createdAt = new Date(item.created_at);
+			const isNew = createdAt >= cutoffDate;
+
+			// 如果是旧 issue（创建于 28 小时之前），若没有评论（comments === 0），说明仅为修改标签/分配人等元数据刷新，直接过滤
+			if (!isNew && (!item.comments || item.comments === 0)) {
+				continue;
+			}
+
+			results.push({
+				source: isNew ? 'Intel 官方社区驱动追踪 (新提交 Issue)' : 'Intel 官方社区驱动追踪 (Issue 进展更新)',
+				title: item.title,
+				url: item.html_url,
+				updated: item.updated_at,
+				created_at: item.created_at,
+				issueType: isNew ? 'new' : 'old',
+				summary: item.body ? item.body.replace(/<[^>]+>/g, '').slice(0, 250) : '',
+			});
+		}
+		return results;
 	} catch (err) {
 		console.warn('[IGCIT] 抓取警告:', err.message);
 		return [];
@@ -471,9 +490,9 @@ async function collectAllUpdates(history) {
 	return deduplicated;
 }
 
-// --- 3. 调用 Radeon Cloud LLM 生成 Markdown ---
+// --- 3. 调用 Radeon Cloud LLM 生成结构化 JSON ---
 async function generateSummaryWithLLM(items, todayStr, history) {
-	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 进行高信息密度技术提炼 (已接入 v2 事实分层与技术纪律)...`);
+	console.log(`[2/4] 调用 Radeon Cloud API (${RADEON_MODEL}) 提取高信息密度结构化研报数据 (JSON 模式)...`);
 
 	const { systemPrompt, userPrompt } = buildDailyPrompts(items, todayStr, history);
 
@@ -495,6 +514,7 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 						{ role: 'system', content: systemPrompt },
 						{ role: 'user', content: userPrompt },
 					],
+					response_format: { type: 'json_object' },
 					temperature: 0.2, // 保持低温度以确保严谨无幻觉
 					max_tokens: 4500,
 				}),
@@ -528,7 +548,16 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 		throw new Error('LLM 未返回有效内容');
 	}
 
-	return content;
+	const parsedJson = parseDailyJsonOutput(content);
+	const jsonValidation = validateDailyJson(parsedJson);
+	if (!jsonValidation.isValid) {
+		throw new Error(`模型输出的 JSON 结构校验未通过: ${jsonValidation.errors.join('; ')}`);
+	}
+	if (jsonValidation.warnings.length > 0) {
+		console.warn('[daily-lib] JSON 数据规范告警:', jsonValidation.warnings.join('; '));
+	}
+
+	return parsedJson;
 }
 
 // --- 4. 主流程执行 ---
@@ -551,12 +580,31 @@ async function main() {
 	const threads = loadNewsThreads();
 	console.log(`[Threads] 载入了 ${threads.length} 个长期追踪技术事件。`);
 
-	const items = filterAndRankItems(rawItems, threads, 8, 20);
-	console.log(`[Rank] 经过技术重要性打分，从 ${rawItems.length} 条中筛选出 Top ${items.length} 条高价值动态输入研报生成模型。`);
+	// 准入门槛提高至 15 分，精选 Top 20
+	const items = filterAndRankItems(rawItems, threads, 15, 20);
+	console.log(`[Rank] 经过技术重要性打分 (阈值: 15)，从 ${rawItems.length} 条中筛选出 ${items.length} 条真正高价值核心动态。`);
 
-	const generatedContent = await generateSummaryWithLLM(items, todayStr, history);
-	const sanitized = sanitizeDailyMarkdown(generatedContent);
+	if (items.length === 0) {
+		console.log('[Notice] 今日经严苛打分后无达到门槛的高价值技术动态，遵循“宁缺毋滥”原则，跳过今日日报发布。');
+		return;
+	}
 
+	// 1. 请求模型输出结构化 JSON
+	const jsonData = await generateSummaryWithLLM(items, todayStr, history);
+
+	// 2. 程序接管排版渲染 Markdown
+	console.log('[3/4] 由程序模板引擎严格渲染 Markdown (强制 Frontmatter、受控 Badge 白名单与板块排版)...');
+	const renderedMarkdown = renderDailyMarkdown(jsonData, todayStr, threads);
+
+	// 3. 发布前硬门禁校验 (Pre-flight Hard Gate，写盘前拦截)
+	console.log('[4/4] 正在执行发布前硬门禁校验 (Pre-flight Gate)...');
+	const validation = validateDailyMarkdown(renderedMarkdown);
+	if (!validation.isValid) {
+		throw new Error(`发布前硬门禁校验失败，拒绝写入磁盘:\n - ${validation.errors.join('\n - ')}`);
+	}
+	console.log('\x1b[32m✔ 发布前硬门禁校验 100% 通过\x1b[0m');
+
+	// 4. 最终落盘
 	const outputFileName = `intel-gpu-daily-${todayStr}.md`;
 	const newsDir = path.resolve('src/content/news');
 	if (!fs.existsSync(newsDir)) {
@@ -564,19 +612,8 @@ async function main() {
 	}
 	const outputPath = path.join(newsDir, outputFileName);
 
-	fs.writeFileSync(outputPath, sanitized, 'utf-8');
-	console.log(`\x1b[32m[3/4] 成功生成日报文件: ${outputPath}\x1b[0m`);
-
-	console.log('[4/4] 正在根据研报 v2 规范深度校验生成内容...');
-	const validation = validateDailyMarkdown(sanitized);
-	if (validation.isValid) {
-		console.log('\x1b[32m✔ Frontmatter 与核心结构校验通过\x1b[0m');
-	} else {
-		console.error('\x1b[31m✖ 校验未通过:\x1b[0m', validation.errors.join(', '));
-	}
-	if (validation.warnings.length > 0) {
-		console.warn('\x1b[33m⚠ 格式规范告警:\x1b[0m\n  - ' + validation.warnings.join('\n  - '));
-	}
+	fs.writeFileSync(outputPath, renderedMarkdown, 'utf-8');
+	console.log(`\x1b[32m✔ 成功生成并落盘日报文件: ${outputPath}\x1b[0m`);
 }
 
 main().catch(err => {

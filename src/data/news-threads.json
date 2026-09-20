@@ -2,7 +2,8 @@
   {
     "id": "vllm-qwen-dflash-k-norm",
     "title": "vLLM Qwen DFlash K-norm 导致 XPU 崩溃问题",
-    "keywords": ["dflash", "k-norm", "knorm", "qwen", "56250"],
+    "matchAll": ["dflash"],
+    "matchAny": ["k-norm", "knorm", "56250"],
     "status": "workaround",
     "lastUpdated": "2026-09-18",
     "history": [
@@ -16,7 +17,8 @@
   {
     "id": "b580-cold-boot-screen-freeze",
     "title": "Arc B580 锁屏唤醒与冷启动冻结问题",
-    "keywords": ["b580", "cold boot", "lock screen", "freeze", "black screen", "1560"],
+    "matchAll": ["b580"],
+    "matchAny": ["cold boot", "lock screen", "freeze", "black screen", "1560"],
     "status": "investigating",
     "lastUpdated": "2026-09-19",
     "history": [
@@ -30,7 +32,8 @@
   {
     "id": "sglang-xpu-mtp",
     "title": "SGLang XPU MTP (多 Token 预测) 适配演进",
-    "keywords": ["sglang", "mtp", "multi-token", "xpu"],
+    "matchAll": ["sglang"],
+    "matchAny": ["mtp", "multi-token"],
     "status": "in-progress",
     "lastUpdated": "2026-09-17",
     "history": [
@@ -44,7 +47,8 @@
   {
     "id": "triton-xpu-grf-spill",
     "title": "Triton XPU LTS 驱动 GRF 溢出重建稳定性",
-    "keywords": ["grf", "spill", "rebuild", "8115", "7959", "pyhpc_isoneutral_mixing"],
+    "matchAll": ["triton", "spill"],
+    "matchAny": ["8115", "7959", "pyhpc", "lts"],
     "status": "reverted-for-safety",
     "lastUpdated": "2026-09-19",
     "history": [
