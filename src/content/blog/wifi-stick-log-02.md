@@ -240,15 +240,21 @@ systemctl enable sshd
 systemctl enable ModemManager
 ```
 13. 安装 vmlinuz 与内核模块
+新开个终端，在chroot容器外面：
+```bash
+sudo make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-  INSTALL_MOD_PATH=~/msm8916/rootfs modules_install
+sudo make ARCH=arm64 INSTALL_PATH=~/msm8916/rootfs/boot install
+sudo cp arch/arm64/boot/Image.gz ../rootfs/boot
+```
 14. 制作 initramfs 镜像文件
-
+切回chroot里：
 ```bash
 # 刚才把mkinitcpio也清理掉了，先装回来
 pacman -Sy mkinitcpio
 kerver=$(ls /usr/lib/modules)
 mkinitcpio --generate /boot/initrd.img-$kerver --kernel $kerver
 ```
-运行完上面的命令后还需要再开一个终端，在chroot外将镜像文件里的`initrd.img-*`拷贝出来：
+再切回chroot容器外将镜像文件里的`initrd.img-*`拷贝出来：
 ```bash
 sudo cp ~/msm8916/rootfs/boot/initrd.img-* ~/msm8916/initrd.img
 # 更改一下所有者
