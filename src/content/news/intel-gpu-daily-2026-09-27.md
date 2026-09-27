@@ -17,15 +17,9 @@ draft: false
 
 ## 核心速览
 
-- **`[Released]`** **oneDNN v3.13.3 发布**：oneDNN 发布 v3.13.3 补丁版本，包含多项修复与优化。
-- **`[Issue]`** **No Man's Sky 在 Intel GPU 上世界加载时图形挂起**：用户报告 No Man's Sky v7.04 在 Intel 驱动下世界加载时图形挂起，待官方确认。
+- **`[Issue]`** **Intel 显卡运行《无人深空》时出现图形挂起**：社区报告在最新驱动下游戏世界加载时图形挂起，疑似与驱动或游戏兼容性有关。
 
-## 下游优化与加速库 (intel/llm-scaler / Triton / OpenVINO)
+## 社区实测与生态动态
 
-- **[oneDNN] oneDNN v3.13.3 发布**：oneDNN 发布 v3.13.3 补丁版本，包含多项修复与优化，具体改动未在摘要中列出，但作为官方发布，通常包含 bug 修复和性能改进。 [[oneDNN v3.13.3](https://github.com/uxlfoundation/oneDNN/releases/tag/v3.13.3)]
-  > **影响：** 为使用 oneDNN 的开发者提供稳定性和性能提升，建议升级。
-
-## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)
-
-- **[Intel GPU 驱动] No Man's Sky 在 Intel GPU 上世界加载时图形挂起**：用户报告 No Man's Sky v7.04 在 Intel 驱动下世界加载时图形挂起，但官方尚未确认根因，报告者推测可能与驱动或游戏兼容性有关。 [[IGCIT Issue #1565](https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1565)]
-  > **影响：** 影响 Intel GPU 用户运行该游戏，需等待官方调查和修复。
+- **[Intel GPU Community Issue Tracker] No Man's Sky Cosmos v7.04 世界加载时图形挂起**：报告者使用最新 Intel 驱动，在《无人深空》Cosmos v7.04 版本世界加载时遭遇图形挂起。报告者推测可能与驱动在特定渲染路径上的稳定性有关，但尚未获得官方维护者确认根因。 [[IGCIT #1565](https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1565)]
+  > **影响：** 影响 Intel 显卡用户运行该游戏时的稳定性，需等待官方进一步调查或驱动更新。
