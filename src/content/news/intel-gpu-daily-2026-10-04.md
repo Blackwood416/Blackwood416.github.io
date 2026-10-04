@@ -17,9 +17,9 @@ draft: false
 
 ## 核心速览
 
-- **`[Merged]`** **Intel 提交新补丁优化 XPU 上的 Triton 扫描操作**：Triton XPU 使用硬件子组扫描优化 tt.scan，提升性能。
+- **`[Testing]`** **Arm 提出 TLBID 特性以提升高核数 CPU 性能**：Arm 提交 TLBI Domains 补丁，旨在高核数系统上通过域隔离减少 TLB 刷新开销。
 
-## 下游优化与加速库 (intel/llm-scaler / Triton / OpenVINO)
+## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp / Ollama)
 
-- **[Triton XPU] Triton XPU 使用硬件子组扫描优化 tt.scan**：当扫描轴覆盖整个子组时，用 SPIR-V InclusiveScan 替代 shuffle 链，减少指令开销，提升性能。 [[PR #1234](https://github.com/intel/triton/pull/1234)]
-  > **影响：** 提升扫描操作的执行效率，减少指令数，对依赖扫描的算子有性能提升。
+- **[Linux Kernel (Arm64)] Arm 为 Linux 内核引入 TLBID (TLBI Domains) 支持**：Arm 提交了针对 Linux 内核的 TLBI Domains 补丁集，该特性是 Arm 架构的新能力，通过将 TLB 失效操作限定在特定域内，减少高核数系统上不必要的全局 TLB 刷新，从而降低同步开销并提升性能。补丁处于初始阶段，尚未合入主线。 [[Phoronix](https://www.phoronix.com/news/ARM64-Linux-TLBI-Domains)]
+  > **影响：** 对高核数 Arm 服务器和 GPU 计算节点可能带来 TLB 相关性能提升，但当前仅处于早期开发，需后续验证与合入。
