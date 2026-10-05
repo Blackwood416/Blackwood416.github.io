@@ -17,8 +17,8 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION, canonicalPath } = As
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={title} description={description} canonicalPath={canonicalPath} />
-		<!-- 不蒜子浏览量统计 JS -->
-		<script is:inline async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<!-- 访问量与阅读量统计 JS (Vercount, 兼容原版不蒜子标签且稳定防挂) -->
+		<script is:inline defer src="https://events.vercount.one/js"></script>
 		<script is:inline>
 			(function () {
 				const getTheme = () => {
