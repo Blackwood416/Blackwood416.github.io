@@ -5,41 +5,85 @@ const today = new Date();
 ---
 
 <footer>
-	<p>&copy; {today.getFullYear()} {SITE_AUTHOR}</p>
-	<nav aria-label="页脚链接">
-		<a href="/rss.xml">RSS</a>
-		<a href="https://github.com/Blackwood416/Blackwood416.github.io">GitHub</a>
-	</nav>
+	<div class="footer-divider" aria-hidden="true"></div>
+	<div class="footer-inner">
+		<div class="footer-brand">
+			<span class="footer-sparkle" aria-hidden="true">✦</span>
+			<p>&copy; {today.getFullYear()} <strong>{SITE_AUTHOR}</strong> · Crafted with Astro &amp; Aurora Glass</p>
+		</div>
+		<nav aria-label="页脚链接">
+			<a href="/rss.xml" class="footer-pill">RSS 订阅</a>
+			<a href="https://github.com/Blackwood416/Blackwood416.github.io" target="_blank" rel="noopener noreferrer" class="footer-pill">GitHub</a>
+		</nav>
+	</div>
 </footer>
 <style>
 	footer {
+		max-width: var(--content-width);
+		margin: 2rem auto 0;
+		padding: 0 1rem 3.5rem;
+		color: var(--text-muted);
+		font-size: 0.9rem;
+	}
+	.footer-divider {
+		height: 1px;
+		width: 100%;
+		margin-bottom: 2rem;
+		background: linear-gradient(90deg, transparent, var(--border-strong), var(--accent), var(--accent-secondary), var(--border-strong), transparent);
+		opacity: 0.55;
+	}
+	.footer-inner {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		max-width: var(--content-width);
-		margin: 0 auto;
-		padding: 2rem 1rem 3rem;
-		color: var(--text-muted);
-		font-size: 0.9rem;
+	}
+	.footer-brand {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.footer-sparkle {
+		color: var(--accent);
+		font-size: 0.85rem;
+		filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.4));
 	}
 	p {
 		margin: 0;
 	}
+	p strong {
+		color: var(--text-strong);
+		font-weight: 600;
+	}
 	nav {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.75rem;
+		gap: 0.6rem;
 	}
-	a {
+	.footer-pill {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.3rem 0.85rem;
+		border-radius: 9999px;
+		border: 1px solid var(--glass-border);
+		background: var(--glass-bg);
+		backdrop-filter: blur(12px);
 		color: var(--text-muted);
+		text-decoration: none;
+		font-size: 0.85rem;
+		font-weight: 500;
+		transition: all var(--transition-fast);
 	}
-	a:hover,
-	a:focus-visible {
+	.footer-pill:hover,
+	.footer-pill:focus-visible {
 		color: var(--accent);
+		border-color: var(--hover-border);
+		background: var(--hover-bg);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
 	}
 	@media (max-width: 640px) {
-		footer {
+		.footer-inner {
 			align-items: flex-start;
 			flex-direction: column;
 		}

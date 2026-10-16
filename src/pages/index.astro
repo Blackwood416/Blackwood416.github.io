@@ -5,57 +5,108 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { encodeHrefSegment, getVisiblePosts } from '../lib/blog';
 
+const allPosts = getVisiblePosts(await getCollection('blog'));
 // 取前 6 篇可见文章
-const posts = getVisiblePosts(await getCollection('blog')).slice(0, 6);
+const posts = allPosts.slice(0, 6);
+const totalCategories = new Set(allPosts.flatMap((p) => p.data.categories)).size;
+const totalTags = new Set(allPosts.flatMap((p) => p.data.tags)).size;
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
 	<!-- Hero Section -->
 	<header class="hero animate-fade-up" style="--delay: 1">
+		<div class="hero__halo" aria-hidden="true"></div>
+		<div class="hero__badge">
+			<span class="hero__badge-dot" aria-hidden="true"></span>
+			<span class="hero__badge-text">EXPLORING CODE · AI · DIGITAL CRAFT</span>
+		</div>
 		<h1 class="hero__title">{SITE_TITLE}</h1>
 		<p class="hero__subtitle">
-			欢迎来到我的博客。这里记录着我的一些经验与日常。
+			欢迎来到我的数字花园与技术知识库。这里沉淀着架构思考、工程实践与日常灵感。
 			<span class="hero__cursor"></span>
 		</p>
 		<div class="cta-group">
-			<a href="/posts/" class="btn btn--primary">探索文章</a>
-			<a href="/about/" class="btn btn--secondary">关于我</a>
+			<a href="/posts/" class="btn btn--primary">
+				<span>探索文章</span>
+				<svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M4 10h12m-5-5l5 5-5 5" />
+				</svg>
+			</a>
+			<a href="/about/" class="btn btn--secondary">关于博主</a>
+		</div>
+
+		<!-- 知识库概览微缩水晶胶囊 -->
+		<div class="hero__stats">
+			<a href="/posts/" class="stat-pill">
+				<span class="stat-pill__value">{allPosts.length}</span>
+				<span class="stat-pill__label">篇技术文章</span>
+			</a>
+			<a href="/categories/" class="stat-pill">
+				<span class="stat-pill__value">{totalCategories}</span>
+				<span class="stat-pill__label">个专题分类</span>
+			</a>
+			<a href="/tags/" class="stat-pill">
+				<span class="stat-pill__value">{totalTags}</span>
+				<span class="stat-pill__label">枚知识标签</span>
+			</a>
 		</div>
 	</header>
 
 	<!-- Main Home Content: Recent Posts -->
 	<section class="home-content" aria-labelledby="recent-posts">
-		<h2 id="recent-posts" class="animate-fade-up" style="--delay: 2">最新文章</h2>
-		<ul class="post-list">
+		<div class="section-header animate-fade-up" style="--delay: 2">
+			<div class="section-header__title-wrap">
+				<span class="section-header__kicker">RECENT DISPATCHES</span>
+				<h2 id="recent-posts">最新文章</h2>
+			</div>
+			<a href="/posts/" class="section-header__more">
+				浏览全部归档 <span aria-hidden="true">→</span>
+			</a>
+		</div>
+		<ul class="post-list post-list--bento">
 			{
 				posts.map((post, index) => (
-					<li class="post-card animate-fade-up" style={`--delay: ${index + 3}`}>
+					<li
+						class={`post-card ${index === 0 ? 'post-card--featured' : ''} animate-fade-up`}
+						style={`--delay: ${index + 3}`}
+					>
+						<div class="post-card__top">
+							<span class="post-card__index" aria-hidden="true">
+								{index === 0 ? '✦ FEATURED' : String(index + 1).padStart(2, '0')}
+							</span>
+							<p class="post-meta">
+								<FormattedDate date={post.data.pubDate} />
+								{
+									post.data.updatedDate && (
+										<span class="post-meta-updated">
+											· 更新于 <FormattedDate date={post.data.updatedDate} />
+										</span>
+									)
+								}
+							</p>
+						</div>
 						<h3>
-							<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+							<a href={`/posts/${post.id}/`} class="post-card__title-link">{post.data.title}</a>
 						</h3>
-						<p class="post-meta">
-							<FormattedDate date={post.data.pubDate} />
+						<p class="post-card__desc">{post.data.description}</p>
+						<div class="post-card__footer">
 							{
-								post.data.updatedDate && (
-									<span class="post-meta-updated">
-										· 更新于 <FormattedDate date={post.data.updatedDate} />
-									</span>
-								)
+								(post.data.categories.length > 0 || post.data.tags.length > 0) ? (
+									<div class="post-taxonomy">
+										{post.data.categories.map((category) => (
+											<a href={`/categories/${encodeHrefSegment(category)}/`} class="taxonomy-chip taxonomy-chip--cat">{category}</a>
+										))}
+										{post.data.tags.slice(0, 4).map((tag) => (
+											<a href={`/tags/${encodeHrefSegment(tag)}/`} class="taxonomy-chip">#{tag}</a>
+										))}
+									</div>
+								) : <div />
 							}
-						</p>
-						{
-							(post.data.categories.length > 0 || post.data.tags.length > 0) && (
-								<div class="post-taxonomy">
-									{post.data.categories.map((category) => (
-										<a href={`/categories/${encodeHrefSegment(category)}/`}>{category}</a>
-									))}
-									{post.data.tags.map((tag) => (
-										<a href={`/tags/${encodeHrefSegment(tag)}/`}>#{tag}</a>
-									))}
-								</div>
-							)
-						}
-						<p>{post.data.description}</p>
+							<a href={`/posts/${post.id}/`} class="post-card__readmore" aria-label={`阅读 ${post.data.title}`}>
+								<span>阅读全文</span>
+								<span class="post-card__arrow" aria-hidden="true">→</span>
+							</a>
+						</div>
 					</li>
 				))
 			}
@@ -66,35 +117,121 @@ const posts = getVisiblePosts(await getCollection('blog')).slice(0, 6);
 <style>
 	/* Hero Section */
 	.hero {
-		padding: 3.5rem 0 3rem;
+		padding: 3.5rem 2.75rem 3rem;
+		margin-bottom: 3rem;
 		text-align: left;
 		position: relative;
+		border-radius: 28px;
+		border: 1px solid var(--glass-border);
+		background: var(--glass-bg);
+		backdrop-filter: url(#liquid-glass) blur(var(--glass-blur)) saturate(190%);
+		-webkit-backdrop-filter: url(#liquid-glass) blur(var(--glass-blur)) saturate(190%);
+		box-shadow: var(--glass-shadow);
+		overflow: hidden;
 	}
+
+	/* 顶部流光折射高光边（纯净银紫高光，避免杂色） */
+	.hero::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 10%;
+		right: 10%;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.55), rgba(255, 255, 255, 0.7), rgba(167, 139, 250, 0.55), transparent);
+		pointer-events: none;
+	}
+
+	:global(.dark) .hero::before {
+		background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.35), rgba(255, 255, 255, 0.45), rgba(167, 139, 250, 0.35), transparent);
+	}
+
+	.hero__halo {
+		position: absolute;
+		top: -45%;
+		right: -10%;
+		width: 480px;
+		height: 480px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, rgba(139, 92, 246, 0.04) 55%, transparent 75%);
+		filter: blur(60px);
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	:global(.dark) .hero__halo {
+		background: radial-gradient(circle, rgba(139, 92, 246, 0.10) 0%, transparent 70%);
+	}
+
+	.hero__badge {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		padding: 0.35rem 0.95rem;
+		margin-bottom: 1.35rem;
+		border-radius: 9999px;
+		font-size: 0.76rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: var(--accent);
+		background: rgba(124, 58, 237, 0.08);
+		border: 1px solid rgba(124, 58, 237, 0.22);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	}
+
+	:global(.dark) .hero__badge {
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba(255, 255, 255, 0.12);
+		color: #e2dff5;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
+	.hero__badge-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 8px var(--accent);
+		animation: blinkDot 2.4s ease-in-out infinite;
+	}
+
+	@keyframes blinkDot {
+		0%, 100% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.45; transform: scale(0.82); }
+	}
+
 	.hero__title {
-		font-size: 3.5rem;
-		font-weight: 800;
-		line-height: 1.15;
-		margin: 0 0 1.25rem;
-		background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+		position: relative;
+		z-index: 1;
+		font-size: clamp(2.5rem, 5vw, 3.85rem);
+		font-weight: 900;
+		line-height: 1.12;
+		margin: 0 0 1.15rem;
+		background: var(--gradient-aurora);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
 		letter-spacing: -0.03em;
-		transition: color var(--transition-normal);
 	}
+
 	.hero__subtitle {
-		font-size: 1.35rem;
+		position: relative;
+		z-index: 1;
+		font-size: 1.22rem;
 		color: var(--text-muted);
 		max-width: 680px;
-		margin: 0 0 2.25rem;
-		line-height: 1.65;
+		margin: 0 0 2rem;
+		line-height: 1.7;
 		transition: color var(--transition-normal);
 	}
+
 	.hero__cursor {
 		display: inline-block;
 		width: 3px;
 		height: 1.1em;
-		background-color: var(--accent);
+		background: var(--accent);
 		margin-left: 4px;
 		vertical-align: middle;
 		animation: blink 1s step-end infinite;
@@ -102,66 +239,289 @@ const posts = getVisiblePosts(await getCollection('blog')).slice(0, 6);
 	
 	/* Call To Action Buttons */
 	.cta-group {
+		position: relative;
+		z-index: 1;
 		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
-		margin-bottom: 1rem;
+		margin-bottom: 2.25rem;
 	}
+
 	.btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.75rem 1.65rem;
-		border-radius: 12px;
-		font-weight: 600;
+		gap: 0.5rem;
+		padding: 0.78rem 1.75rem;
+		border-radius: 9999px;
+		font-weight: 700;
+		font-size: 0.96rem;
 		text-decoration: none;
-		transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+		transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 	}
+
 	.btn--primary {
-		background: var(--accent);
+		background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
 		color: #ffffff;
-		box-shadow: 0 4px 14px rgba(124, 58, 237, 0.28);
+		box-shadow: 0 8px 22px -4px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
+
+	:global(.dark) .btn--primary {
+		background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+		box-shadow: 0 8px 24px -4px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	}
+
 	.btn--primary:hover {
-		background: var(--accent-dark);
+		color: #ffffff;
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+		box-shadow: 0 12px 28px -4px rgba(124, 58, 237, 0.55);
 	}
+
+	.btn--primary svg {
+		transition: transform var(--transition-fast);
+	}
+
+	.btn--primary:hover svg {
+		transform: translateX(3px);
+	}
+
 	.btn--secondary {
-		border: 1px solid var(--border);
-		background: var(--surface);
-		color: var(--text);
+		border: 1px solid var(--glass-border);
+		background: rgba(255, 255, 255, 0.35);
+		backdrop-filter: blur(12px);
+		color: var(--text-strong);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 	}
+
+	:global(.dark) .btn--secondary {
+		background: rgba(255, 255, 255, 0.04);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	}
+
 	.btn--secondary:hover {
 		border-color: var(--accent);
 		color: var(--accent);
 		transform: translateY(-2px);
-		background: var(--surface-muted);
+		background: var(--hover-bg);
 	}
-	
+
+	/* 统计胶囊行 */
+	.hero__stats {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.85rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--glass-border);
+	}
+
+	.stat-pill {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		padding: 0.45rem 1rem;
+		border-radius: 12px;
+		background: rgba(124, 58, 237, 0.05);
+		border: 1px solid var(--glass-border);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	:global(.dark) .stat-pill {
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.stat-pill:hover {
+		transform: translateY(-2px);
+		border-color: var(--hover-border);
+		background: var(--hover-bg);
+		box-shadow: 0 4px 14px rgba(124, 58, 237, 0.14);
+	}
+
+	.stat-pill__value {
+		font-size: 1.25rem;
+		font-weight: 800;
+		color: var(--accent);
+	}
+
+	.stat-pill__label {
+		font-size: 0.86rem;
+		color: var(--text-muted);
+		font-weight: 500;
+	}
+
+	/* Section Header */
 	.home-content {
-		margin-top: 2rem;
+		margin-top: 2.5rem;
 	}
-	
-	.post-card a {
+
+	.section-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.section-header__kicker {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 800;
+		letter-spacing: 0.14em;
+		color: var(--accent);
+		margin-bottom: 0.25rem;
+	}
+
+	.section-header h2 {
+		margin: 0;
+		font-size: 1.75rem;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+	}
+
+	.section-header__more {
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: var(--text-muted);
+		text-decoration: none;
+		transition: color var(--transition-fast), transform var(--transition-fast);
+	}
+
+	.section-header__more:hover {
+		color: var(--accent);
+		transform: translateX(3px);
+	}
+
+	/* Bento Grid Layout for Home Posts */
+	.post-list--bento {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.35rem;
+	}
+
+	.post-card--featured {
+		grid-column: span 2;
+		padding: 2rem 2.25rem;
+	}
+
+	.post-card--featured h3 {
+		font-size: 1.65rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.post-card__top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 0.65rem;
+	}
+
+	.post-card__index {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		font-size: 0.76rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		padding: 0.18rem 0.6rem;
+		border-radius: 9999px;
+		color: var(--accent);
+		background: rgba(124, 58, 237, 0.08);
+		border: 1px solid rgba(124, 58, 237, 0.2);
+	}
+
+	:global(.dark) .post-card__index {
+		background: rgba(167, 139, 250, 0.1);
+		border-color: rgba(167, 139, 250, 0.22);
+	}
+
+	.post-card--featured .post-card__index {
+		background: rgba(124, 58, 237, 0.12);
+		border-color: rgba(124, 58, 237, 0.32);
+		color: var(--accent);
+	}
+
+	:global(.dark) .post-card--featured .post-card__index {
+		background: rgba(167, 139, 250, 0.16);
+		border-color: rgba(167, 139, 250, 0.38);
+		color: #e9d5ff;
+	}
+
+	.post-card__title-link {
 		color: var(--text-strong);
 		transition: color var(--transition-fast);
 	}
-	.post-card a:hover {
+
+	.post-card:hover .post-card__title-link {
 		color: var(--accent);
+	}
+
+	.post-card__desc {
+		color: var(--text);
+		opacity: 0.92;
+		line-height: 1.68;
+		margin-bottom: 1.15rem;
+	}
+
+	.post-card__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-top: auto;
+		padding-top: 0.85rem;
+		border-top: 1px solid rgba(124, 58, 237, 0.1);
+	}
+
+	:global(.dark) .post-card__footer {
+		border-top-color: rgba(167, 139, 250, 0.12);
+	}
+
+	.post-card__footer .post-taxonomy {
+		margin: 0;
+	}
+
+	.post-card__readmore {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.88rem;
+		font-weight: 700;
+		color: var(--accent);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.post-card__arrow {
+		display: inline-block;
+		transition: transform var(--transition-fast);
+	}
+
+	.post-card:hover .post-card__arrow {
+		transform: translateX(4px);
 	}
 
 	/* Blinking Cursor Animation */
 	@keyframes blink {
-		from, to { background-color: transparent }
-		50% { background-color: var(--accent) }
+		from, to { opacity: 0 }
+		50% { opacity: 1 }
 	}
 	
-	@media (max-width: 768px) {
+	@media (max-width: 820px) {
 		.hero {
-			padding: 2.5rem 0 2rem;
+			padding: 2.25rem 1.5rem 2rem;
+			border-radius: 22px;
 		}
-		.hero__title {
-			font-size: 2.75rem;
+		.post-list--bento {
+			grid-template-columns: 1fr;
+		}
+		.post-card--featured {
+			grid-column: span 1;
+			padding: 1.5rem;
+		}
+		.post-card--featured h3 {
+			font-size: 1.35rem;
 		}
 	}
 </style>

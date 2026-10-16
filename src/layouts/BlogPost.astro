@@ -35,9 +35,12 @@ const {
 ---
 
 <BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+	<div class="reading-progress-track" aria-hidden="true">
+		<div class="reading-progress-bar" id="reading-progress-bar"></div>
+	</div>
 	<div class="post-shell">
 		<article class="post">
-			<header class="post-header">
+			<header class="post-header glass-card">
 				<p class="post-date">
 					发布于 <FormattedDate date={pubDate} />
 					{
@@ -346,6 +349,25 @@ const {
 			
 			// 触发一次初始化
 			handleScroll();
+		})();
+
+		// ==========================================
+		// 顶部极光流光阅读进度条实时推进
+		// ==========================================
+		(function () {
+			const progressBar = document.getElementById('reading-progress-bar');
+			if (!progressBar) return;
+
+			const updateProgress = () => {
+				const scrollTop = window.scrollY || document.documentElement.scrollTop;
+				const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+				const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+				progressBar.style.width = `${pct}%`;
+			};
+
+			window.addEventListener('scroll', updateProgress, { passive: true });
+			window.addEventListener('resize', updateProgress, { passive: true });
+			updateProgress();
 		})();
 
 		// ==========================================
