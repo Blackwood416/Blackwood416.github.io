@@ -4,10 +4,13 @@ import { XMLParser } from 'fast-xml-parser';
 import {
 	loadNewsThreads,
 	filterAndRankItems,
+	assignRefs,
+	isIntelGpuRelated,
 	buildDailyPrompts,
 	parseDailyJsonOutput,
 	validateDailyJson,
 	renderDailyMarkdown,
+	renderQuietDayMarkdown,
 	validateDailyMarkdown,
 } from './daily-lib.mjs';
 
@@ -92,9 +95,9 @@ function loadReportedHistory(currentDateStr) {
 
 		// 提取最新一期（即昨日）的核心速览部分
 		if (i === 0) {
-			const coreMatch = content.match(/## 核心速览([\s\S]*?)(?=##|$)/);
+			const coreMatch = content.match(/## (?:核心速览|今日要点)([\s\S]*?)(?=\n## |$)/);
 			if (coreMatch) {
-				yesterdayHighlights = coreMatch[1].trim();
+				yesterdayHighlights = coreMatch[1].replace(/<[^>]+>/g, '').replace(/\[详情 →\]\([^)]*\)/g, '').trim();
 			}
 		}
 	}
@@ -260,7 +263,6 @@ async function fetchSearchPRs(label, query) {
 // 1.4 Phoronix RSS (过滤仅包含图形/显卡/Intel 驱动的内容)
 async function fetchPhoronix() {
 	const url = 'https://www.phoronix.com/rss.php';
-	const intelKeywords = ['intel', 'arc', 'xe', 'battlemage', 'panther lake', 'lunar lake', 'anv', 'i915', 'oneapi', 'level zero', 'xe2'];
 	const excludeKeywords = ['apple silicon', 'risc-v', 'snapdragon', 'qualcomm', 'raspberry pi', 'radeon', 'amdgpu', 'geforce', 'nvidia'];
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
@@ -283,8 +285,8 @@ async function fetchPhoronix() {
 			const isExcluded = excludeKeywords.some(ex => titleLower.includes(ex));
 			if (isExcluded) continue;
 
-			const isIntelGpuRelated = intelKeywords.some(k => fullText.includes(k));
-			if (isIntelGpuRelated) {
+			// 整词匹配，避免 "search" / "architecture" 之类误命中 arc、xe
+			if (isIntelGpuRelated(`${item.title || ''} ${item.description || ''}`)) {
 				results.push({
 					source: 'Phoronix (Linux Graphics/Driver)',
 					title: item.title,
@@ -304,8 +306,8 @@ async function fetchPhoronix() {
 // 1.5 TechPowerUp News RSS (Windows Intel 显卡驱动与硬件发布第一时间监控)
 async function fetchTechPowerUpDrivers() {
 	const url = 'https://www.techpowerup.com/rss/news';
-	const intelKeywords = ['intel', 'arc', 'battlemage', 'alchemist'];
-	const driverKeywords = ['driver', 'drivers', 'whql', 'game on', 'graphics'];
+	const intelTitleRe = /\b(intel|arc|battlemage|alchemist)\b/i;
+	const driverRe = /\b(drivers?|whql|game on|graphics)\b/i;
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
 		if (!res.ok) return [];
@@ -324,8 +326,8 @@ async function fetchTechPowerUpDrivers() {
 			const descLower = (item.description || '').toLowerCase();
 			const fullText = `${titleLower} ${descLower}`;
 
-			const hasIntel = intelKeywords.some(k => titleLower.includes(k));
-			const hasDriver = driverKeywords.some(k => fullText.includes(k));
+			const hasIntel = intelTitleRe.test(titleLower);
+			const hasDriver = driverRe.test(fullText);
 			if (hasIntel && hasDriver) {
 				results.push({
 					source: 'TechPowerUp (Windows 驱动与硬件)',
@@ -549,7 +551,7 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 	}
 
 	const parsedJson = parseDailyJsonOutput(content);
-	const jsonValidation = validateDailyJson(parsedJson);
+	const jsonValidation = validateDailyJson(parsedJson, items);
 	if (!jsonValidation.isValid) {
 		throw new Error(`模型输出的 JSON 结构校验未通过: ${jsonValidation.errors.join('; ')}`);
 	}
@@ -557,7 +559,23 @@ async function generateSummaryWithLLM(items, todayStr, history) {
 		console.warn('[daily-lib] JSON 数据规范告警:', jsonValidation.warnings.join('; '));
 	}
 
-	return parsedJson;
+	return jsonValidation.data;
+}
+
+function writeOutputs(todayStr, markdown, snapshot) {
+	const newsDir = path.resolve('src/content/news');
+	fs.mkdirSync(newsDir, { recursive: true });
+	const outputPath = path.join(newsDir, `intel-gpu-daily-${todayStr}.md`);
+	fs.writeFileSync(outputPath, markdown, 'utf-8');
+	console.log(`\x1b[32m✔ 日报已写入: ${outputPath}\x1b[0m`);
+
+	if (snapshot) {
+		const jsonDir = path.resolve('src/data/news-json');
+		fs.mkdirSync(jsonDir, { recursive: true });
+		const jsonPath = path.join(jsonDir, `${todayStr}.json`);
+		fs.writeFileSync(jsonPath, JSON.stringify(snapshot, null, 2) + '\n', 'utf-8');
+		console.log(`✔ 结构化数据已保存: ${jsonPath}`);
+	}
 }
 
 // --- 4. 主流程执行 ---
@@ -572,48 +590,37 @@ async function main() {
 	console.log(`[Deduplicate] 从历史日报中提取了 ${history.seenUrls.size} 个已报道链接和 ${history.seenKeys.size} 个特征键。`);
 
 	const rawItems = await collectAllUpdates(history);
-	if (rawItems.length === 0) {
-		console.log('[Notice] 过去 28 小时内所有动态均已在往期日报中报道，今日无新增动态，跳过日报生成。');
-		return;
-	}
-
 	const threads = loadNewsThreads();
 	console.log(`[Threads] 载入了 ${threads.length} 个长期追踪技术事件。`);
 
-	// 准入门槛提高至 15 分，精选 Top 20
-	const items = filterAndRankItems(rawItems, threads, 15, 20);
-	console.log(`[Rank] 经过技术重要性打分 (阈值: 15)，从 ${rawItems.length} 条中筛选出 ${items.length} 条真正高价值核心动态。`);
+	const items = assignRefs(filterAndRankItems(rawItems, threads, 15, 20));
+	console.log(`[Rank] 阈值 15：${rawItems.length} 条候选中保留 ${items.length} 条。`);
 
 	if (items.length === 0) {
-		console.log('[Notice] 今日经严苛打分后无达到门槛的高价值技术动态，遵循“宁缺毋滥”原则，跳过今日日报发布。');
+		console.log('[Notice] 今日没有达到门槛的动态，发布简报。');
+		writeOutputs(todayStr, renderQuietDayMarkdown(todayStr, rawItems.length), null);
 		return;
 	}
 
-	// 1. 请求模型输出结构化 JSON
+	// 1. 模型输出结构化 JSON（仅理解与提炼）
 	const jsonData = await generateSummaryWithLLM(items, todayStr, history);
 
-	// 2. 程序接管排版渲染 Markdown
-	console.log('[3/4] 由程序模板引擎严格渲染 Markdown (强制 Frontmatter、受控 Badge 白名单与板块排版)...');
-	const renderedMarkdown = renderDailyMarkdown(jsonData, todayStr, threads);
+	// 2. 程序渲染：板块、模块分组、主次分级、链接均由代码决定
+	console.log('[3/4] 渲染 Markdown...');
+	const renderedMarkdown = renderDailyMarkdown(jsonData, todayStr, threads, items);
 
-	// 3. 发布前硬门禁校验 (Pre-flight Hard Gate，写盘前拦截)
-	console.log('[4/4] 正在执行发布前硬门禁校验 (Pre-flight Gate)...');
+	// 3. 发布前硬门禁
+	console.log('[4/4] 发布前校验...');
 	const validation = validateDailyMarkdown(renderedMarkdown);
 	if (!validation.isValid) {
-		throw new Error(`发布前硬门禁校验失败，拒绝写入磁盘:\n - ${validation.errors.join('\n - ')}`);
+		throw new Error(`发布前校验失败，拒绝写入磁盘:\n - ${validation.errors.join('\n - ')}`);
 	}
-	console.log('\x1b[32m✔ 发布前硬门禁校验 100% 通过\x1b[0m');
 
-	// 4. 最终落盘
-	const outputFileName = `intel-gpu-daily-${todayStr}.md`;
-	const newsDir = path.resolve('src/content/news');
-	if (!fs.existsSync(newsDir)) {
-		fs.mkdirSync(newsDir, { recursive: true });
-	}
-	const outputPath = path.join(newsDir, outputFileName);
-
-	fs.writeFileSync(outputPath, renderedMarkdown, 'utf-8');
-	console.log(`\x1b[32m✔ 成功生成并落盘日报文件: ${outputPath}\x1b[0m`);
+	writeOutputs(todayStr, renderedMarkdown, {
+		date: todayStr,
+		sources: items.map(({ ref, source, title, url, updated, score }) => ({ ref, source, title, url, updated, score })),
+		output: jsonData,
+	});
 }
 
 main().catch(err => {

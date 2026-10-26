@@ -66,6 +66,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/content/news/
+          git add src/content/news/ src/data/news-json/
           git commit -m "chore: auto-generate intel gpu daily digest [skip ci]"
           git push origin master

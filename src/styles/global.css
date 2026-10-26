@@ -1645,3 +1645,176 @@ html.dark .katex,
 		left: -140px !important;
 	}
 }
+
+
+/* ==========================================================================
+   Intel GPU 日报 (News) 专属样式系统 (v2.2)
+   ========================================================================== */
+
+/* 1. 状态 Badge 胶囊 */
+.news-badge {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.72rem;
+	font-weight: 600;
+	padding: 0.15rem 0.5rem;
+	border-radius: 9999px;
+	line-height: 1.1;
+	letter-spacing: 0.02em;
+	margin-right: 0.4rem;
+	vertical-align: middle;
+	transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.news-badge--merged {
+	background: #ecfdf5;
+	color: #047857;
+	border: 1px solid #a7f3d0;
+}
+:root.dark .news-badge--merged,
+html.dark .news-badge--merged {
+	background: rgba(16, 185, 129, 0.15);
+	color: #34d399;
+	border-color: rgba(52, 211, 153, 0.3);
+}
+
+.news-badge--released {
+	background: #eff6ff;
+	color: #1d4ed8;
+	border: 1px solid #bfdbfe;
+}
+:root.dark .news-badge--released,
+html.dark .news-badge--released {
+	background: rgba(59, 130, 246, 0.15);
+	color: #60a5fa;
+	border-color: rgba(96, 165, 250, 0.3);
+}
+
+.news-badge--workaround {
+	background: #fffbeb;
+	color: #b45309;
+	border: 1px solid #fde68a;
+}
+:root.dark .news-badge--workaround,
+html.dark .news-badge--workaround {
+	background: rgba(245, 158, 11, 0.15);
+	color: #fbbf24;
+	border-color: rgba(251, 191, 36, 0.3);
+}
+
+.news-badge--issue {
+	background: #fff1f2;
+	color: #be123c;
+	border: 1px solid #fecdd3;
+}
+:root.dark .news-badge--issue,
+html.dark .news-badge--issue {
+	background: rgba(244, 63, 94, 0.15);
+	color: #fb7185;
+	border-color: rgba(251, 113, 133, 0.3);
+}
+
+.news-badge--testing {
+	background: #f8fafc;
+	color: #475569;
+	border: 1px solid #cbd5e1;
+}
+:root.dark .news-badge--testing,
+html.dark .news-badge--testing {
+	background: rgba(148, 163, 184, 0.15);
+	color: #94a3b8;
+	border-color: rgba(148, 163, 184, 0.25);
+}
+
+.news-badge--discussion {
+	background: #f0fdfa;
+	color: #0f766e;
+	border: 1px solid #99f6e4;
+}
+:root.dark .news-badge--discussion,
+html.dark .news-badge--discussion {
+	background: rgba(20, 184, 166, 0.15);
+	color: #2dd4bf;
+	border-color: rgba(45, 212, 191, 0.3);
+}
+
+/* 2. 次要动态折叠组件 */
+details.news-minor {
+	margin: 1.25rem 0;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	border: 1px dashed var(--border);
+	background: var(--surface-subtle);
+	transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+details.news-minor[open] {
+	border-color: var(--border-strong);
+}
+
+details.news-minor summary {
+	cursor: pointer;
+	font-size: 0.88rem;
+	font-weight: 500;
+	color: var(--text-muted);
+	user-select: none;
+	outline: none;
+}
+
+details.news-minor summary:hover {
+	color: var(--accent);
+}
+
+details.news-minor ul {
+	margin-top: 0.75rem;
+	margin-bottom: 0;
+	padding-left: 1.25rem;
+	font-size: 0.88rem;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+details.news-minor li {
+	margin-bottom: 0.35rem;
+}
+
+/* 3. 日报正文特定排版增强 */
+.prose--news blockquote::before {
+	display: none !important;
+}
+
+.prose--news blockquote {
+	margin: 1.2rem 0;
+	padding: 0.85rem 1.15rem;
+	background: var(--surface-subtle);
+	border-left: 3px solid var(--accent);
+	border-image: none;
+	border-radius: 0 8px 8px 0;
+	font-size: 0.95rem;
+	line-height: 1.65;
+	box-shadow: var(--shadow-sm);
+}
+
+.prose--news h3 {
+	font-size: 1.15rem;
+	margin-top: 2rem;
+	margin-bottom: 0.85rem;
+	padding-bottom: 0.35rem;
+	border-bottom: 1px solid var(--border);
+	color: var(--text-strong);
+}
+
+.prose--news ul {
+	padding-left: 1.35rem;
+	margin-bottom: 1.25rem;
+}
+
+.prose--news li {
+	margin-bottom: 0.45rem;
+	line-height: 1.68;
+}
+
+.prose--news p {
+	margin-bottom: 1rem;
+	line-height: 1.72;
+}

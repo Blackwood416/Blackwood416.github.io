@@ -32,6 +32,8 @@ const {
 	basePath = '/posts',
 	canonicalPath,
 } = Astro.props;
+
+const isNews = basePath === '/news';
 ---
 
 <BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
@@ -39,7 +41,7 @@ const {
 		<div class="reading-progress-bar" id="reading-progress-bar"></div>
 	</div>
 	<div class="post-shell">
-		<article class="post">
+		<article class:list={['post', { 'post--news': isNews }]}>
 			<header class="post-header glass-card">
 				<p class="post-date">
 					发布于 <FormattedDate date={pubDate} />
@@ -92,7 +94,7 @@ const {
 				}
 			</header>
 			<TableOfContents items={tocItems} variant="mobile" />
-			<div class="prose">
+			<div class:list={['prose', { 'prose--news': isNews }]}>
 				<slot />
 			</div>
 			<PostNavigation previous={previous} next={next} basePath={basePath} />

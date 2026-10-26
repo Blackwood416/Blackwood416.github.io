@@ -13,6 +13,8 @@ import {
 	ALLOWED_STATUS_BADGES,
 	sanitizeDailyMarkdown,
 	validateDailyMarkdown,
+	isIntelGpuRelated,
+	renderQuietDayMarkdown,
 } from '../scripts/daily-lib.mjs';
 
 const fixturePath = path.resolve('tests/fixtures/news-replay-sample.json');
@@ -115,12 +117,15 @@ describe('daily-lib v2.1 evaluation and replay tests', () => {
 		expect(rendered).toContain('title: "Intel GPU 技术生态日报 (2026-09-19)"');
 		expect(rendered).toContain('tags:');
 
-		// 验证核心速览与受控 Badge
-		expect(rendered).toContain("## 核心速览\n\n- **`[Released]`** **Intel Arc 驱动 101.9030 Beta 发布**：新增多款新游优化，修复 Core Ultra DX12 卡顿\n- **`[Issue]`** **B580 冷启动与黑屏冻结追踪**：社区反馈 4K 60Hz 唤醒异常，官方固件排查中");
+		// 验证核心速览与受控 Badge (v2.2 胶囊样式)
+		expect(rendered).toContain('## 核心速览');
+		expect(rendered).toContain('<span class="news-badge news-badge--released">Released</span> **Intel Arc 驱动 101.9030 Beta 发布**：新增多款新游优化，修复 Core Ultra DX12 卡顿');
+		expect(rendered).toContain('<span class="news-badge news-badge--issue">Issue</span> **B580 冷启动与黑屏冻结追踪**：社区反馈 4K 60Hz 唤醒异常，官方固件排查中');
 
 		// 验证板块与正文条目排版
-		expect(rendered).toContain('## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)');
-		expect(rendered).toContain('- **[Windows 驱动] Arc 101.9030 Beta 发布**：修复 Dragon\'s Dogma 2 DX12 在 Core Ultra 平台的性能卡顿。 [[TechPowerUp](https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released)]');
+		expect(rendered).toContain('## 驱动、内核与图形栈');
+		expect(rendered).toContain('### Windows 驱动');
+		expect(rendered).toContain('- **Arc 101.9030 Beta 发布**：修复 Dragon\'s Dogma 2 DX12 在 Core Ultra 平台的性能卡顿。 [[TechPowerUp](https://www.techpowerup.com/352834/intel-arc-gpu-graphics-drivers-101-9030-beta-released)]');
 		expect(rendered).toContain('> **影响：** 该更新为针对上层特定游戏的驱动热修复，推荐遇到卡顿的用户升级。');
 
 		// 验证程序自动注入的续报行
@@ -157,5 +162,44 @@ pubDate: "2026-09-19T08:30:00.000Z"
 		const res2 = validateDailyMarkdown(forbiddenMarkdown);
 		expect(res2.isValid).toBe(false);
 		expect(res2.errors.some(e => e.includes('被禁用的机械公关套话'))).toBe(true);
+	});
+	it('renders quiet day markdown and folds minor items (v2.2)', () => {
+		// 1. 安静简报
+		const quietMd = renderQuietDayMarkdown('2026-09-21', 5);
+		expect(quietMd).toContain('今日无重要更新');
+		expect(quietMd).toContain('过去 28 小时抓取到 5 条候选');
+
+		// 2. 整词匹配过滤
+		expect(isIntelGpuRelated('Intel Arc A770 performance')).toBe(true);
+		expect(isIntelGpuRelated('Linux slab allocator search architecture')).toBe(false);
+
+		// 3. 次要条目折叠
+		const dataWithMinor = {
+			overview: [{ status: 'Merged', title: '主要修复' }],
+			items: [
+				{
+					module: '测试模块',
+					title: '主要修复',
+					analysis: '核心代码逻辑变更',
+					impact: '修复内存泄漏',
+					changeType: 'bugfix',
+					tier: 'major',
+					refs: ['r1']
+				},
+				{
+					module: '测试模块',
+					title: 'CI 放宽超时',
+					analysis: '仅调整测试环境',
+					impact: null,
+					changeType: 'test_fix',
+					tier: 'minor',
+					refs: ['r2']
+				}
+			]
+		};
+		const renderedMinor = renderDailyMarkdown(dataWithMinor, '2026-09-21', [], [{ ref: 'r1', source: 'vllm' }, { ref: 'r2', source: 'vllm' }]);
+		expect(renderedMinor).toContain('<details class="news-minor">');
+		expect(renderedMinor).toContain('<summary>其他 1 项小改动</summary>');
+		expect(renderedMinor).toContain('- CI 放宽超时');
 	});
 });

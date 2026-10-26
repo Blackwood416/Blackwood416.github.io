@@ -11,11 +11,10 @@ export const ALLOWED_STATUS_BADGES = ['Merged', 'Released', 'Workaround', 'Issue
  */
 export function normalizeStatusBadge(status, changeType = '') {
 	if (!status) return 'Merged';
-	const trimmed = status.trim();
+	const trimmed = String(status).trim();
 	const matched = ALLOWED_STATUS_BADGES.find(b => b.toLowerCase() === trimmed.toLowerCase());
 	if (matched) return matched;
 
-	// 降级映射字典
 	const lower = trimmed.toLowerCase();
 	if (lower.includes('release') || lower.includes('publish')) return 'Released';
 	if (lower.includes('workaround') || lower.includes('fallback')) return 'Workaround';
@@ -32,14 +31,124 @@ export function normalizeStatusBadge(status, changeType = '') {
 }
 
 /**
- * 读取跨日跟踪线程库
+ * 渲染状态胶囊（HTML 内联，样式见 global.css .news-badge）
  */
+export function renderBadge(status) {
+	const safe = normalizeStatusBadge(status);
+	return `<span class="news-badge news-badge--${safe.toLowerCase()}">${safe}</span>`;
+}
+
+/**
+ * 与 github-slugger（Astro 标题锚点）一致的简化 slug 实现
+ */
+export function slugifyHeading(text) {
+	return String(text)
+		.trim()
+		.toLowerCase()
+		.replace(/[^\p{L}\p{M}\p{N}\s_-]/gu, '')
+		.replace(/\s/g, '-');
+}
+
+// ---------------------------------------------------------------------------
+// 来源 → 板块 / 模块（由代码决定，LLM 不参与）
+// ---------------------------------------------------------------------------
+
+export const SECTION_ORDER = ['upstream', 'downstream', 'drivers', 'community'];
+
+export const SECTION_TITLES = {
+	upstream: '主流框架与上游集成',
+	downstream: '编译器与加速库',
+	drivers: '驱动、内核与图形栈',
+	community: '社区反馈',
+};
+
+const MODULE_RULES = [
+	// [匹配 source 的正则, 板块, 模块名]
+	[/上游合入:\s*vllm/i, 'upstream', 'vLLM XPU'],
+	[/上游合入:\s*sglang/i, 'upstream', 'SGLang XPU'],
+	[/上游合入:\s*pytorch/i, 'upstream', 'PyTorch XPU'],
+	[/上游合入:\s*llama\.cpp/i, 'upstream', 'llama.cpp SYCL'],
+	[/上游合入:\s*comfyui/i, 'upstream', 'ComfyUI'],
+	[/上游合入:\s*ollama/i, 'upstream', 'Ollama'],
+	[/上游合入:\s*deepspeed/i, 'upstream', 'DeepSpeed'],
+	[/上游合入/i, 'upstream', '其他框架'],
+	[/intel-xpu-backend-for-triton/i, 'downstream', 'Triton XPU 后端'],
+	[/llm-scaler/i, 'downstream', 'intel/llm-scaler'],
+	[/openvino/i, 'downstream', 'OpenVINO'],
+	[/onednn/i, 'downstream', 'oneDNN'],
+	[/onemkl/i, 'downstream', 'oneMKL'],
+	[/intel\/llvm/i, 'downstream', 'SYCL 编译器'],
+	[/compute-runtime/i, 'drivers', 'compute-runtime'],
+	[/intel-graphics-compiler/i, 'drivers', 'IGC 图形编译器'],
+	[/level-zero/i, 'drivers', 'Level Zero'],
+	[/techpowerup/i, 'drivers', 'Windows 驱动'],
+	[/phoronix/i, 'drivers', 'Linux 图形栈'],
+	[/igcit|社区驱动追踪/i, 'community', 'IGCIT 问题追踪'],
+	[/reddit/i, 'community', 'Reddit r/IntelArc'],
+];
+
+export function classifySource(source = '') {
+	for (const [re, section, module] of MODULE_RULES) {
+		if (re.test(source)) return { section, module };
+	}
+	return { section: 'community', module: '其他' };
+}
+
+/**
+ * 由 URL 生成链接文本（不信任 LLM 给出的链接）
+ */
+export function deriveLinkLabel(url = '', source = '') {
+	let m;
+	if ((m = url.match(/\/pull\/(\d+)/))) return `PR #${m[1]}`;
+	if ((m = url.match(/\/issues\/(\d+)/))) return `#${m[1]}`;
+	if ((m = url.match(/\/commit\/([a-f0-9]{7})/i))) return `commit ${m[1]}`;
+	if ((m = url.match(/\/releases\/tag\/([^/?#]+)/))) return decodeURIComponent(m[1]);
+	if (/phoronix/i.test(url)) return 'Phoronix';
+	if (/techpowerup/i.test(url)) return 'TechPowerUp';
+	if (/reddit/i.test(url)) return 'Reddit';
+	return source.split(/[\s(]/)[0] || '来源';
+}
+
+// ---------------------------------------------------------------------------
+// 次要条目判定 & 空洞影响行过滤
+// ---------------------------------------------------------------------------
+
+const MINOR_CHANGE_TYPES = new Set(['test_fix', 'ci', 'sync', 'build', 'chore', 'docs']);
+const MINOR_TITLE_RE = /(\bci\b|\btests?\b|\bskip\b|timeout|flaky|retry|\bwarning\b|\blint\b|\btypo\b|\bbump\b|测试|跳过|超时|去抖|告警|误报|同步上游|适配上游|上游同步|CI)/i;
+
+export function isMinorItem(item) {
+	if (item.tier === 'minor') return true;
+	if (MINOR_CHANGE_TYPES.has(item.changeType)) return true;
+	return MINOR_TITLE_RE.test(item.title || '');
+}
+
+const HOLLOW_IMPACT_PATTERNS = [
+	/可能包含.{0,12}(改进|修复)/,
+	/^(提高|提升|增强|改善).{0,10}(正确性|稳定性|兼容性|可靠性|准确性)[。.]?$/,
+	/简化\s*CI/,
+	/保持与上游(同步|一致)/,
+	/提升测试覆盖/,
+	/确保测试(正确|正常|通过)/,
+	/普通用户感知有限/,
+	/需测试性能影响/,
+];
+
+export function isHollowImpact(text) {
+	if (!text || typeof text !== 'string') return true;
+	const t = text.trim();
+	if (t.length < 12) return true;
+	return HOLLOW_IMPACT_PATTERNS.some(re => re.test(t));
+}
+
+// ---------------------------------------------------------------------------
+// 线程库与匹配
+// ---------------------------------------------------------------------------
+
 export function loadNewsThreads(threadsFilePath = 'src/data/news-threads.json') {
 	const resolved = path.resolve(threadsFilePath);
 	if (!fs.existsSync(resolved)) return [];
 	try {
-		const raw = fs.readFileSync(resolved, 'utf-8');
-		return JSON.parse(raw);
+		return JSON.parse(fs.readFileSync(resolved, 'utf-8'));
 	} catch (e) {
 		console.warn('[daily-lib] 读取 news-threads.json 失败:', e.message);
 		return [];
@@ -47,241 +156,187 @@ export function loadNewsThreads(threadsFilePath = 'src/data/news-threads.json') 
 }
 
 /**
- * 复合条件匹配某个新闻动态是否命中了已知追踪线程
- * 必须满足 matchAll 中的全部关键词，且至少满足 matchAny 中的一个关键词
+ * 复合条件匹配：必须满足 matchAll 全部，且命中 matchAny 至少一个
  */
 export function matchNewsThreads(item, threads = []) {
 	if (!threads || threads.length === 0) return [];
 	const haystack = `${item.source || ''} ${item.title || ''} ${item.summary || ''} ${item.url || ''}`.toLowerCase();
 
-	const matched = [];
-	for (const thread of threads) {
+	const checkKeyword = (kw) => {
+		const cleanKw = kw.trim().toLowerCase();
+		if (!cleanKw) return false;
+		if (/^\d+$/.test(cleanKw)) {
+			return haystack.includes(`/${cleanKw}`) || haystack.includes(`#${cleanKw}`) || haystack.includes(` ${cleanKw} `);
+		}
+		return haystack.includes(cleanKw);
+	};
+
+	return threads.filter(thread => {
 		const matchAll = thread.matchAll || [];
 		const matchAny = thread.matchAny || thread.keywords || [];
-
-		const checkKeyword = (cleanKw) => {
-			if (!cleanKw) return false;
-			if (/^\d+$/.test(cleanKw)) {
-				return haystack.includes(`/${cleanKw}`) || haystack.includes(`#${cleanKw}`) || haystack.includes(` ${cleanKw} `);
-			}
-			return haystack.includes(cleanKw);
-		};
-
-		// 必须满足全部 matchAll
-		const allPassed = matchAll.length === 0 || matchAll.every(kw => checkKeyword(kw.trim().toLowerCase()));
-		// 必须满足至少一个 matchAny
-		const anyPassed = matchAny.length === 0 || matchAny.some(kw => checkKeyword(kw.trim().toLowerCase()));
-
-		if (allPassed && anyPassed) {
-			matched.push(thread);
-		}
-	}
-	return matched;
+		const allPassed = matchAll.length === 0 || matchAll.every(checkKeyword);
+		const anyPassed = matchAny.length === 0 || matchAny.some(checkKeyword);
+		return allPassed && anyPassed;
+	});
 }
 
+// ---------------------------------------------------------------------------
+// 相关性与重要性
+// ---------------------------------------------------------------------------
+
+const GPU_SPECIFIC_RE = /\b(xe[23]?|xe-?kmd|i915|anv|iris|battlemage|alchemist|celestial|lunar lake|panther lake|arrow lake|meteor lake|arc (a|b)\d{3}|arc pro|intel arc|arc graphics|oneapi|level zero|openvino|sycl)\b/i;
+const GPU_CONTEXT_RE = /\b(graphics|gpu|igpu|dgpu|mesa|drm|vulkan|opengl|driver|compute)\b/i;
+
 /**
- * 评估单条新闻的技术重要性得分（v2.1：基础分归零，生产准入门槛提高，严打快照与水帖）
+ * 判断一条新闻是否真的与 Intel GPU 相关（整词匹配，避免 search/architecture 误命中 arc）
  */
+export function isIntelGpuRelated(text = '') {
+	if (GPU_SPECIFIC_RE.test(text)) return true;
+	return /\bintel\b/i.test(text) && GPU_CONTEXT_RE.test(text);
+}
+
 export function scoreItemImportance(item, matchedThreads = []) {
-	let score = 0; // 基础分归 0！
+	let score = 0;
 	const source = (item.source || '').toLowerCase();
 	const title = (item.title || '').toLowerCase();
 	const summary = (item.summary || '').toLowerCase();
 	const url = (item.url || '').toLowerCase();
 	const fullText = `${source} ${title} ${summary} ${url}`;
 
-	// 1. 常规快照、每日构建、无变更 Release 严厉扣分 (-25 ~ -30)
-	if (/(?:nightly|weekly|daily build|sycl-latest-good|latest-good|latest-buildable|snapshot)/i.test(fullText)) {
-		score -= 25;
-	}
-	if (/(?:bump version|update readme|update changelog|license|typo|fix typo|format code|clang-format|pre-commit)/i.test(title)) {
-		score -= 25;
-	}
-	if (/^(?:ci|chore|build|test|style|workflow)(?:\([^\)]+\))?:\s*/i.test(title)) {
-		score -= 20;
-	}
-	if (/(?:github actions?|workflows?|ci runner|cache action|dependency update|dependabot|docker|sync branch|merge branch)/i.test(fullText)) {
-		score -= 20;
-	}
+	// 常规快照与杂务
+	if (/(?:nightly|weekly|daily build|sycl-latest-good|latest-good|latest-buildable|snapshot)/i.test(fullText)) score -= 25;
+	if (/(?:bump version|update readme|update changelog|license|typo|fix typo|format code|clang-format|pre-commit)/i.test(title)) score -= 25;
+	if (/^(?:\[(?:ci|test|tests)\]|(?:ci|chore|build|test|style|workflow)(?:\([^\)]+\))?:)\s*/i.test(title)) score -= 20;
+	if (/(?:github actions?|workflows?|ci runner|cache action|dependency update|dependabot|docker|sync branch|merge branch)/i.test(fullText)) score -= 20;
 
-	// 2. Reddit 水帖、装机构想、日常配置求助扣分
+	// Reddit
 	if (source.includes('reddit')) {
-		if (/(?:steam machine|clone|setup|psu|power supply|should i buy|thoughts|fan noise|case build|help me)/i.test(fullText)) {
-			score -= 20;
-		} else {
-			score -= 5;
-		}
+		if (/(?:steam machine|clone|setup|psu|power supply|should i buy|thoughts|fan noise|case build|help me)/i.test(fullText)) score -= 20;
+		else score -= 5;
 	}
 
-	// 3. 旧 Issue 惩罚
-	if (item.issueType === 'old') {
-		score -= 15;
+	// 旧 Issue
+	if (item.issueType === 'old') score -= 15;
+
+	// 新闻站：与 Intel GPU 无关的直接重罚
+	if ((source.includes('phoronix') || source.includes('techpowerup')) && !isIntelGpuRelated(`${title} ${summary}`)) {
+		score -= 40;
 	}
 
-	// 4. 核心架构、驱动发布与严重稳定性加分 (+15 ~ +20)
-	// 真实显卡驱动正式发布（TechPowerUp 驱动发布、Game On、WHQL）
-	if (source.includes('techpowerup') && /(?:driver|drivers|whql|game ready|beta release)/i.test(fullText)) {
-		score += 20;
-	}
-	// Linux 图形栈重要进展 (Phoronix 核心内核/Mesa/Xe)
-	if (source.includes('phoronix') && /(?:drm\/xe|mesa|anv|kernel|vram|fred|xe2|xe3)/i.test(fullText)) {
-		score += 15;
-	}
-	// 关键致命错误与崩溃修复
-	if (/(?:crash|freeze|hang|regression|black screen|bsod|segfault|corruption|deadlock|data loss|stutter)/i.test(fullText)) {
-		score += 18;
-	}
-	// 上游主仓合入 (PyTorch, vLLM, SGLang, Triton)
-	if (source.includes('上游合入') || source.includes('pytorch') || source.includes('vllm') || source.includes('sglang') || source.includes('triton')) {
-		score += 15;
-	}
-	// 根因修复与临时绕过
-	if (/(?:workaround|fallback|revert|root cause|hotfix|security advisory)/i.test(fullText)) {
-		score += 14;
-	}
-	// 算子、核心加速、底层硬件特性
-	if (/(?:triton|xpu|sycl|kernel|subgroup|xmx|esimd|usm|anv|kv cache|attention|quant|moe|fp8|int8)/i.test(fullText)) {
-		score += 10;
-	}
-	// 真实 GitHub Release（排除快照）
-	if (source.includes('release') && !/(?:nightly|snapshot|latest-good|latest-buildable)/i.test(fullText)) {
-		score += 15;
-	}
+	// 加分
+	if (source.includes('techpowerup') && /(?:driver|drivers|whql|game ready|beta release)/i.test(fullText)) score += 20;
+	if (source.includes('phoronix') && /(?:drm\/xe|mesa|anv|kernel|vram|fred|xe2|xe3)/i.test(fullText)) score += 15;
+	if (/(?:crash|freeze|hang|regression|black screen|bsod|segfault|corruption|deadlock|data loss|stutter)/i.test(fullText)) score += 18;
+	if (source.includes('上游合入') || source.includes('triton')) score += 15;
+	if (/(?:workaround|fallback|revert|root cause|hotfix|security advisory)/i.test(fullText)) score += 14;
+	if (/(?:triton|xpu|sycl|kernel|subgroup|xmx|esimd|usm|anv|kv cache|attention|quant|moe|fp8|int8|int4)/i.test(fullText)) score += 10;
+	if (source.includes('release') && !/(?:nightly|snapshot|latest-good|latest-buildable)/i.test(fullText)) score += 15;
 
-	// 5. 命中历史追踪线程高额加分 (+20)
-	if (matchedThreads && matchedThreads.length > 0) {
-		score += 20;
-	}
+	if (matchedThreads && matchedThreads.length > 0) score += 20;
 
 	return score;
 }
 
-/**
- * 过滤并按技术重要性排序候选列表（v2.1：准入门槛提高至 15）
- */
 export function filterAndRankItems(items, threads = [], minScore = 15, limit = 20) {
-	const scored = items.map(item => {
-		const matchedThreads = matchNewsThreads(item, threads);
-		const score = scoreItemImportance(item, matchedThreads);
-		return {
-			...item,
-			matchedThreads,
-			score,
-		};
-	});
-
-	// 过滤低分噪音项
-	const filtered = scored.filter(item => item.score >= minScore);
-
-	// 按重要性从高到低排序
-	filtered.sort((a, b) => b.score - a.score);
-
-	// 限制输入条目数量，精选 Top-N
-	return filtered.slice(0, limit);
+	return items
+		.map(item => {
+			const matchedThreads = matchNewsThreads(item, threads);
+			return { ...item, matchedThreads, score: scoreItemImportance(item, matchedThreads) };
+		})
+		.filter(item => item.score >= minScore)
+		.sort((a, b) => b.score - a.score)
+		.slice(0, limit);
 }
 
 /**
- * 构造请求 LLM 输出纯结构化 JSON 的 Prompts (v2.1)
+ * 给候选条目分配稳定引用 ID（s1, s2, ...），LLM 只回传 ref
  */
+export function assignRefs(items) {
+	return items.map((it, idx) => ({ ...it, ref: `s${idx + 1}` }));
+}
+
+// ---------------------------------------------------------------------------
+// Prompt
+// ---------------------------------------------------------------------------
+
 export function buildDailyPrompts(items, todayStr, history) {
-	const promptData = items.map((it, idx) => {
+	const promptData = items.map((it) => {
 		let threadInfo = '';
 		if (it.matchedThreads && it.matchedThreads.length > 0) {
 			const th = it.matchedThreads[0];
-			const latestHistory = th.history?.[th.history.length - 1];
-			threadInfo = `\n【关联追踪事件ID】: "${th.id}"
-【追踪事件名】: "${th.title}"
-【此前已知阶段】: [${latestHistory?.stage || th.status}] ${latestHistory?.note || ''} (最后跟进日期: ${th.lastUpdated})`;
+			const latest = th.history?.[th.history.length - 1];
+			threadInfo = `\n关联追踪事件: threadId="${th.id}"，${th.title}；此前阶段：[${latest?.stage || th.status}] ${latest?.note || ''}`;
 		}
-
-		return `[${idx + 1}] ID: item-${idx + 1}
-来源: ${it.source} (重要度得分: ${it.score})
+		return `[${it.ref}] 来源: ${it.source}
 标题: ${it.title}
-链接: ${it.url}
 时间: ${it.updated}
 摘要: ${it.summary ? it.summary.replace(/\s+/g, ' ') : '无摘要'}${threadInfo}
 ---`;
 	}).join('\n');
 
-	const yesterdayHighlightsPrompt = history?.yesterdayHighlights
-		? `\n【往期（昨日）已报道核心速览 - 严禁重复！】\n以下是上一期日报已报道的关键内容，今天绝对禁止再次作为主要新闻重复报道：\n${history.yesterdayHighlights}\n`
+	const yesterday = history?.yesterdayHighlights
+		? `\n【昨日已报道要点，禁止重复作为今日要点】\n${history.yesterdayHighlights}\n`
 		: '';
 
-	const systemPrompt = `你是一名精通底层系统编程、GPU 架构与深度学习编译器的资深系统架构师。
-你的任务：根据提供的过去 24 小时内经过清洗和重要性打分的信源列表，对今日 Intel GPU 技术生态进展进行技术提炼，并【必须输出纯 JSON 格式】。
-${yesterdayHighlightsPrompt}
-【输出格式要求 - 必须输出纯 JSON，禁止任何 Markdown 包装外壳】
-输出必须是符合以下 JSON 结构的纯文本（不要带 \`\`\`json 标记）：
+	const systemPrompt = `你是一名熟悉 GPU 架构、深度学习编译器和 Intel GPU 软件栈的系统工程师，为《Intel GPU 技术生态日报》做技术编辑。
+你只负责理解和提炼，排版、分组、链接由程序完成。必须输出纯 JSON，不要任何 Markdown 外壳。
+${yesterday}
+【JSON 结构】
 {
   "overview": [
-    {
-      "status": "Merged", // 仅限 "Merged" | "Released" | "Workaround" | "Issue" | "Testing"
-      "title": "一句话概括核心主题",
-      "summary": "一句话说明具体发生了什么与技术要点（控制在 40 字以内）"
-    }
+    { "status": "Merged", "title": "不超过 30 字的结论句", "refs": ["s1"] }
   ],
   "items": [
     {
-      "section": "downstream", // 仅限 "downstream" | "upstream" | "drivers" | "community"
-      "module": "模块名，例如: Triton XPU / vLLM XPU / Windows 驱动 / Linux drm/xe",
-      "title": "改动标题",
-      "sourceUrl": "对应的真实 URL",
-      "sourceLabel": "简短链接文本，如 PR #1234 或 Phoronix",
-      "changeType": "feature", // "feature" | "bugfix" | "workaround" | "test_fix" | "driver_update" | "issue_report"
-      "isTrueFix": true, // 若仅为规避分支或测试跳过，必须为 false
-      "claimOwner": "maintainer", // "maintainer" | "code" | "reporter" | "community"
-      "rootCauseConfirmed": true, // 仅当维护者或代码确凿证实根因时为 true；报告者个人推测必须为 false
-      "analysis": "核心技术分析与改动动机（客观严密，说明具体改动与根因）",
-      "impact": "简短精炼评估对开发者编译、运行、性能或架构的具体影响；若属于规避或测试修复需明确点出",
-      "threadId": null // 若命中了关联追踪事件，填入对应的 threadId 字符串，否则填 null
+      "refs": ["s1"],
+      "title": "改动主题，不超过 30 字，不要写模块名前缀",
+      "analysis": "做了什么、为什么（根因），2~3 句，只写信源能支持的内容",
+      "impact": "谁受影响、需要做什么；写不出具体对象就填 null",
+      "brief": "不超过 25 字的一句话，用于次要条目",
+      "tier": "major",
+      "changeType": "feature",
+      "isTrueFix": true,
+      "claimOwner": "maintainer",
+      "rootCauseConfirmed": true,
+      "threadId": null
     }
   ]
 }
 
-【核心纪律与事实分层原则】
-1. status 白名单：overview 中的 status 字段【严格只允许】从以下 5 个枚举中选择：
-   - "Merged"（上游代码合入）
-   - "Released"（正式驱动或框架发版）
-   - "Workaround"（临时规避方案/降级回退）
-   - "Issue"（问题追踪/Bug报告）
-   - "Testing"（性能测试/基准/CI修复）
-   严禁使用任何未经允许的值（例如绝对禁止使用 "Community"、"True upstream fix" 等）。
+【字段约束】
+- refs：只能使用输入中出现的 ID（如 "s3"）。同一件事的多条信源（例如版本号提升 + 对应依赖更新）合并为一个 item，refs 写多个。
+- overview：1~3 条，只放今天最值得看的结论；title 是结论而不是标题复述。内容少就少写，不要凑数。
+- status 只允许 "Merged" | "Released" | "Workaround" | "Issue" | "Testing"。
+- tier："major" 表示影响实际使用、性能、正确性或兼容性；测试放宽、跳过测试、CI 调整、上游同步、构建告警一律 "minor"。
+- changeType："feature" | "bugfix" | "workaround" | "test_fix" | "ci" | "sync" | "driver_update" | "issue_report"。
+- impact：禁止空话（如「可能包含性能改进」「提高正确性」「简化 CI」）。没有具体受影响对象就填 null。minor 条目 impact 填 null。
 
-2. 事实与推断分离（claimOwner 与 rootCauseConfirmed）：
-   - 如果某条 Issue 或 Bug 只是社区用户/报告者提交（claimOwner: "reporter"），且官方维护者尚未确认根因（rootCauseConfirmed: false），analysis 中【严禁】声称“根因确认为……”，必须使用“报告者推测可能与……有关”。
-   - 区分 true fix 与 workaround：若是上层绕行或条件规避，isTrueFix 必须为 false，并在 impact 中明确指出是规避方案。
+【事实纪律】
+- 报告者提交、维护者未确认的问题（claimOwner="reporter"，rootCauseConfirmed=false），analysis 只能写「报告者认为……」，不得给出根因结论，也不得自行推测根因。
+- 上层绕行或条件规避：isTrueFix=false，analysis 中写明是规避。
+- 测试放宽或跳过：写明「属于测试调整，根因未解决」。
+- 禁止公关套话（重磅、里程碑、颠覆性、赋能）和「不是……而是……」句式。`;
 
-3. 宁缺毋滥：
-   - overview 数量：提炼今日最核心的 1～3 条即可，没有高价值内容切勿硬凑；
-   - 严禁公关套话（如“重磅”、“里程碑”、“颠覆性”、“赋予新生命”）；
-   - 严禁机械句式（如“不是……而是……”）。`;
-
-	const userPrompt = `以下是今日经过技术重要性打分筛选出的高价值信源列表，请严格按照上述 JSON Schema 提炼并输出纯 JSON：\n\n${promptData}`;
+	const userPrompt = `今日候选信源如下（已按重要性排序），请输出 JSON：\n\n${promptData}`;
 
 	return { systemPrompt, userPrompt };
 }
 
-/**
- * 解析 LLM 返回的 JSON 结构
- */
+// ---------------------------------------------------------------------------
+// JSON 解析与校验
+// ---------------------------------------------------------------------------
+
 export function parseDailyJsonOutput(rawResponse) {
 	if (!rawResponse || typeof rawResponse !== 'string') {
 		throw new Error('LLM 返回内容为空');
 	}
-
-	let cleaned = rawResponse.trim();
-	// 剔除可能的 ```json 或 ``` 标记
-	cleaned = cleaned.replace(/^```(?:json)?\s*\r?\n/i, '');
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-	cleaned = cleaned.trim();
-
-	// 定位首个 { 和最后一个 }
-	const firstBrace = cleaned.indexOf('{');
-	const lastBrace = cleaned.lastIndexOf('}');
-	if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-		cleaned = cleaned.slice(firstBrace, lastBrace + 1);
-	}
-
+	let cleaned = rawResponse.trim()
+		.replace(/^```(?:json)?\s*\r?\n/i, '')
+		.replace(/\r?\n```\s*$/i, '')
+		.trim();
+	const first = cleaned.indexOf('{');
+	const last = cleaned.lastIndexOf('}');
+	if (first !== -1 && last > first) cleaned = cleaned.slice(first, last + 1);
 	try {
 		return JSON.parse(cleaned);
 	} catch (err) {
@@ -289,60 +344,133 @@ export function parseDailyJsonOutput(rawResponse) {
 	}
 }
 
+function itemRefs(it) {
+	if (Array.isArray(it.refs) && it.refs.length > 0) return it.refs;
+	if (it.ref) return [it.ref];
+	if (it.sourceUrl) return [it.sourceUrl];
+	return [];
+}
+
 /**
- * 校验 JSON 数据完整性（发布前门禁）
+ * 校验并清洗 LLM JSON：丢弃引用了不存在 ref 的条目（防止编造信源）
+ * @param {object} data LLM 输出
+ * @param {Array} sources 带 ref 的候选条目
  */
-export function validateDailyJson(data) {
+export function validateDailyJson(data, sources = null) {
 	const errors = [];
 	const warnings = [];
 
 	if (!data || typeof data !== 'object') {
-		return { isValid: false, errors: ['数据不是合法的 JSON 对象'], warnings };
+		return { isValid: false, errors: ['数据不是合法的 JSON 对象'], warnings, data };
 	}
 
-	if (!Array.isArray(data.overview) || data.overview.length === 0) {
-		errors.push('overview 必须为包含至少 1 条记录的数组');
-	} else {
-		data.overview.forEach((ov, idx) => {
-			if (!ov.title || !ov.summary) {
-				errors.push(`overview[${idx}] 缺少 title 或 summary`);
+	const refSet = sources ? new Set(sources.map(s => s.ref)) : null;
+	const keepRefs = (refs) => (refSet ? refs.filter(r => refSet.has(r)) : refs);
+
+	const items = (Array.isArray(data.items) ? data.items : []).filter((it, idx) => {
+		if (!it || !it.title || !it.analysis) {
+			warnings.push(`items[${idx}] 缺少 title/analysis，已丢弃`);
+			return false;
+		}
+		let refs = keepRefs(itemRefs(it));
+		if (refs.length === 0) {
+			if (!sources) {
+				refs = [`item-${idx}`];
+			} else {
+				warnings.push(`items[${idx}]「${it.title}」没有有效 ref，已丢弃`);
+				return false;
 			}
-			if (!ALLOWED_STATUS_BADGES.includes(ov.status)) {
-				warnings.push(`overview[${idx}] 的 status "${ov.status}" 超出受控白名单，将被规范化`);
-			}
-		});
+		}
+		it.refs = refs;
+		return true;
+	});
+
+	const overview = (Array.isArray(data.overview) ? data.overview : []).filter((ov, idx) => {
+		if (!ov || !ov.title) {
+			warnings.push(`overview[${idx}] 缺少 title，已丢弃`);
+			return false;
+		}
+		ov.refs = keepRefs(itemRefs(ov));
+		if (!ALLOWED_STATUS_BADGES.includes(ov.status)) {
+			warnings.push(`overview[${idx}] status "${ov.status}" 不在白名单，将被规范化`);
+		}
+		return true;
+	}).slice(0, 3);
+
+	if (items.length === 0) errors.push('没有任何可用的正文条目');
+	if (overview.length === 0 && items.length > 0) {
+		warnings.push('overview 为空，将由首条正文条目生成');
+		overview.push({ status: 'Merged', title: items[0].title, refs: items[0].refs });
 	}
 
-	if (!Array.isArray(data.items) || data.items.length === 0) {
-		errors.push('items 必须为包含至少 1 条记录的数组');
-	} else {
-		data.items.forEach((it, idx) => {
-			if (!it.module || !it.title || !it.analysis || !it.impact) {
-				errors.push(`items[${idx}] 缺少必要字段 (module/title/analysis/impact)`);
-			}
-		});
-	}
+	const cleaned = { ...data, overview, items };
+	return { isValid: errors.length === 0, errors, warnings, data: cleaned };
+}
 
-	return {
-		isValid: errors.length === 0,
-		errors,
-		warnings,
-	};
+// ---------------------------------------------------------------------------
+// 渲染
+// ---------------------------------------------------------------------------
+
+function yamlString(s) {
+	return JSON.stringify(String(s));
+}
+
+export function buildDescription(overview = []) {
+	const titles = overview.map(o => String(o.title).trim().replace(/[。.]$/, '')).filter(Boolean);
+	if (titles.length === 0) return '今日 Intel GPU 软件栈与驱动动态。';
+	const text = titles.join('；');
+	return text.length > 120 ? `${text.slice(0, 118)}…` : text;
 }
 
 /**
- * 程序渲染 Markdown（代码接管排版、Frontmatter、Badge 白名单与引用块）
+ * 程序渲染 Markdown
+ * @param {object} jsonData 已通过 validateDailyJson 清洗的数据
+ * @param {string} todayStr YYYY-MM-DD
+ * @param {Array} threads 线程库
+ * @param {Array} sources 带 ref 的候选条目（提供 source/url）
  */
-export function renderDailyMarkdown(jsonData, todayStr, threads = []) {
-	const threadMap = new Map();
-	if (Array.isArray(threads)) {
-		threads.forEach(t => threadMap.set(t.id, t));
+export function renderDailyMarkdown(jsonData, todayStr, threads = [], sources = []) {
+	const threadMap = new Map((threads || []).map(t => [t.id, t]));
+	const sourceMap = new Map((sources || []).map(s => [s.ref, s]));
+
+	const getSourceLinks = (it) => {
+		const refs = it.refs || [];
+		if (refs.length > 0 && sourceMap.size > 0) {
+			const found = refs.map(r => sourceMap.get(r)).filter(Boolean);
+			if (found.length > 0) {
+				return found.map(s => `[${deriveLinkLabel(s.url, s.source)}](${s.url})`).join(' · ');
+			}
+		}
+		if (it.sourceUrl) {
+			const label = it.sourceLabel || deriveLinkLabel(it.sourceUrl, it.module || '');
+			return `[[${label}](${it.sourceUrl})]`;
+		}
+		return '';
+	};
+
+	// 1. 归位：section / module 由第一个 ref 的来源决定
+	const placed = (jsonData.items || []).map(it => {
+		const refs = itemRefs(it);
+		const first = refs.length > 0 ? sourceMap.get(refs[0]) : null;
+		let { section, module } = first ? classifySource(first?.source || '') : {};
+		section = section || it.section || 'ecosystem';
+		module = module || it.module || '生态与驱动进展';
+		return { ...it, refs, section, module, minor: isMinorItem(it) };
+	});
+
+	// ref → 模块锚点，供速览跳转
+	const refAnchor = new Map();
+	for (const it of placed) {
+		for (const r of it.refs) {
+			if (!refAnchor.has(r)) refAnchor.set(r, slugifyHeading(it.module));
+		}
 	}
 
-	// 1. 生成受控 Frontmatter
+	const overview = jsonData.overview || [];
+
 	let md = `---
-title: "Intel GPU 技术生态日报 (${todayStr})"
-description: "今日 Intel GPU 动态速览：包含驱动内核演进、算子与推理引擎适配进展。"
+title: ${yamlString(`Intel GPU 技术生态日报 (${todayStr})`)}
+description: ${yamlString(buildDescription(overview))}
 pubDate: "${todayStr}T08:30:00.000Z"
 tags:
   - Intel
@@ -357,81 +485,101 @@ categories:
 draft: false
 ---
 
+## 核心速览
+
 `;
 
-	// 2. 生成核心速览（程序强制 Badge 白名单）
-	md += `## 核心速览\n\n`;
-	const overviewList = Array.isArray(jsonData.overview) ? jsonData.overview : [];
-	for (const ov of overviewList) {
-		const safeBadge = normalizeStatusBadge(ov.status);
-		md += `- **\`[${safeBadge}]\`** **${ov.title.trim()}**：${ov.summary.trim()}\n`;
+	for (const ov of overview) {
+		const normStatus = normalizeStatusBadge(ov.status);
+		const badgeHtml = renderBadge(normStatus);
+		const anchor = ov.refs?.map(r => refAnchor.get(r)).find(Boolean);
+		const jump = anchor ? ` [详情 →](#${anchor})` : '';
+		const summary = ov.summary ? `：${ov.summary.trim()}` : '';
+		md += `- ${badgeHtml} **${String(ov.title).trim()}**${summary}${jump}\n`;
 	}
 	md += '\n';
 
-	// 3. 板块映射与组织
-	const SECTION_TITLES = {
-		downstream: '## 下游优化与加速库 (intel/llm-scaler / Triton / OpenVINO)',
-		upstream: '## 主流框架与上游集成 (PyTorch / vLLM / SGLang / llama.cpp / Ollama)',
-		drivers: '## 驱动、内核与图形栈 (Windows 驱动 / Linux drm/xe / Mesa ANV)',
-		community: '## 社区实测与生态动态',
-	};
-
-	const sectionOrder = ['downstream', 'upstream', 'drivers', 'community'];
-	const items = Array.isArray(jsonData.items) ? jsonData.items : [];
-
-	for (const secKey of sectionOrder) {
-		const secItems = items.filter(it => it.section === secKey);
+	// 2. 板块 → 模块 → 重点 / 次要
+	for (const secKey of SECTION_ORDER) {
+		const secItems = placed.filter(it => it.section === secKey);
 		if (secItems.length === 0) continue;
 
-		md += `${SECTION_TITLES[secKey]}\n\n`;
-		for (const it of secItems) {
-			const mod = (it.module || 'Intel GPU').trim();
-			const title = (it.title || '').trim();
-			const analysis = (it.analysis || '').trim();
-			const impact = (it.impact || '').trim();
-			const sourceLabel = (it.sourceLabel || '来源链接').trim();
-			const sourceUrl = (it.sourceUrl || '#').trim();
+		md += `## ${SECTION_TITLES[secKey]}\n\n`;
 
-			// 条目第一行：模块名、改动主题、分析、链接
-			md += `- **[${mod}] ${title}**：${analysis} [[${sourceLabel}](${sourceUrl})]\n`;
+		const modules = [...new Set(secItems.map(it => it.module))];
+		for (const mod of modules) {
+			const modItems = secItems.filter(it => it.module === mod);
+			const major = modItems.filter(it => !it.minor);
+			const minor = modItems.filter(it => it.minor);
 
-			// 条目第二行：影响评估行
-			md += `  > **影响：** ${impact}\n`;
+			md += `### ${mod}\n\n`;
 
-			// 条目第三行：如果命中了长线追踪事件，自动由代码追加续报行
-			if (it.threadId && threadMap.has(it.threadId)) {
-				const th = threadMap.get(it.threadId);
-				const latestHistory = th.history?.[th.history.length - 1];
-				const historyDate = latestHistory?.date || th.lastUpdated;
-				const note = latestHistory?.note ? `（此前阶段：${latestHistory.note}）` : '';
-				md += `  > 🔗 **续报（关联 ${historyDate} 日报）：** 事件跟踪【${th.title}】新进展${note}。\n`;
+			for (const it of major) {
+				const src = getSourceLinks(it);
+				const linkSuffix = src ? ` ${src}` : '';
+				md += `- **${it.title.trim()}**：${it.analysis.trim()}${linkSuffix}\n`;
+				if (!isHollowImpact(it.impact)) {
+					md += `\n  > **影响：** ${it.impact.trim()}\n`;
+				}
+				if (it.threadId && threadMap.has(it.threadId)) {
+					const th = threadMap.get(it.threadId);
+					const latest = th.history?.[th.history.length - 1];
+					const note = latest?.note ? `（此前阶段：${latest.note}）` : '';
+					md += `\n  > 🔗 **续报（关联 ${latest?.date || th.lastUpdated} 日报）：** 事件跟踪【${th.title}】新进展${note}。\n`;
+				}
+				md += '\n';
+			}
+
+			if (minor.length > 0) {
+				const label = major.length > 0 ? `其他 ${minor.length} 项小改动` : `${minor.length} 项小改动`;
+				md += `<details class="news-minor">\n<summary>${label}</summary>\n\n`;
+				for (const it of minor) {
+					const brief = it.brief && String(it.brief).trim() ? `：${String(it.brief).trim()}` : '';
+					const src = getSourceLinks(it);
+					const linkSuffix = src ? ` ${src}` : '';
+					md += `- ${it.title.trim()}${brief}${linkSuffix}\n`;
+				}
+				md += `\n</details>\n\n`;
 			}
 		}
-		md += '\n';
 	}
 
-	return md.trim();
+	return md.trim() + '\n';
 }
 
-/**
- * 清洗 Markdown 文本（向后兼容保留）
- */
-export function sanitizeDailyMarkdown(text) {
-	let cleaned = text.trim();
-	cleaned = cleaned.replace(/^```(?:markdown)?\s*\r?\n/i, '');
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-	const firstYamlIndex = cleaned.indexOf('---');
-	if (firstYamlIndex > 0) {
-		cleaned = cleaned.slice(firstYamlIndex);
-	}
-	cleaned = cleaned.replace(/^(\s*---\s*\r?\n)+/, '---\n');
-	cleaned = cleaned.replace(/\r?\n```\s*$/i, '');
-	return cleaned.trim();
-}
+// ---------------------------------------------------------------------------
+// 发布前硬门禁
+// ---------------------------------------------------------------------------
 
 /**
- * 校验生成的 Markdown 是否符合规范（发布前硬门禁）
+ * 当天没有达到门槛的动态时的简报（不调用 LLM）
  */
+export function renderQuietDayMarkdown(todayStr, candidateCount = 0) {
+	const reason = candidateCount > 0
+		? `过去 28 小时抓取到 ${candidateCount} 条候选，经去重与重要性筛选后均未达到收录标准（多为 CI 调整、每日构建快照或与 Intel GPU 无关的新闻）。`
+		: '过去 28 小时没有抓取到新的动态，或全部已在往期报道。';
+	return `---
+title: ${yamlString(`Intel GPU 技术生态日报 (${todayStr})`)}
+description: "今日无重要更新。"
+pubDate: "${todayStr}T08:30:00.000Z"
+tags:
+  - Intel
+  - GPU
+  - 日报
+categories:
+  - 技术日报
+  - 显卡
+draft: false
+---
+
+## 今日要点
+
+今日无值得单独报道的更新。
+
+${reason}
+`;
+}
+
 export function validateDailyMarkdown(markdown) {
 	const errors = [];
 	const warnings = [];
@@ -439,29 +587,37 @@ export function validateDailyMarkdown(markdown) {
 	if (!markdown.startsWith('---') || !markdown.includes('title:') || !markdown.includes('pubDate:')) {
 		errors.push('缺少标准 YAML Frontmatter (title/pubDate)');
 	}
-
-	if (!markdown.includes('## 核心速览')) {
-		errors.push('缺少 "## 核心速览" 二级标题');
+	if (!markdown.includes('## 核心速览') && !markdown.includes('## 今日要点')) {
+		errors.push('缺少 "## 核心速览" 或 "## 今日要点" 二级标题');
 	}
 
-	// 校验核心速览是否包含状态 Badge
-	const overviewMatch = markdown.match(/## 核心速览([\s\S]*?)(?=##|$)/);
+	const overviewMatch = markdown.match(/## (?:核心速览|今日要点)([\s\S]*?)(?=\n## |$)/);
 	if (overviewMatch) {
-		const overviewText = overviewMatch[1];
-		const hasBadges = /`\[(Merged|Released|Workaround|Issue|Testing)\]`/i.test(overviewText);
-		if (!hasBadges) {
-			errors.push('核心速览中未检测到合法的受控状态 Badge');
-		}
+		const lines = overviewMatch[1].split('\n').filter(l => l.trim().startsWith('- '));
+		if (lines.length === 0) errors.push('核心速览为空');
+		const allowedLower = ALLOWED_STATUS_BADGES.map(b => b.toLowerCase()).join("|");
+		const allowedUpper = ALLOWED_STATUS_BADGES.join("|");
+		const badgeRe = new RegExp('class="news-badge news-badge--(' + allowedLower + ')"|\\*\\*`\\\[(' + allowedUpper + ')\\\]`\\*\\*');
+		lines.forEach((l, i) => {
+			if (!badgeRe.test(l)) errors.push(`核心速览第 ${i + 1} 条缺少受控状态 Badge`);
+		});
 	}
 
-	// 校验正文条目是否包含 `> **影响：**`
-	const hasImpactLines = />\s*\*\*影响[：:]\*\*/.test(markdown);
-	if (!hasImpactLines) {
-		errors.push('正文中未检测到 "> **影响：**" 结论行');
+	if (!/\n## (?!核心速览|今日要点)/.test(markdown)) {
+		errors.push('缺少正文板块（至少需要一个正文二级标题）');
 	}
 
-	// 校验黑名单机械句式（硬错误）
-	const forbiddenPhrases = ['不是……而是……', '不是...而是...', '重磅来袭', '赋予新生命', '颠覆性'];
+	const forbiddenPhrases = [
+		'不是……而是……',
+		'不是...而是...',
+		'不是普通的更新，而是',
+		'重磅来袭',
+		'赋予新生命',
+		'颠覆性',
+		'划时代',
+		'全面赋能',
+		'里程碑式的飞跃',
+	];
 	for (const phrase of forbiddenPhrases) {
 		if (markdown.includes(phrase)) {
 			errors.push(`检测到被禁用的机械公关套话: "${phrase}"`);
