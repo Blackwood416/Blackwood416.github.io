@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-26",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Report the GRF count IGC compiled with as n_regs (#8498)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/c9ae4b3fc786095b9459c18643829deacc08ede2",
+      "updated": "2026-10-25T09:36:22Z",
+      "score": 25
+    },
+    {
+      "ref": "s2",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] [Intel] dp-attention: Skip the CustomAllReduceV2 import on XPU",
+      "url": "https://github.com/sgl-project/sglang/pull/46417",
+      "updated": "2026-10-26T04:41:26Z",
+      "score": 25
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "Triton XPU 后端报告 IGC 实际编译的 GRF 数",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "SGLang 修复 XPU 上 dp-attention 的导入崩溃",
+        "refs": [
+          "s2"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "Triton XPU 报告 IGC 实际 GRF 数",
+        "analysis": "load_binary 原先从构建标志推断 n_regs（256 或 128），但在 grf_mode='auto' 时 IGC 可能选择不同值，导致报告不准确。此改动让 load_binary 报告 IGC 实际编译使用的 GRF 数，提升调试和性能分析的准确性。",
+        "impact": "使用 Triton XPU 后端且开启自动 GRF 模式的开发者，可获得更准确的寄存器占用信息。",
+        "brief": "修复 auto GRF 模式下 n_regs 报告不准确的问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "SGLang 跳过 XPU 上的 CustomAllReduceV2 导入",
+        "analysis": "dp_attention.py 在模块级导入了 CustomAllReduceV2，该模块在 XPU 上不可用，导致导入失败。此改动在 XPU 上跳过该导入，属于条件规避，避免运行时崩溃。",
+        "impact": "使用 SGLang 在 Intel XPU 上运行 dp-attention 的用户，不再因导入错误而中断。",
+        "brief": "XPU 上跳过不支持的 CustomAllReduceV2 导入",
+        "tier": "major",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
