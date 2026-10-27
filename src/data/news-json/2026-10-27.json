@@ -110,21 +110,14 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "vLLM XPU MoE 内核调整网格顺序与 tile 大小以提升性能",
+        "title": "vLLM XPU MoE 调整网格顺序与 tile 尺寸，提升专家批处理性能",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "Triton XPU 后端将 exp2 降级为 tl.math.exp2 加速 f16/f32",
-        "refs": [
-          "s3"
-        ]
-      },
-      {
-        "status": "Merged",
-        "title": "vLLM XPU 改用 per-token 动态 FP8 量化，兼容图执行",
+        "title": "vLLM XPU 启用 per-token 动态 FP8 量化，提升性能与图兼容性",
         "refs": [
           "s7"
         ]
@@ -135,10 +128,10 @@
         "refs": [
           "s1"
         ],
-        "title": "调整 MoE 内核网格顺序与 tile 大小",
-        "analysis": "将专家 ID 设为最快变化的网格轴，使连续程序访问不同专家的权重，改善内存访问局部性；同时调整 tile 大小以匹配专家批处理场景。",
-        "impact": "使用 vLLM XPU 的 MoE 模型推理性能可能提升，需重新基准测试。",
-        "brief": "优化 MoE 内核调度，提升缓存利用率",
+        "title": "调整 MoE 网格顺序与 tile 尺寸",
+        "analysis": "将 batched_triton_kernel 的网格顺序改为 expert id 作为最快变化轴，使连续程序访问不同专家的权重，并调整 tile 尺寸，以改善专家批处理时的内存访问局部性和负载均衡。",
+        "impact": "使用 vLLM XPU MoE 的推理性能可能提升，需重新测试相关模型。",
+        "brief": "优化 MoE 专家批处理的内存访问模式",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -151,9 +144,9 @@
           "s2"
         ],
         "title": "bf16 保留统一注意力重关联，fp8 移除",
-        "analysis": "对 bf16 的 Q 保留预缩放方式，对 fp8 的 Q 改用原始逐 tile 乘法，以适配不同数据类型的数值特性。",
-        "impact": "影响 vLLM 在 XPU 上使用 fp8 或 bf16 的注意力计算，需验证数值正确性。",
-        "brief": "调整注意力重关联策略，适配 fp8",
+        "analysis": "在 vLLM 注意力中，对 bf16 保留预缩放 Q 的统一重关联优化，对 fp8 则回退到原始逐 tile 乘加，因为 fp8 下预缩放可能引入精度问题。",
+        "impact": "影响 vLLM XPU 上 bf16 和 fp8 注意力计算的性能与精度，需验证 fp8 场景。",
+        "brief": "调整注意力重关联策略以适配不同精度",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -166,9 +159,9 @@
           "s3"
         ],
         "title": "将 libdevice.exp2 降级为 tl.math.exp2",
-        "analysis": "将 f16/f32 的 exp2 调用从 libdevice 降级到 tl.math.exp2，实测 f16 下更快且更准确。",
-        "impact": "使用 Triton 编译的 f16/f32 指数运算性能提升，精度改善。",
-        "brief": "exp2 降级，f16 更快更准",
+        "analysis": "将 f16/f32 的 libdevice.exp2 调用降级为 tl.math.exp2，实测 f16 下更快且更准确，提升数学函数性能。",
+        "impact": "使用 exp2 的 Triton 内核在 XPU 上性能提升，精度改善。",
+        "brief": "优化 exp2 实现，提升速度与精度",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -181,9 +174,9 @@
           "s4"
         ],
         "title": "允许 namedtuple 字段退出 JIT 特化",
-        "analysis": "为 namedtuple 字段增加 opt-out 机制，避免 JIT 特化导致不必要的重编译。",
-        "impact": "使用 Triton JIT 且涉及 namedtuple 的代码可减少编译开销。",
-        "brief": "namedtuple 字段可跳过 JIT 特化",
+        "analysis": "在运行时中允许 namedtuple 字段选择不参与 JIT 特化，避免因字段值变化导致不必要的重编译，提升灵活性。",
+        "impact": "使用 namedtuple 作为内核参数的 Triton 用户可受益，减少编译开销。",
+        "brief": "增加 namedtuple 字段特化控制",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
@@ -196,9 +189,9 @@
           "s5"
         ],
         "title": "统一二进制加载流程并重命名 SPIRVRunner",
-        "analysis": "对齐 native binary、SPIRVRunner 和 driver.c 的二进制加载流程，并将 SPIRVRunner 重命名为 TritonKernelRunner。",
-        "impact": "影响 Triton XPU 后端的运行时加载路径，需回归测试。",
-        "brief": "统一加载流程，重命名 runner",
+        "analysis": "对齐 native binary、SPIRVRunner 和 driver.c 的二进制加载流程，并将 SPIRVRunner 重命名为 TritonKernelRunner，以简化代码路径。",
+        "impact": "影响 Triton XPU 后端的二进制加载逻辑，需回归测试。",
+        "brief": "重构二进制加载流程，统一命名",
         "tier": "minor",
         "changeType": "refactor",
         "isTrueFix": false,
@@ -211,9 +204,9 @@
           "s6"
         ],
         "title": "取消跳过 MRV2 draft_model 推测解码测试",
-        "analysis": "Model Runner V2 已支持 draft_model 推测方法，因此取消相关测试的跳过。",
-        "impact": "vLLM XPU 的推测解码测试恢复执行，需确保通过。",
-        "brief": "恢复 MRV2 推测解码测试",
+        "analysis": "由于 vLLM 已支持 draft_model 推测方法，取消 XPU 上相关测试的跳过，以覆盖该功能。",
+        "impact": "vLLM XPU 的推测解码功能将获得测试覆盖，可能暴露潜在问题。",
+        "brief": "启用 MRV2 推测解码测试",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -225,9 +218,9 @@
         "refs": [
           "s7"
         ],
-        "title": "改用 per-token 动态 FP8 激活量化",
-        "analysis": "将 FP8 激活量化从 per-tensor 改为 per-token 动态，以提升性能并避免图执行时 padding 导致的量化问题。",
-        "impact": "vLLM XPU 上使用 FP8 的模型推理性能提升，图执行兼容性改善。",
+        "title": "采用 per-token 动态 FP8 激活量化",
+        "analysis": "将 FP8 激活量化从 per-tensor 改为 per-token 动态量化，以提升性能并增强与 XPU graph 的兼容性，避免 padding 导致的量化问题。",
+        "impact": "vLLM XPU 上 FP8 推理性能提升，图执行兼容性改善。",
         "brief": "FP8 量化改为 per-token 动态",
         "tier": "major",
         "changeType": "feature",
@@ -241,8 +234,8 @@
           "s8"
         ],
         "title": "在 XPU 上启用 test_fusion_rmsnorm_quant",
-        "analysis": "为 XPU 添加 test_fusion_rmsnorm_quant 测试支持，用于验证融合 RMSNorm 量化。",
-        "impact": "增加测试覆盖，需确保测试通过。",
+        "analysis": "为 XPU 添加 test_fusion_rmsnorm_quant 测试支持，用于验证融合 RMSNorm 与量化的正确性。",
+        "impact": "增加测试覆盖，可能发现 XPU 上的融合问题。",
         "brief": "启用 XPU 融合 RMSNorm 量化测试",
         "tier": "minor",
         "changeType": "test_fix",
@@ -255,10 +248,10 @@
         "refs": [
           "s9"
         ],
-        "title": "XPU 测试依赖添加 PEFT 以支持 LoRA",
-        "analysis": "在 XPU 测试依赖中添加 peft>=0.20.0，使 HF 参考模型能加载 LoRA 适配器，修复语音转文本测试失败。",
-        "impact": "vLLM XPU 的 LoRA 相关测试可正常运行。",
-        "brief": "添加 PEFT 依赖，修复 LoRA 测试",
+        "title": "为 XPU 测试添加 PEFT 依赖",
+        "analysis": "在 XPU 测试依赖中添加 peft>=0.20.0，使 HF 参考模型能够加载 LoRA 适配器，修复语音转文本模型对比测试的失败。",
+        "impact": "vLLM XPU 测试环境将支持 LoRA 加载，相关测试可正常运行。",
+        "brief": "添加 PEFT 依赖以支持 LoRA 测试",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -270,9 +263,9 @@
         "refs": [
           "s10"
         ],
-        "title": "修复 MLA 缓存操作参数",
-        "analysis": "上游 vLLM 为 concat_and_cache_mla 添加了 skip_scale 参数，XPU 实现未同步导致兼容性问题，已修复参数。",
-        "impact": "修复 vLLM XPU 上 MLA 缓存功能，确保与上游一致。",
+        "title": "修复 XPU MLA 缓存操作参数",
+        "analysis": "修复 XPU 上 MLA 缓存操作与上游新增 skip_scale 参数的兼容性问题，确保 concat_and_cache_mla 正确调用。",
+        "impact": "修复 MLA 缓存在 XPU 上的潜在错误，影响使用 MLA 的模型。",
         "brief": "修复 MLA 缓存参数兼容性",
         "tier": "major",
         "changeType": "bugfix",
@@ -286,8 +279,8 @@
           "s11"
         ],
         "title": "修复 Kimi-Linear 模型在 XPU 上的分发",
-        "analysis": "Kimi-Linear 模型在 XPU 上错误地回退到 NVIDIA 实现，已修复分发逻辑，使其在 XPU 上正确运行。",
-        "impact": "vLLM XPU 可运行 Kimi-Linear 模型，依赖 MLA 修复。",
+        "analysis": "修复 Kimi-Linear 模型在 XPU 上错误回退到 NVIDIA 实现的问题，使其能正确使用 XPU 路径，依赖 MLA 修复。",
+        "impact": "Kimi-Linear 模型可在 XPU 上运行，但性能可能非最优。",
         "brief": "修复 Kimi-Linear 模型 XPU 分发",
         "tier": "major",
         "changeType": "bugfix",
@@ -300,10 +293,10 @@
         "refs": [
           "s12"
         ],
-        "title": "SGLang 防护 CuTe DSL 导入",
-        "analysis": "wanvideo.py 模块级导入 CuTe DSL 相关函数，在 XPU 上不可用，已添加防护避免导入错误。",
-        "impact": "SGLang 在 XPU 上运行 diffusion/wan 模型不再崩溃。",
-        "brief": "防护 CuTe DSL 导入，修复 XPU 崩溃",
+        "title": "在 XPU 上保护 CuTe DSL 导入",
+        "analysis": "在 wanvideo.py 中，对 CuTe DSL 的 q/k norm RoPE 导入添加 XPU 保护，避免在 XPU 上因缺少依赖而导入失败。",
+        "impact": "修复 SGLang 在 XPU 上运行 Wan 视频模型的导入错误。",
+        "brief": "保护 CuTe DSL 导入以支持 XPU",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -315,10 +308,10 @@
         "refs": [
           "s13"
         ],
-        "title": "Level Zero Loader v1.35.0 发布",
-        "analysis": "oneAPI Level Zero Loader 发布 v1.35.0，包含驱动加载器更新。",
-        "impact": "使用 Level Zero 的 Intel GPU 用户可升级驱动加载器。",
-        "brief": "Level Zero Loader 发布 v1.35.0",
+        "title": "发布 oneAPI Level Zero Loader v1.35.0",
+        "analysis": "发布 oneAPI Level Zero Loader 新版本，包含驱动加载器的更新，具体变更未提供。",
+        "impact": "使用 Level Zero 的 XPU 应用可升级以获取新功能或修复。",
+        "brief": "Level Zero Loader 发布新版本",
         "tier": "minor",
         "changeType": "driver_update",
         "isTrueFix": false,
