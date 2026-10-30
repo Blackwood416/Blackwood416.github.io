@@ -3,6 +3,14 @@
   "sources": [
     {
       "ref": "s1",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] [Intel] attention: Allow page_size=1 on the Intel XPU backend",
+      "url": "https://github.com/sgl-project/sglang/pull/42725",
+      "updated": "2026-10-30T02:56:17Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
       "source": "GitHub Release: intel/intel-xpu-backend-for-triton",
       "title": "v3.9.0",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/releases/tag/v3.9.0",
@@ -10,7 +18,15 @@
       "score": 40
     },
     {
-      "ref": "s2",
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[XPU] Add a raw Level Zero probe for SPIR-V capabilities/extensions (#8576)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/fe357dd0b202375e8b914136482b93a0b3109bf0",
+      "updated": "2026-10-30T03:25:37Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[RemoveLayoutConversions] Fix arith.constant value/result type mismatch in `setEncodingInPlace` (#8569)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/d8ea04887542f66c3319b7289ff464018a3757dd",
@@ -18,7 +34,7 @@
       "score": 25
     },
     {
-      "ref": "s3",
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[SimplifySignedArithmetic] Load DeadCodeAnalysis so range analysis runs (#8580)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/cafb4591b49d5492ce5311e2d4aa28f2647646b4",
@@ -26,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s4",
+      "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[RemoveLayoutConversions] Keep the DPAS encoding through reshapes whose inferred linear layout equals it (#8563)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/948e3a293d524794097871b2b96aef4acdf4ffb5",
@@ -34,7 +50,7 @@
       "score": 25
     },
     {
-      "ref": "s5",
+      "ref": "s7",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[XPU] Accept grf_mode='160', '192' and '512' on CRI only (#8330)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/66ea569bb028651b42980a0b8980de558c506279",
@@ -42,7 +58,7 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s8",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[INTEL] Default `TRITON_ALLOW_FP_FUSION` to `True` (#8575)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/44752c7354f60c919b2ef5858f82b72cc490dcb1",
@@ -50,7 +66,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s9",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Use DPAS for fp8 dots with a bf16 accumulator (#8540)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a16812b5b34ea4ed445c27f02b9775c4f954b36e",
@@ -58,7 +74,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s10",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[AOT] Don't emit `SPV_EXT_long_vector` for an `ocloc` that doesn't support it (#8527)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/b3bee6ab25bf9a0cc6a734a8e4583fbe2db39ab7",
@@ -66,7 +82,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s11",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[AnnotateCacheControl] Avoid false cross-warp reuse in single-warp layouts (#8570)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/23f79e908525c27b75041be2f172740625d7d682",
@@ -74,7 +90,7 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s12",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU] use multimodal_rotary_embedding xpu kernel for mrope",
       "url": "https://github.com/vllm-project/vllm/pull/59938",
@@ -82,7 +98,7 @@
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s13",
       "source": "GitHub Release: oneapi-src/oneDNN",
       "title": "v3.14.1",
       "url": "https://github.com/uxlfoundation/oneDNN/releases/tag/v3.14.1",
@@ -90,7 +106,7 @@
       "score": 15
     },
     {
-      "ref": "s12",
+      "ref": "s14",
       "source": "GitHub Release: oneapi-src/oneDNN",
       "title": "v3.13.5",
       "url": "https://github.com/uxlfoundation/oneDNN/releases/tag/v3.13.5",
@@ -98,7 +114,7 @@
       "score": 15
     },
     {
-      "ref": "s13",
+      "ref": "s15",
       "source": "GitHub Release: oneapi-src/level-zero",
       "title": "pyzes-v0.1.4: feature: prepare for pyzes-0.1.4 release (#554)",
       "url": "https://github.com/oneapi-src/level-zero/releases/tag/pyzes-v0.1.4",
@@ -109,17 +125,17 @@
   "output": {
     "overview": [
       {
-        "status": "Released",
-        "title": "Intel Triton XPU 后端发布 v3.9.0",
+        "status": "Merged",
+        "title": "SGLang 修复 Intel XPU 上 page_size=1 崩溃",
         "refs": [
           "s1"
         ]
       },
       {
-        "status": "Merged",
-        "title": "修复 SimplifySignedArithmetic 范围分析未运行问题",
+        "status": "Released",
+        "title": "Intel Triton 后端发布 v3.9.0",
         "refs": [
-          "s3"
+          "s2"
         ]
       }
     ],
@@ -128,28 +144,28 @@
         "refs": [
           "s1"
         ],
-        "title": "Intel Triton XPU 后端发布 v3.9.0",
-        "analysis": "发布 v3.9.0 版本，包含多个修复和功能更新。具体变更内容未在摘要中详述，但版本号提升表明有新的功能或修复。",
-        "impact": "使用该后端的用户应升级到 v3.9.0 以获取最新修复和功能。",
-        "brief": "发布 v3.9.0 版本",
+        "title": "允许 XPU 后端 page_size=1",
+        "analysis": "SGLang 在 Intel XPU 后端使用 paged KV cache 时，`baidu/Unlimited-OCR` 模型因滑动窗口注意力导致启动崩溃。修复允许 page_size=1，解决该模型的启动问题。",
+        "impact": "使用 Intel XPU 后端的 SGLang 用户，特别是运行滑动窗口注意力模型的用户，将不再遇到启动崩溃。",
+        "brief": "修复 XPU 后端 page_size=1 崩溃",
         "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s2"
         ],
-        "title": "修复 setEncodingInPlace 中常量类型不匹配",
-        "analysis": "修复 RemoveLayoutConversions 中 arith.constant 的 value 和 result 类型不匹配问题，避免编译错误。",
-        "impact": "影响使用 RemoveLayoutConversions 的编译流程，修复后编译更稳定。",
-        "brief": "修复常量类型不匹配",
-        "tier": "minor",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "title": "Intel Triton 后端发布 v3.9.0",
+        "analysis": "Intel 的 Triton XPU 后端发布了 v3.9.0 版本，包含多项修复和功能改进。",
+        "impact": "使用 Intel Triton 后端的开发者应升级到 v3.9.0 以获取最新修复。",
+        "brief": "发布 v3.9.0 版本",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -158,13 +174,13 @@
         "refs": [
           "s3"
         ],
-        "title": "修复 SimplifySignedArithmetic 范围分析未运行",
-        "analysis": "该 pass 构建了裸 DataFlowSolver 并仅加载 IntegerRangeAnalysis，缺少 DeadCodeAnalysis 导致 MLIR 数据流框架将所有块视为死代码，范围分析未实际运行。加载 DeadCodeAnalysis 后修复。",
-        "impact": "影响 SimplifySignedArithmetic 优化，修复后范围分析生效，可能改善优化效果。",
-        "brief": "加载 DeadCodeAnalysis 修复范围分析",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "title": "添加 Level Zero 探针检查 SPIR-V 能力",
+        "analysis": "为 Intel XPU 后端添加原始 Level Zero 探针，用于查询 SPIR-V 能力和扩展，以便更好地适配不同硬件。",
+        "impact": "提升后端对不同 Intel GPU 的兼容性。",
+        "brief": "新增 SPIR-V 能力探针",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -173,11 +189,11 @@
         "refs": [
           "s4"
         ],
-        "title": "保留 DPAS 编码通过 reshape",
-        "analysis": "在 3D attention 内核中，epilogue reshape 导致 DPAS 编码丢失。当 reshape 推断的线性布局与 DPAS 编码相同时，保留该编码，避免不必要的布局转换。",
-        "impact": "改善 3D attention 内核的性能，减少布局转换开销。",
-        "brief": "保留 DPAS 编码通过 reshape",
-        "tier": "major",
+        "title": "修复 setEncodingInPlace 类型不匹配",
+        "analysis": "修复 RemoveLayoutConversions 中 arith.constant 值/结果类型不匹配的问题，避免编译错误。",
+        "impact": "修复编译错误，影响使用该 pass 的开发者。",
+        "brief": "修复类型不匹配",
+        "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -188,28 +204,28 @@
         "refs": [
           "s5"
         ],
-        "title": "CRI 支持更多 grf_mode 值",
-        "analysis": "CRI 现在接受 grf_mode='160'、'192' 和 '512'，通过 SPV_INTEL_maximum_registers 执行模式请求，其他架构拒绝。'160' 和 '192' 为新增支持。",
-        "impact": "使用 CRI 的用户可以指定更多 grf_mode 值，提升灵活性。",
-        "brief": "CRI 支持更多 grf_mode",
+        "title": "加载 DeadCodeAnalysis 使范围分析生效",
+        "analysis": "SimplifySignedArithmetic pass 之前未加载 DeadCodeAnalysis，导致数据流框架将所有块视为死代码，范围分析无法运行。修复后范围分析正常工作。",
+        "impact": "修复了范围分析失效的问题，可能影响优化效果。",
+        "brief": "修复范围分析失效",
         "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s6"
         ],
-        "title": "默认启用 FP 融合",
-        "analysis": "上游 triton 将隐式 FP 融合改为 opt-in（默认关闭），Intel 后端合并后丢失了 FMA 收缩。此改动将 TRITON_ALLOW_FP_FUSION 默认设为 True，恢复默认行为。",
-        "impact": "恢复默认 FP 融合行为，避免性能回退。",
-        "brief": "默认启用 FP 融合",
-        "tier": "major",
+        "title": "保留 reshape 中的 DPAS 编码",
+        "analysis": "在 3-D attention 内核中，reshape 后推断的线性布局与 DPAS 编码相等时，保留 DPAS 编码，避免不必要的布局转换。",
+        "impact": "提升 3-D attention 内核性能。",
+        "brief": "优化 reshape 布局转换",
+        "tier": "minor",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -218,28 +234,28 @@
         "refs": [
           "s7"
         ],
-        "title": "fp8 dot 使用 DPAS 支持 bf16 累加器",
-        "analysis": "DPAS 仅对 bf16 操作数有 bf16 累加器，对 fp8 操作数仅在 Xe3P 等目标上支持。在其他目标（如 BMG、PVC）上，fp8 x fp8 -> bf16 dot 没有 DPAS 形式，此改动使用 DPAS 以支持该场景。",
-        "impact": "改善 fp8 dot 在非 Xe3P 目标上的性能。",
-        "brief": "fp8 dot 使用 DPAS 支持 bf16 累加",
-        "tier": "major",
+        "title": "CRI 支持更多 grf_mode 值",
+        "analysis": "CRI 架构现在接受 grf_mode='160'、'192' 和 '512'，通过 SPV_INTEL_maximum_registers 执行模式请求，其他架构拒绝。",
+        "impact": "CRI 用户可使用更多寄存器配置。",
+        "brief": "扩展 CRI grf_mode 支持",
+        "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s8"
         ],
-        "title": "AOT 编译避免不支持 long_vector 的 ocloc",
-        "analysis": "AOT 编译将 SPIR-V 交给 ocloc，其 IGC 独立于已安装驱动。当 ocloc 不支持 SPV_EXT_long_vector 时，不再发出该扩展，避免编译失败。",
-        "impact": "修复 AOT 编译在特定 ocloc 上的失败问题。",
-        "brief": "AOT 避免不支持 long_vector 的 ocloc",
+        "title": "默认启用 FP 融合",
+        "analysis": "上游 Triton 将隐式 FP 融合改为 opt-in，Intel 后端默认设置 TRITON_ALLOW_FP_FUSION=True，以恢复 FMA 收缩等优化。",
+        "impact": "恢复 FP 融合优化，可能提升性能。",
+        "brief": "恢复 FP 融合默认开启",
         "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -248,10 +264,25 @@
         "refs": [
           "s9"
         ],
-        "title": "避免单 warp 布局中的假跨 warp 重用",
-        "analysis": "AnnotateCacheControl 在单 warp 布局中错误地标记了跨 warp 重用，导致缓存控制不当。此改动避免这种假重用。",
-        "impact": "改善缓存控制，可能提升性能。",
-        "brief": "避免假跨 warp 重用",
+        "title": "fp8 dot 使用 DPAS 和 bf16 累加器",
+        "analysis": "对于 fp8 x fp8 -> bf16 的 dot，在支持 fp8 DPAS 的目标（如 Xe3P）上使用 DPAS，其他目标（如 BMG、PVC）则回退到其他实现。",
+        "impact": "提升 fp8 dot 性能，特别是 Xe3P 平台。",
+        "brief": "优化 fp8 dot 实现",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "AOT 编译避免不支持 long_vector",
+        "analysis": "AOT 编译时，如果 ocloc 不支持 SPV_EXT_long_vector，则不再生成该扩展，避免编译失败。",
+        "impact": "修复 AOT 编译在特定 ocloc 上的失败。",
+        "brief": "修复 AOT 编译兼容性",
         "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -261,48 +292,63 @@
       },
       {
         "refs": [
-          "s10"
+          "s11"
         ],
-        "title": "vLLM XPU 使用 mrope 专用内核提升吞吐",
-        "analysis": "使用改进的 multimodal_rotary_embedding XPU 内核替换 Triton 内核路径，获得约 13% 吞吐提升。依赖 vllm-xpu-kernels PR #616。",
-        "impact": "vLLM XPU 用户可获得性能提升，但需等待相关内核 PR 合并。",
-        "brief": "mrope 内核提升 13% 吞吐",
+        "title": "避免单 warp 布局的跨 warp 误判",
+        "analysis": "AnnotateCacheControl 在单 warp 布局中避免错误的跨 warp 重用检测，减少不必要的缓存控制。",
+        "impact": "可能提升缓存控制准确性。",
+        "brief": "修复缓存控制误判",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "vLLM XPU 使用专用 mrope 内核",
+        "analysis": "vLLM XPU 使用新的 multimodal_rotary_embedding XPU 内核替换 Triton 路径，获得约 13% 吞吐提升。",
+        "impact": "vLLM XPU 用户可获得性能提升。",
+        "brief": "mrope 内核替换提升吞吐",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
-          "s11",
-          "s12"
+          "s13",
+          "s14"
         ],
         "title": "oneDNN 发布 v3.14.1 和 v3.13.5",
-        "analysis": "oneDNN 发布两个维护版本 v3.14.1 和 v3.13.5，包含 bug 修复和稳定性改进。",
-        "impact": "使用 oneDNN 的用户应更新到最新维护版本。",
-        "brief": "oneDNN 发布两个维护版本",
+        "analysis": "oneDNN 发布两个维护版本，包含 bug 修复和稳定性改进。",
+        "impact": "使用 oneDNN 的开发者应升级到最新版本。",
+        "brief": "发布维护版本",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
-          "s13"
+          "s15"
         ],
-        "title": "level-zero 发布 pyzes v0.1.4",
-        "analysis": "level-zero 发布 pyzes v0.1.4，为 Python 绑定准备发布。",
-        "impact": "使用 pyzes 的用户可升级到 v0.1.4。",
-        "brief": "pyzes v0.1.4 发布",
+        "title": "pyzes v0.1.4 发布",
+        "analysis": "Level Zero Python 绑定 pyzes 发布 v0.1.4，为发布做准备。",
+        "impact": "使用 pyzes 的开发者可升级。",
+        "brief": "发布 pyzes v0.1.4",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       }
     ]
