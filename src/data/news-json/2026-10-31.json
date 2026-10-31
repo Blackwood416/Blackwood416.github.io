@@ -1,0 +1,209 @@
+{
+  "date": "2026-10-31",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][XPU] Add record_logical_topk_ready to XPUMLASparseImpl",
+      "url": "https://github.com/vllm-project/vllm/pull/64065",
+      "updated": "2026-10-30T07:26:30Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[FoldTrueCmpI] Keep comparisons that feed `llvm.intr.assume` (#8579)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/61732f9cfd0e81d8a2a06625ff309d14699b7cf8",
+      "updated": "2026-10-31T00:03:56Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Pad or drop descriptor 2D block accesses left of column 0 (#8520)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/2f23516c4be1dd4b75514e6a791a2813febd58b0",
+      "updated": "2026-10-30T21:06:21Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "remove passing moe tests from xe2 skiplist (#8592)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e0da8c815db53d1d2121aadb91dbff0854e7efed",
+      "updated": "2026-10-30T17:50:53Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] Use GitHub release page index URL for vllm-xpu-kernels",
+      "url": "https://github.com/vllm-project/vllm/pull/64633",
+      "updated": "2026-10-30T08:45:03Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] Enable streaming input e2e test on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/64285",
+      "updated": "2026-10-30T07:26:52Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "GitHub Release: intel/compute-runtime",
+      "title": "26.35.39758.21: fix: always defer backing of mid thread preemption surfaces",
+      "url": "https://github.com/intel/compute-runtime/releases/tag/26.35.39758.21",
+      "updated": "2026-10-30T15:05:40.000Z",
+      "score": 15
+    },
+    {
+      "ref": "s8",
+      "source": "GitHub Release: intel/intel-graphics-compiler",
+      "title": "v2.43.1:  Bump MINOR to 43",
+      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.1",
+      "updated": "2026-10-30T14:07:31.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "vLLM XPU 修复稀疏注意力崩溃，DeepSeek-V3.2 等可运行",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "Triton XPU 修复 2D 块访问越界，避免错误数据",
+        "refs": [
+          "s3"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "为 XPUMLASparseImpl 补充 record_logical_topk_ready",
+        "analysis": "MLAAttention.forward 在每个稀疏层调用 impl.record_logical_topk_ready()，但 XPUMLASparseImpl 未定义该方法，导致 DeepSeek-V3.2 和 GLM-5.x 在 XPU 上首次前向时抛出 AttributeError。修复为 XPU 实现添加该方法，使稀疏注意力路径正常工作。",
+        "impact": "使用 DeepSeek-V3.2 或 GLM-5.x 的 vLLM XPU 用户可避免崩溃，需更新到包含此修复的版本。",
+        "brief": "修复 XPU 稀疏注意力缺失方法导致的崩溃",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "保留喂给 llvm.intr.assume 的比较，避免误折叠",
+        "analysis": "范围分析能从假设本身证明假设的比较，导致 FoldTrueCmpI 将每个 tl.assume 条件折叠为 %true，留下 llvm.intr.assume %true，可能使后续优化失效。修复保留喂给 assume 的比较，确保假设信息不被错误消除。",
+        "impact": "使用 Triton XPU 后端的用户可能获得更准确的优化结果，但具体影响需验证。",
+        "brief": "修复 FoldTrueCmpI 误折叠 assume 条件",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "修复 2D 块访问在列 0 左侧的填充或丢弃",
+        "analysis": "由于 64 字节基址对齐补偿，2D 块消息可能在实际基址前最多 63 字节开始，硬件只对加载进行零填充，导致越界访问。修复在列 0 左侧进行填充或丢弃，确保访问安全。",
+        "impact": "使用 Triton XPU 后端且涉及 2D 块访问的用户可避免潜在错误数据或崩溃。",
+        "brief": "修复 2D 块访问越界问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "从 xe2 skiplist 移除已通过的 MoE 测试",
+        "analysis": "两个 MoE 测试用例在 xe2 上已通过，因此从 skiplist 中移除，使它们重新在 CI 中运行。这属于测试调整，根因未涉及。",
+        "impact": null,
+        "brief": "移除已通过的 MoE 测试跳过项",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "vLLM XPU 改用 GitHub Pages 索引安装内核包",
+        "analysis": "将 vllm_xpu_kernels 的安装从固定版本 0.1.16.2 改为使用项目 GitHub Pages 的 wheel 索引，以便获取最新构建。这简化了依赖管理，但可能引入版本漂移。",
+        "impact": "vLLM XPU 用户安装时不再锁定旧版本，需注意新版本兼容性。",
+        "brief": "改用 GitHub Pages 索引安装 XPU 内核包",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "在 XPU CI 启用流式输入端到端测试",
+        "analysis": "移除 test_streaming_input.py 中仅限 CUDA 的跳过，并在 Intel CI 的 E2E Core 作业中运行。这扩大了测试覆盖，但属于测试调整，根因未涉及。",
+        "impact": null,
+        "brief": "启用 XPU 流式输入端到端测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "compute-runtime 修复中线程抢占表面延迟分配",
+        "analysis": "发布 26.35.39758.21，修复了中线程抢占表面的后备分配问题，改为始终延迟分配。这属于驱动更新，具体影响需结合上下文。",
+        "impact": "使用 Intel GPU 驱动的用户可能获得更稳定的抢占行为，但需验证。",
+        "brief": "修复中线程抢占表面分配",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "IGC 发布 v2.43.1，版本号升至 43",
+        "analysis": "Intel Graphics Compiler 发布 v2.43.1，主要变更是将 MINOR 版本号提升到 43。无其他细节，可能包含累积修复。",
+        "impact": null,
+        "brief": "IGC 发布 v2.43.1",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
