@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-01",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "32.0.101.9150][Arc B580][Win11 26H2] Concurrent YouTube Live + Kick Live streams freeze in Microsoft Edge on dual-monitor mixed refresh rate setup (MPO / WDDM 3.2 WNEXT",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1600",
+      "updated": "2026-10-31T19:31:44Z",
+      "score": 38
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[BENCHMARKS] Assume pid_m/pid_n non-negative in gemm-tensor-of-ptr (#8606)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/46c44133db973559a7003a54afcf0c940879941b",
+      "updated": "2026-10-31T20:48:21Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "GitHub Release: intel/intel-graphics-compiler",
+      "title": "v2.43.2",
+      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.2",
+      "updated": "2026-10-31T13:10:13.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Issue",
+        "title": "Arc B580 在 Win11 26H2 双屏混刷新率下直播冻结，疑与 MPO 相关",
+        "refs": [
+          "s1"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "Arc B580 双屏直播冻结问题报告",
+        "analysis": "报告者称在 Win11 26H2 下，Arc B580 双显示器混刷新率时，Edge 中同时播放 YouTube Live 和 Kick Live 会冻结，怀疑与 MPO 或 WDDM 3.2 相关。该问题为社区新提交，尚未经维护者确认。",
+        "impact": "使用 Arc B580 且双屏混刷新率的用户可能遇到直播冻结，需关注后续驱动更新。",
+        "brief": "B580 双屏直播冻结，疑与 MPO 相关",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": "b580-cold-boot-screen-freeze"
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "Triton 基准测试添加 pid 非负假设",
+        "analysis": "在 gemm-tensor-of-ptr 基准测试的两个 kernel 中添加 `tl.assume(pid_m >= 0)` 和 `tl.assume(pid_n >= 0)`，与教程中的做法保持一致，用于帮助编译器优化。",
+        "impact": null,
+        "brief": "基准测试添加 pid 非负假设",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "Intel Graphics Compiler 发布 v2.43.2",
+        "analysis": "Intel Graphics Compiler 发布新版本 v2.43.2，具体变更内容未在摘要中说明。",
+        "impact": "使用 IGC 的开发者可升级至该版本，具体影响需查看发布说明。",
+        "brief": "IGC 发布 v2.43.2",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
