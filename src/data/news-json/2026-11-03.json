@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-03",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Revert \"[BlockIO] Refuse d64 2D block messages at non-8-byte-aligned columns (#8586)\" (#8622)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/eff445037a51e407b376df3b53b8cb556847e314",
+      "updated": "2026-11-02T21:18:05Z",
+      "score": 39
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[XPU] Mark worker's SPV probe result with a stdout prefix (#8620)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/687149300b814fed61b7e28e106f519af9996d02",
+      "updated": "2026-11-02T23:42:58Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[BlockIO] Refuse d64 2D block messages at non-8-byte-aligned columns (#8586)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a9339770f38e225926b38e14bf6705e24f26fd08",
+      "updated": "2026-11-02T18:30:00Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Unskip `num_groups=0` quant tests (#8577)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6cdb633405785a7ea7a5feb1b5c56e229fb3b2d0",
+      "updated": "2026-11-02T15:39:05Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[SGLANG] Update pin to `d19f19d68cbd959619c19ce1cd3192bd38b67888` (#8542)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9b8241b0a4c6c4d16770ac3dd2dcc05e5695b6c9",
+      "updated": "2026-11-02T10:34:09Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Update pin (#8568)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/3331d8cdda850366984d573664df3c82da62feec",
+      "updated": "2026-11-02T07:01:35Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Test] Skip attention fusion splitting_ops check on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/62623",
+      "updated": "2026-11-02T23:26:11Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] graph: Restore XPU logger and Inkling backend mock dtype",
+      "url": "https://github.com/sgl-project/sglang/pull/47858",
+      "updated": "2026-11-02T11:20:02Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] [Intel] gemma4: Bidirectional image attention on the intel_xpu backend",
+      "url": "https://github.com/sgl-project/sglang/pull/46816",
+      "updated": "2026-11-02T07:18:11Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "TechPowerUp (Windows 驱动与硬件)",
+      "title": "Intel \"Larrabee\" GPU System Surfaces with Working Drivers",
+      "url": "https://www.techpowerup.com/354399/intel-larrabee-gpu-system-surfaces-with-working-drivers",
+      "updated": "2026-11-02T13:02:34.000Z",
+      "score": 20
+    },
+    {
+      "ref": "s11",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "Arc B580 - Overwatch DX11: Persistent Shader Compilation, 100–349ms Stutters and Low FPS",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1601",
+      "updated": "2026-11-02T21:48:36Z",
+      "score": 18
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "BlockIO 非 8 字节对齐 d64 拒绝被回滚，因主分支失败",
+        "refs": [
+          "s1",
+          "s3"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "vLLM 量化测试 num_groups=0 重新启用",
+        "refs": [
+          "s4"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1",
+          "s3"
+        ],
+        "title": "回滚 BlockIO 非对齐 d64 拒绝逻辑",
+        "analysis": "原提交 #8586 拒绝非 8 字节对齐列的 d64 2D block 消息，但该改动在主分支 CI 失败，因此被回滚。回滚后恢复原有行为，问题根因未解决。",
+        "impact": "使用非 8 字节对齐 d64 2D block 的 XPU 用户可能仍会遇到潜在错误，需等待后续修复。",
+        "brief": "回滚非对齐 d64 拒绝，CI 失败",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "SPV 探测结果添加 stdout 前缀",
+        "analysis": "为 worker 的 SPV 探测结果添加 stdout 前缀，便于区分输出流，避免与其他输出混淆。",
+        "impact": null,
+        "brief": "SPV 探测输出加前缀",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "重新启用 vLLM num_groups=0 量化测试",
+        "analysis": "重新启用此前跳过的 num_groups=0 量化测试，关闭 issue #8162。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "重新启用 num_groups=0 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "SGLang 固定版本更新",
+        "analysis": "更新 SGLang 固定版本至 d19f19d68cbd959619c19ce1cd3192bd38b67888，关闭 issue #8541。",
+        "impact": null,
+        "brief": "SGLang 版本更新",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "vLLM 固定版本更新",
+        "analysis": "更新 vLLM 固定版本，同时引入 vllm-xpu-kernels 0.1.16.2 发布。B580 CI 验证无性能影响。",
+        "impact": null,
+        "brief": "vLLM 版本更新",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "XPU 跳过注意力融合 splitting_ops 检查",
+        "analysis": "XPU 上 test_splitting_ops_dynamic 失败，因为 XPUPlatform 强制禁用 fuse_attn_quant，导致预期不符。跳过该检查属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "跳过 XPU 注意力融合检查",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "修复 XPU logger 和 Inkling mock dtype",
+        "analysis": "修复 #47173 后，EAGLEDraftExtendCudaGraphRunner 读取 backend.cache_loc_dtype，但 Inkling 回放 fixture 返回 Mock 导致分配失败。恢复 XPU logger 并修复 mock dtype。",
+        "impact": "使用 Inkling 回放的 XPU 用户",
+        "brief": "修复 XPU logger 和 mock dtype",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "Gemma4 双向图像注意力修复",
+        "analysis": "在 intel_xpu 后端，Gemma4 图像 token 使用因果注意力而非双向注意力。修复 prepare_attn_masks 以支持 XPU 后端。",
+        "impact": "使用 Gemma4 的 XPU 用户",
+        "brief": "修复 Gemma4 双向注意力",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "Larrabee 原型驱动恢复 3D 加速",
+        "analysis": "社区恢复 Larrabee 原型驱动，重新启用 3D 加速，提供测试机会。",
+        "impact": "对 Larrabee 感兴趣的硬件爱好者",
+        "brief": "Larrabee 驱动恢复",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": true,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "Arc B580 守望先锋 DX11 卡顿问题",
+        "analysis": "报告者称 Arc B580 在守望先锋 DX11 下持续着色器编译，100-349ms 卡顿和低 FPS。属于问题报告，根因未确认。",
+        "impact": "Arc B580 用户",
+        "brief": "B580 守望先锋卡顿报告",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      }
+    ]
+  }
+}
