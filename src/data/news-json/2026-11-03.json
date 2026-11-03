@@ -52,13 +52,37 @@
     {
       "ref": "s7",
       "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI]Increase memory for Quantization test and deselect timeout case in v1/shutdown",
+      "url": "https://github.com/vllm-project/vllm/pull/65097",
+      "updated": "2026-11-03T06:58:11Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Test] Use current platform device in test_compile_ranges",
+      "url": "https://github.com/vllm-project/vllm/pull/63641",
+      "updated": "2026-11-03T06:56:39Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] add EPD test into intel CI",
+      "url": "https://github.com/vllm-project/vllm/pull/64651",
+      "updated": "2026-11-03T02:48:55Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][Test] Skip attention fusion splitting_ops check on XPU",
       "url": "https://github.com/vllm-project/vllm/pull/62623",
       "updated": "2026-11-02T23:26:11Z",
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s11",
       "source": "上游合入: SGLang (XPU)",
       "title": "[Fix] graph: Restore XPU logger and Inkling backend mock dtype",
       "url": "https://github.com/sgl-project/sglang/pull/47858",
@@ -66,7 +90,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s12",
       "source": "上游合入: SGLang (XPU)",
       "title": "[Fix] [Intel] gemma4: Bidirectional image attention on the intel_xpu backend",
       "url": "https://github.com/sgl-project/sglang/pull/46816",
@@ -74,7 +98,15 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s13",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[CI][XPU] Extend batch-invariance tests in Intel CI",
+      "url": "https://github.com/vllm-project/vllm/pull/64396",
+      "updated": "2026-11-03T06:18:02Z",
+      "score": 23
+    },
+    {
+      "ref": "s14",
       "source": "TechPowerUp (Windows 驱动与硬件)",
       "title": "Intel \"Larrabee\" GPU System Surfaces with Working Drivers",
       "url": "https://www.techpowerup.com/354399/intel-larrabee-gpu-system-surfaces-with-working-drivers",
@@ -82,11 +114,11 @@
       "score": 20
     },
     {
-      "ref": "s11",
+      "ref": "s15",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Arc B580 - Overwatch DX11: Persistent Shader Compilation, 100–349ms Stutters and Low FPS",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1601",
-      "updated": "2026-11-02T21:48:36Z",
+      "updated": "2026-11-03T04:33:14Z",
       "score": 18
     }
   ],
@@ -94,7 +126,7 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "BlockIO 非 8 字节对齐 d64 拒绝被回滚，因主分支失败",
+        "title": "BlockIO 非对齐 d64 限制被回滚，主分支 CI 恢复",
         "refs": [
           "s1",
           "s3"
@@ -102,7 +134,7 @@
       },
       {
         "status": "Merged",
-        "title": "vLLM 量化测试 num_groups=0 重新启用",
+        "title": "vLLM 量化测试取消跳过，num_groups=0 场景恢复验证",
         "refs": [
           "s4"
         ]
@@ -114,25 +146,25 @@
           "s1",
           "s3"
         ],
-        "title": "回滚 BlockIO 非对齐 d64 拒绝逻辑",
-        "analysis": "原提交 #8586 拒绝非 8 字节对齐列的 d64 2D block 消息，但该改动在主分支 CI 失败，因此被回滚。回滚后恢复原有行为，问题根因未解决。",
-        "impact": "使用非 8 字节对齐 d64 2D block 的 XPU 用户可能仍会遇到潜在错误，需等待后续修复。",
-        "brief": "回滚非对齐 d64 拒绝，CI 失败",
+        "title": "回滚 BlockIO 非 8 字节对齐 d64 限制",
+        "analysis": "原提交 #8586 拒绝非 8 字节对齐列的 d64 2D block 消息，但导致主分支 CI 失败，因此回滚该提交以恢复构建稳定性。",
+        "impact": "使用非对齐 d64 2D block 消息的 XPU 用户暂时不受限制，但潜在正确性问题未解决。",
+        "brief": "回滚非对齐 d64 限制，CI 恢复",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s2"
         ],
-        "title": "SPV 探测结果添加 stdout 前缀",
-        "analysis": "为 worker 的 SPV 探测结果添加 stdout 前缀，便于区分输出流，避免与其他输出混淆。",
-        "impact": null,
-        "brief": "SPV 探测输出加前缀",
+        "title": "SPV 探测结果添加 stdout 前缀标记",
+        "analysis": "为 worker 的 SPV 探测结果添加 stdout 前缀，便于在日志中区分和解析探测输出，避免与其他输出混淆。",
+        "impact": "依赖 SPV 探测输出的工具或脚本需适配新前缀格式。",
+        "brief": "SPV 探测输出加前缀便于解析",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": true,
@@ -144,25 +176,25 @@
         "refs": [
           "s4"
         ],
-        "title": "重新启用 vLLM num_groups=0 量化测试",
-        "analysis": "重新启用此前跳过的 num_groups=0 量化测试，关闭 issue #8162。属于测试调整，根因未解决。",
-        "impact": null,
-        "brief": "重新启用 num_groups=0 测试",
+        "title": "取消跳过 num_groups=0 量化测试",
+        "analysis": "vLLM 量化测试中 num_groups=0 场景此前被跳过，现取消跳过并恢复测试，以覆盖该边界条件。",
+        "impact": "vLLM 量化相关功能在 num_groups=0 场景下的正确性将重新得到验证。",
+        "brief": "恢复 num_groups=0 量化测试",
         "tier": "minor",
         "changeType": "test_fix",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s5"
         ],
-        "title": "SGLang 固定版本更新",
-        "analysis": "更新 SGLang 固定版本至 d19f19d68cbd959619c19ce1cd3192bd38b67888，关闭 issue #8541。",
-        "impact": null,
-        "brief": "SGLang 版本更新",
+        "title": "SGLang 固定版本更新至 d19f19d",
+        "analysis": "将 SGLang 的固定版本更新到 d19f19d68cbd959619c19ce1cd3192bd38b67888，以同步上游修复和功能。",
+        "impact": "使用 SGLang 的 XPU 用户将获得更新版本，可能包含性能或正确性改进。",
+        "brief": "SGLang 固定版本更新",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": true,
@@ -174,10 +206,10 @@
         "refs": [
           "s6"
         ],
-        "title": "vLLM 固定版本更新",
-        "analysis": "更新 vLLM 固定版本，同时引入 vllm-xpu-kernels 0.1.16.2 发布。B580 CI 验证无性能影响。",
-        "impact": null,
-        "brief": "vLLM 版本更新",
+        "title": "vLLM 固定版本更新并引入新内核包",
+        "analysis": "更新 vLLM 固定版本，同时引入 vllm-xpu-kernels 0.1.16.2 版本，经 B580 CI 验证对基准性能无影响。",
+        "impact": "vLLM XPU 用户将获得新内核包，可能包含修复或优化。",
+        "brief": "vLLM 固定版本更新，内核包升级",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": true,
@@ -189,27 +221,27 @@
         "refs": [
           "s7"
         ],
-        "title": "XPU 跳过注意力融合 splitting_ops 检查",
-        "analysis": "XPU 上 test_splitting_ops_dynamic 失败，因为 XPUPlatform 强制禁用 fuse_attn_quant，导致预期不符。跳过该检查属于测试调整，根因未解决。",
+        "title": "vLLM 量化测试增加内存并跳过超时用例",
+        "analysis": "B50 上量化测试出现 OOM，通过增加内存请求解决；同时跳过 v1/shutdown 中的超时用例，属于测试调整。",
         "impact": null,
-        "brief": "跳过 XPU 注意力融合检查",
+        "brief": "量化测试内存增加，超时用例跳过",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s8"
         ],
-        "title": "修复 XPU logger 和 Inkling mock dtype",
-        "analysis": "修复 #47173 后，EAGLEDraftExtendCudaGraphRunner 读取 backend.cache_loc_dtype，但 Inkling 回放 fixture 返回 Mock 导致分配失败。恢复 XPU logger 并修复 mock dtype。",
-        "impact": "使用 Inkling 回放的 XPU 用户",
-        "brief": "修复 XPU logger 和 mock dtype",
-        "tier": "major",
-        "changeType": "bugfix",
+        "title": "测试改用当前平台设备类型",
+        "analysis": "将 test_compile_ranges 中的硬编码 'cuda' 改为 current_platform.device_type，使测试可在 XPU 上运行，并纳入 Intel CI。",
+        "impact": "XPU 平台将覆盖该编译范围测试，提高测试覆盖率。",
+        "brief": "测试平台适配，XPU 纳入 CI",
+        "tier": "minor",
+        "changeType": "test_fix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -219,12 +251,12 @@
         "refs": [
           "s9"
         ],
-        "title": "Gemma4 双向图像注意力修复",
-        "analysis": "在 intel_xpu 后端，Gemma4 图像 token 使用因果注意力而非双向注意力。修复 prepare_attn_masks 以支持 XPU 后端。",
-        "impact": "使用 Gemma4 的 XPU 用户",
-        "brief": "修复 Gemma4 双向注意力",
-        "tier": "major",
-        "changeType": "bugfix",
+        "title": "Intel CI 新增 EPD 测试",
+        "analysis": "将 EPD 测试添加到 Intel CI 中，以覆盖该功能在 XPU 上的回归。",
+        "impact": "EPD 功能在 XPU 上的回归将被 CI 捕获。",
+        "brief": "Intel CI 增加 EPD 测试",
+        "tier": "minor",
+        "changeType": "ci",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -234,25 +266,85 @@
         "refs": [
           "s10"
         ],
-        "title": "Larrabee 原型驱动恢复 3D 加速",
-        "analysis": "社区恢复 Larrabee 原型驱动，重新启用 3D 加速，提供测试机会。",
-        "impact": "对 Larrabee 感兴趣的硬件爱好者",
-        "brief": "Larrabee 驱动恢复",
+        "title": "XPU 跳过注意力融合 splitting_ops 检查",
+        "analysis": "test_splitting_ops_dynamic 在 XPU 上失败，因为 XPUPlatform 强制禁用 fuse_attn_quant，导致预期不符，故跳过该检查。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "XPU 跳过注意力融合检查",
         "tier": "minor",
-        "changeType": "driver_update",
-        "isTrueFix": true,
-        "claimOwner": "reporter",
-        "rootCauseConfirmed": false,
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s11"
         ],
-        "title": "Arc B580 守望先锋 DX11 卡顿问题",
-        "analysis": "报告者称 Arc B580 在守望先锋 DX11 下持续着色器编译，100-349ms 卡顿和低 FPS。属于问题报告，根因未确认。",
-        "impact": "Arc B580 用户",
-        "brief": "B580 守望先锋卡顿报告",
+        "title": "修复 XPU logger 和 Inkling mock dtype",
+        "analysis": "修复 EAGLEDraftExtendCudaGraphRunner 中 cache_loc_dtype 读取问题，Inkling 检查点回放 fixture 返回 Mock 导致真实缓冲区分配失败，现恢复正确 dtype。",
+        "impact": "SGLang XPU 用户使用 Inkling 检查点回放时不再出现分配错误。",
+        "brief": "修复 Inkling mock dtype 问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "Gemma4 图像注意力在 XPU 后端修复",
+        "analysis": "Gemma4 在 intel_xpu 后端上图像 token 使用因果注意力而非双向注意力，现修复 prepare_attn_masks 以支持 XPU 后端。",
+        "impact": "SGLang XPU 用户使用 Gemma4 模型时图像注意力行为正确。",
+        "brief": "修复 Gemma4 XPU 图像注意力",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "Intel CI 扩展批不变性测试",
+        "analysis": "扩展 Intel CI 的 Batch Invariance 任务，增加 v1/determinism 相关测试，以捕获 XPU 上的回归。",
+        "impact": "XPU 批不变性回归将被 CI 捕获。",
+        "brief": "Intel CI 增加批不变性测试",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "Larrabee 原型恢复 3D 加速",
+        "analysis": "社区用户发现 Larrabee 原型硬件并恢复驱动，成功启用 3D 加速，为研究 Intel 早期 GPU 架构提供机会。",
+        "impact": "对硬件爱好者和架构研究者有参考价值，但不影响当前产品。",
+        "brief": "Larrabee 原型驱动恢复",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "Arc B580 在 Overwatch DX11 下持续着色器编译卡顿",
+        "analysis": "报告者称 Arc B580 在 Overwatch DX11 下出现持续着色器编译，导致 100-349ms 卡顿和低 FPS，已使用最新驱动。",
+        "impact": "Arc B580 用户玩 Overwatch DX11 时可能遇到卡顿，需关注驱动更新。",
+        "brief": "Arc B580 Overwatch 卡顿报告",
         "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
