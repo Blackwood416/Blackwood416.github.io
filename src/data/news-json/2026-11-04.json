@@ -1,0 +1,278 @@
+{
+  "date": "2026-11-04",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Revert \"[Intel] Widen fp8 FMA dot operands before the layout conversion (#8537)\" (#8629)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/b9fd78e172bbea4818f285b58e4912993ee965d7",
+      "updated": "2026-11-03T13:49:34Z",
+      "score": 39
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Reland \"[BlockIO] Refuse d64 2D block messages at non-8-byte-aligned columns (#8586)\" (#8625)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6a31baec2ce8538524d529094b5ba8ca5c994fab",
+      "updated": "2026-11-03T10:10:22Z",
+      "score": 39
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[CRI] Don't assert the 2D-vs-scatter choice for negative columns on CRI (#8635)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/64233defa041f78f6c1d99585a85d7eda732c440",
+      "updated": "2026-11-03T23:54:44Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[FuseReshape] Hoist unit-dim-dropping reshapes through elementwise ops and permutes to the descriptor load (#8578)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/35038fa8f95e3e76cfa5a67a2d817e6144049aec",
+      "updated": "2026-11-03T21:17:00Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[E2E][CI] Set MAX_JOBS to CPU count (#8599)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/cfe80e97a0ea03fd70286d93e0f728f1397e2969",
+      "updated": "2026-11-03T21:09:57Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[INTEL] Lower f32 `tl.fma` to a contractable fmul/fadd pair (#8627)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/5d5eaa0f58c3e6c0dd24782bc921dd433acc28c3",
+      "updated": "2026-11-03T14:30:14Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Widen fp8 FMA dot operands before the layout conversion (#8537)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6ae00b777d667af66b0b9f7589ec921001072754",
+      "updated": "2026-11-03T09:12:22Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Restrict a bf16 out_dtype to bf16 and fp8 dot operands (#8470)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/05cb9fe2a0db2524540f859aa9383509aeedcc16",
+      "updated": "2026-11-03T08:48:34Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] update triton-xpu 3.9.0 shim layer",
+      "url": "https://github.com/vllm-project/vllm/pull/65047",
+      "updated": "2026-11-03T10:04:50Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "Life is Strange Remastered - Crash - game crashed fater hours of playing, sometimes at launch",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1603",
+      "updated": "2026-11-03T17:38:40Z",
+      "score": 18
+    },
+    {
+      "ref": "s11",
+      "source": "GitHub Release: intel/compute-runtime",
+      "title": "26.40.40196.8",
+      "url": "https://github.com/intel/compute-runtime/releases/tag/26.40.40196.8",
+      "updated": "2026-11-03T09:36:18.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "fp8 FMA 拓宽改动因 LTS 驱动失败被回滚",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "BlockIO d64 非对齐限制重新合入，修复 CI 顺序问题",
+        "refs": [
+          "s2"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "回滚 fp8 FMA 拓宽改动",
+        "analysis": "该提交回滚了 #8537，因为该改动在 LTS 驱动上测试失败。回滚是为了恢复稳定性，但根因未解决。",
+        "impact": "依赖 fp8 FMA 拓宽的用户需等待后续修复。",
+        "brief": "回滚 fp8 FMA 拓宽，LTS 驱动失败。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "重新合入 BlockIO d64 非对齐限制",
+        "analysis": "重新合入 #8586，该改动之前因 CI 顺序问题被回滚。现在 #8520 已合入，重新提交以恢复限制。",
+        "impact": "BlockIO 相关用户需注意非对齐列的限制。",
+        "brief": "重新合入 d64 非对齐限制。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "CRI 负数列断言放宽",
+        "analysis": "该改动移除了对负数列 2D-vs-scatter 选择的断言，因为该断言不是正确性属性，测试期望与 CRI 行为不一致。",
+        "impact": "CRI 相关测试不再因负数列断言失败。",
+        "brief": "放宽 CRI 负数列断言。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "提升 unit-dim 重塑到描述符加载",
+        "analysis": "该改动将 unit-dim 丢弃的重塑提升到元素级操作和置换之前，以优化 #8511 注意力内核中的描述符加载。",
+        "impact": "注意力内核性能可能提升。",
+        "brief": "优化描述符加载的重塑提升。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "CI 构建并行度设为 CPU 数",
+        "analysis": "将 MAX_JOBS 设置为 CPU 数量，以缩短 E2E CI 构建时间，从约 27 分钟减少。",
+        "impact": "CI 构建时间缩短。",
+        "brief": "CI 构建并行度优化。",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "f32 tl.fma 降级为可收缩 fmul/fadd",
+        "analysis": "为规避 IGC 对 llvm.fma 的寄存器分配问题，将 f32 tl.fma 降级为标记 contract 的 fmul/fadd 对。移除跟踪在 #8626。",
+        "impact": "使用 f32 tl.fma 的用户可能看到寄存器分配改善。",
+        "brief": "f32 fma 降级规避 IGC 问题。",
+        "tier": "major",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "fp8 FMA dot 操作数拓宽",
+        "analysis": "该改动在布局转换前拓宽 fp8 操作数，但被回滚（见 s1）。此处为原始提交，因 LTS 驱动失败。",
+        "impact": "已回滚，无当前影响。",
+        "brief": "fp8 FMA 拓宽原始提交。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "限制 bf16 out_dtype 到 bf16 和 fp8 点积",
+        "analysis": "该改动限制 bf16 out_dtype 仅用于 bf16 和 fp8 点积操作数，因为 bf16 累加器是 Intel 特有功能。",
+        "impact": "使用 bf16 out_dtype 的用户需确认操作数类型。",
+        "brief": "限制 bf16 out_dtype 使用范围。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "vLLM 更新 triton-xpu 3.9.0 shim",
+        "analysis": "该 PR 更新 triton-xpu 3.9.0 shim 层以支持 torch 2.15 升级。",
+        "impact": "vLLM 用户升级 torch 2.15 时需同步更新。",
+        "brief": "更新 triton-xpu shim 层。",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "Life is Strange 重制版崩溃报告",
+        "analysis": "用户报告游戏在长时间游玩或启动时崩溃，使用最新驱动。具体原因未确认。",
+        "impact": "游戏玩家可能受影响，需等待驱动更新。",
+        "brief": "游戏崩溃问题报告。",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "compute-runtime 26.40.40196.8 发布",
+        "analysis": "Intel compute-runtime 发布新版本 26.40.40196.8，无详细摘要。",
+        "impact": "用户可更新驱动以获取修复。",
+        "brief": "compute-runtime 新版本发布。",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
