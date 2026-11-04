@@ -3,6 +3,14 @@
   "sources": [
     {
       "ref": "s1",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] fix case test_p2p_lifecycle_e2e.py and test_mm_prefix_lm.py",
+      "url": "https://github.com/vllm-project/vllm/pull/65416",
+      "updated": "2026-11-04T04:28:03Z",
+      "score": 57
+    },
+    {
+      "ref": "s2",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "Revert \"[Intel] Widen fp8 FMA dot operands before the layout conversion (#8537)\" (#8629)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/b9fd78e172bbea4818f285b58e4912993ee965d7",
@@ -10,7 +18,7 @@
       "score": 39
     },
     {
-      "ref": "s2",
+      "ref": "s3",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "Reland \"[BlockIO] Refuse d64 2D block messages at non-8-byte-aligned columns (#8586)\" (#8625)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6a31baec2ce8538524d529094b5ba8ca5c994fab",
@@ -18,7 +26,15 @@
       "score": 39
     },
     {
-      "ref": "s3",
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Pre-scale fp8 Q in unified attention only for BLOCK_M >= 64 (#8597)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/71f273d0491f051c4d23c6c70ebedd18a2e85761",
+      "updated": "2026-11-04T01:49:51Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[CRI] Don't assert the 2D-vs-scatter choice for negative columns on CRI (#8635)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/64233defa041f78f6c1d99585a85d7eda732c440",
@@ -26,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s4",
+      "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[FuseReshape] Hoist unit-dim-dropping reshapes through elementwise ops and permutes to the descriptor load (#8578)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/35038fa8f95e3e76cfa5a67a2d817e6144049aec",
@@ -34,7 +50,7 @@
       "score": 25
     },
     {
-      "ref": "s5",
+      "ref": "s7",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[E2E][CI] Set MAX_JOBS to CPU count (#8599)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/cfe80e97a0ea03fd70286d93e0f728f1397e2969",
@@ -42,7 +58,7 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s8",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[INTEL] Lower f32 `tl.fma` to a contractable fmul/fadd pair (#8627)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/5d5eaa0f58c3e6c0dd24782bc921dd433acc28c3",
@@ -50,7 +66,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s9",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Widen fp8 FMA dot operands before the layout conversion (#8537)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6ae00b777d667af66b0b9f7589ec921001072754",
@@ -58,7 +74,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s10",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Restrict a bf16 out_dtype to bf16 and fp8 dot operands (#8470)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/05cb9fe2a0db2524540f859aa9383509aeedcc16",
@@ -66,7 +82,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s11",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU] update triton-xpu 3.9.0 shim layer",
       "url": "https://github.com/vllm-project/vllm/pull/65047",
@@ -74,7 +90,7 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s12",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Life is Strange Remastered - Crash - game crashed fater hours of playing, sometimes at launch",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1603",
@@ -82,7 +98,7 @@
       "score": 18
     },
     {
-      "ref": "s11",
+      "ref": "s13",
       "source": "GitHub Release: intel/compute-runtime",
       "title": "26.40.40196.8",
       "url": "https://github.com/intel/compute-runtime/releases/tag/26.40.40196.8",
@@ -94,14 +110,14 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "fp8 FMA 拓宽改动因 LTS 驱动失败被回滚",
+        "title": "vLLM XPU 修复 P2P 生命周期与前缀测试的独立根因",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "BlockIO d64 非对齐限制重新合入，修复 CI 顺序问题",
+        "title": "Triton XPU 回滚 fp8 FMA 拓宽，规避 LTS 驱动失败",
         "refs": [
           "s2"
         ]
@@ -112,27 +128,12 @@
         "refs": [
           "s1"
         ],
-        "title": "回滚 fp8 FMA 拓宽改动",
-        "analysis": "该提交回滚了 #8537，因为该改动在 LTS 驱动上测试失败。回滚是为了恢复稳定性，但根因未解决。",
-        "impact": "依赖 fp8 FMA 拓宽的用户需等待后续修复。",
-        "brief": "回滚 fp8 FMA 拓宽，LTS 驱动失败。",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s2"
-        ],
-        "title": "重新合入 BlockIO d64 非对齐限制",
-        "analysis": "重新合入 #8586，该改动之前因 CI 顺序问题被回滚。现在 #8520 已合入，重新提交以恢复限制。",
-        "impact": "BlockIO 相关用户需注意非对齐列的限制。",
-        "brief": "重新合入 d64 非对齐限制。",
-        "tier": "major",
-        "changeType": "bugfix",
+        "title": "修复 P2P 生命周期与前缀测试失败",
+        "analysis": "Intel CI 构建 16461 中有三个任务失败，根因有两个：P2P 生命周期回归测试中生产者与消费者块大小未对齐，以及 Triton 前缀填充问题。本提交分别对齐块大小并填充 Triton 前缀，修复测试。",
+        "impact": "vLLM XPU 测试稳定性提升，相关测试不再失败。",
+        "brief": "对齐块大小并填充前缀，修复 CI 失败",
+        "tier": "minor",
+        "changeType": "test_fix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -140,57 +141,12 @@
       },
       {
         "refs": [
-          "s3"
+          "s2"
         ],
-        "title": "CRI 负数列断言放宽",
-        "analysis": "该改动移除了对负数列 2D-vs-scatter 选择的断言，因为该断言不是正确性属性，测试期望与 CRI 行为不一致。",
-        "impact": "CRI 相关测试不再因负数列断言失败。",
-        "brief": "放宽 CRI 负数列断言。",
-        "tier": "minor",
-        "changeType": "test_fix",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s4"
-        ],
-        "title": "提升 unit-dim 重塑到描述符加载",
-        "analysis": "该改动将 unit-dim 丢弃的重塑提升到元素级操作和置换之前，以优化 #8511 注意力内核中的描述符加载。",
-        "impact": "注意力内核性能可能提升。",
-        "brief": "优化描述符加载的重塑提升。",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s5"
-        ],
-        "title": "CI 构建并行度设为 CPU 数",
-        "analysis": "将 MAX_JOBS 设置为 CPU 数量，以缩短 E2E CI 构建时间，从约 27 分钟减少。",
-        "impact": "CI 构建时间缩短。",
-        "brief": "CI 构建并行度优化。",
-        "tier": "minor",
-        "changeType": "ci",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s6"
-        ],
-        "title": "f32 tl.fma 降级为可收缩 fmul/fadd",
-        "analysis": "为规避 IGC 对 llvm.fma 的寄存器分配问题，将 f32 tl.fma 降级为标记 contract 的 fmul/fadd 对。移除跟踪在 #8626。",
-        "impact": "使用 f32 tl.fma 的用户可能看到寄存器分配改善。",
-        "brief": "f32 fma 降级规避 IGC 问题。",
+        "title": "回滚 fp8 FMA 拓宽，规避 LTS 驱动失败",
+        "analysis": "之前的提交 #8537 在 FMA 路径上拓宽 fp8 操作数，但在 LTS 驱动上失败，因此回滚。这是对驱动兼容性问题的规避，而非根本修复。",
+        "impact": "使用 LTS 驱动的用户不再遇到编译失败。",
+        "brief": "回滚 fp8 拓宽，规避 LTS 驱动问题",
         "tier": "major",
         "changeType": "workaround",
         "isTrueFix": false,
@@ -200,29 +156,89 @@
       },
       {
         "refs": [
-          "s7"
+          "s3"
         ],
-        "title": "fp8 FMA dot 操作数拓宽",
-        "analysis": "该改动在布局转换前拓宽 fp8 操作数，但被回滚（见 s1）。此处为原始提交，因 LTS 驱动失败。",
-        "impact": "已回滚，无当前影响。",
-        "brief": "fp8 FMA 拓宽原始提交。",
+        "title": "重新合入 BlockIO 非对齐 d64 拒绝",
+        "analysis": "重新合入 #8586，该提交拒绝非 8 字节对齐列的 d64 2D 块消息。之前因 #8520 合入后未跑 CI 而被回滚，现在重新合入。",
+        "impact": "BlockIO 相关功能恢复限制，避免非对齐访问。",
+        "brief": "重新合入非对齐 d64 拒绝",
         "tier": "major",
         "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "fp8 Q 预缩放仅限 BLOCK_M>=64",
+        "analysis": "在统一注意力中，仅当 BLOCK_M >= 64 时对 fp8 Q 进行预缩放。这是对 #8526 停止预缩放的后续调整，以配合 FP 融合。",
+        "impact": "影响使用统一注意力的 vLLM 用户，BLOCK_M 小于 64 时行为不同。",
+        "brief": "限制 fp8 Q 预缩放条件",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "CRI 上不断言负列 2D-vs-scatter 选择",
+        "analysis": "测试期望负列时无 2D 块存储，但 CRI 会发出。该期望并非正确性属性，因此移除断言。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "移除负列断言，测试调整",
+        "tier": "minor",
+        "changeType": "test_fix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "提升单位维度重塑到描述符加载",
+        "analysis": "将丢弃单位维度的重塑操作提升到元素级操作和置换之前，以便在描述符加载时处理。这是 #8511 注意力内核优化的一部分。",
+        "impact": "优化注意力内核性能，减少不必要的重塑。",
+        "brief": "优化重塑提升，提升内核性能",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "CI 设置 MAX_JOBS 为 CPU 数",
+        "analysis": "将 E2E CI 的 MAX_JOBS 设置为 CPU 核心数，以缩短构建时间。属于 CI 调整。",
+        "impact": null,
+        "brief": "CI 构建时间优化",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s8"
         ],
-        "title": "限制 bf16 out_dtype 到 bf16 和 fp8 点积",
-        "analysis": "该改动限制 bf16 out_dtype 仅用于 bf16 和 fp8 点积操作数，因为 bf16 累加器是 Intel 特有功能。",
-        "impact": "使用 bf16 out_dtype 的用户需确认操作数类型。",
-        "brief": "限制 bf16 out_dtype 使用范围。",
+        "title": "f32 tl.fma 降级为可合约 fmul/fadd",
+        "analysis": "为规避 IGC 寄存器分配问题，将 f32 tl.fma 降级为标记 contract 的 fmul/fadd 对。移除该规避的跟踪在 #8626。",
+        "impact": "使用 IGC 编译的用户可能获得更好的寄存器分配。",
+        "brief": "规避 IGC 寄存器分配问题",
         "tier": "major",
-        "changeType": "feature",
+        "changeType": "workaround",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -232,13 +248,13 @@
         "refs": [
           "s9"
         ],
-        "title": "vLLM 更新 triton-xpu 3.9.0 shim",
-        "analysis": "该 PR 更新 triton-xpu 3.9.0 shim 层以支持 torch 2.15 升级。",
-        "impact": "vLLM 用户升级 torch 2.15 时需同步更新。",
-        "brief": "更新 triton-xpu shim 层。",
-        "tier": "major",
-        "changeType": "sync",
-        "isTrueFix": false,
+        "title": "fp8 FMA dot 操作数拓宽（原提交）",
+        "analysis": "在 FMA 路径上，decomposeMixedModeDotOp 在布局转换前拓宽 fp8 操作数，但该布局复制了操作数，导致问题。本提交是原始实现，但已被回滚。",
+        "impact": null,
+        "brief": "原始 fp8 拓宽实现",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -247,10 +263,40 @@
         "refs": [
           "s10"
         ],
+        "title": "限制 bf16 out_dtype 仅用于 bf16 和 fp8 dot",
+        "analysis": "bf16 累加器是 Intel 特有功能，前端在其他后端拒绝 out_dtype=tl.bfloat16。本提交限制该 out_dtype 仅用于 bf16 和 fp8 dot 操作数。",
+        "impact": "限制 bf16 out_dtype 使用范围，避免不支持的组合。",
+        "brief": "限制 bf16 out_dtype 适用范围",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "更新 triton-xpu 3.9.0 shim 层",
+        "analysis": "为 torch 2.15 升级更新 triton-xpu 3.9.0 shim 层，属于上游同步。",
+        "impact": null,
+        "brief": "同步 triton-xpu shim 层",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
         "title": "Life is Strange 重制版崩溃报告",
-        "analysis": "用户报告游戏在长时间游玩或启动时崩溃，使用最新驱动。具体原因未确认。",
-        "impact": "游戏玩家可能受影响，需等待驱动更新。",
-        "brief": "游戏崩溃问题报告。",
+        "analysis": "用户报告游戏在游玩数小时后或启动时崩溃，使用最新驱动。报告者认为可能与驱动相关，但未确认根因。",
+        "impact": null,
+        "brief": "游戏崩溃问题报告",
         "tier": "minor",
         "changeType": "issue_report",
         "isTrueFix": false,
@@ -260,13 +306,13 @@
       },
       {
         "refs": [
-          "s11"
+          "s13"
         ],
-        "title": "compute-runtime 26.40.40196.8 发布",
-        "analysis": "Intel compute-runtime 发布新版本 26.40.40196.8，无详细摘要。",
-        "impact": "用户可更新驱动以获取修复。",
-        "brief": "compute-runtime 新版本发布。",
-        "tier": "minor",
+        "title": "compute-runtime 发布 26.40.40196.8",
+        "analysis": "Intel compute-runtime 发布新版本 26.40.40196.8，无摘要，可能包含驱动更新。",
+        "impact": "使用该驱动的用户可升级获取潜在修复。",
+        "brief": "新驱动版本发布",
+        "tier": "major",
         "changeType": "driver_update",
         "isTrueFix": false,
         "claimOwner": "maintainer",
