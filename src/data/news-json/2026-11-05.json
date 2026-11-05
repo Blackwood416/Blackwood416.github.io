@@ -68,13 +68,21 @@
     {
       "ref": "s9",
       "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] skipp unsupported test cases in CI",
+      "url": "https://github.com/vllm-project/vllm/pull/65805",
+      "updated": "2026-11-05T05:15:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][Perf] Reuse GDN metadata across KV cache groups on XPU",
       "url": "https://github.com/vllm-project/vllm/pull/64479",
       "updated": "2026-11-04T23:45:04Z",
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s11",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU] upgrade to torch 2.15",
       "url": "https://github.com/vllm-project/vllm/pull/63977",
@@ -82,7 +90,31 @@
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s12",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Doc] [XPU] Cookbook: Update the XPU Docker version to 0.5.23",
+      "url": "https://github.com/sgl-project/sglang/pull/48104",
+      "updated": "2026-11-05T05:57:38Z",
+      "score": 23
+    },
+    {
+      "ref": "s13",
+      "source": "TechPowerUp (Windows 驱动与硬件)",
+      "title": "Intel Releases Arc GPU Graphics Drivers 101.9175 WHQL",
+      "url": "https://www.techpowerup.com/354491/intel-releases-arc-gpu-graphics-drivers-101-9175-whql",
+      "updated": "2026-11-05T06:21:02.000Z",
+      "score": 20
+    },
+    {
+      "ref": "s14",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "[Bug] Assetto Corsa Competizione Crashes with D3D Device Lost Error on Driver 9150",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1607",
+      "updated": "2026-11-05T05:38:43Z",
+      "score": 18
+    },
+    {
+      "ref": "s15",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "[Arc B580][Driver 32.0.101.9154 Beta] DXR / Ray Tracing crash (LKD 0x141 BBHANG / GuC Scheduler error) in Call of Duty HQ",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1606",
@@ -90,7 +122,7 @@
       "score": 18
     },
     {
-      "ref": "s12",
+      "ref": "s16",
       "source": "GitHub Release: oneapi-src/oneDNN",
       "title": "v3.14.2",
       "url": "https://github.com/uxlfoundation/oneDNN/releases/tag/v3.14.2",
@@ -102,16 +134,16 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "XPU 跟随上游默认关闭隐式 FP 融合",
+        "title": "Triton XPU 跟随上游默认关闭隐式 FP 融合",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "修复 SimplifySignedArithmetic 对无符号结果的错误假设",
+        "title": "vLLM XPU 复用 GDN 元数据提升性能",
         "refs": [
-          "s2"
+          "s10"
         ]
       }
     ],
@@ -120,13 +152,13 @@
         "refs": [
           "s1"
         ],
-        "title": "适配上游 FP 融合默认值变更",
-        "analysis": "上游 triton-lang/triton#11270 将隐式 FP 融合改为 opt-in，并新增 TRITON_FORCE_DISABLE_FP_FUSION。XPU 侧回滚 #8395，使共享开关默认恢复为 False，与上游行为保持一致。",
-        "impact": "使用 Triton XPU 后端的用户，若依赖默认开启的 FP 融合，需显式启用相关开关。",
+        "title": "适配上游 FP 融合默认变更",
+        "analysis": "上游 triton-lang/triton#11270 将隐式 FP 融合改为 opt-in，并新增 TRITON_FORCE_DISABLE_FP_FUSION。本提交在 XPU 上回滚 #8395，使共享开关默认恢复为 False，以与上游行为一致。",
+        "impact": "使用 Triton XPU 后端的用户需注意 FP 融合默认关闭，可能影响性能，但行为与上游对齐。",
         "brief": "回滚 #8395，默认关闭隐式 FP 融合",
         "tier": "major",
         "changeType": "sync",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -136,8 +168,8 @@
           "s2"
         ],
         "title": "修复无符号结果非负性误判",
-        "analysis": "isNonNegative 无条件接受 remui/divui 的结果，但无符号操作仅表示操作数按无符号读取，不保证结果非负。该修复避免将无符号结果错误视为非负，影响后续符号相关优化。",
-        "impact": "使用 Triton XPU 编译器的用户，可能获得更准确的符号推导，避免潜在错误优化。",
+        "analysis": "SimplifySignedArithmetic 的 isNonNegative 无条件接受 remui/divui 结果，但无符号操作仅表示操作数按无符号读取，不保证结果非负。本提交修正该逻辑，避免后续优化错误。",
+        "impact": "影响依赖该优化 pass 的 Triton XPU 编译正确性，修复潜在错误代码生成。",
         "brief": "修正无符号结果非负性判断",
         "tier": "major",
         "changeType": "bugfix",
@@ -151,9 +183,9 @@
           "s3"
         ],
         "title": "vLLM CI 提前 5 小时运行",
-        "analysis": "将 vllm-tests-bmg/pvc.yml 的调度时间提前 5 小时，以避开仓库活动高峰期，减少资源竞争和等待时间。",
+        "analysis": "将 vllm-tests-bmg/pvc.yml 的调度时间提前 5 小时，以避开仓库活动高峰期，减少资源竞争。属于 CI 调度调整。",
         "impact": null,
-        "brief": "调整 vLLM CI 调度时间",
+        "brief": "调整 vLLM CI 运行时间",
         "tier": "minor",
         "changeType": "ci",
         "isTrueFix": false,
@@ -166,9 +198,9 @@
           "s4"
         ],
         "title": "新增 grouped-matmul 行限制掩码基准",
-        "analysis": "为 grouped-matmul 添加 row-limit-mask 微基准测试，覆盖 #8565 的场景，用于验证相关优化或修复。",
+        "analysis": "为 grouped-matmul 添加 row-limit-mask 微基准测试，覆盖 #8565 场景，用于性能回归检测。",
         "impact": null,
-        "brief": "添加 grouped-matmul 微基准",
+        "brief": "添加 grouped-matmul 基准测试",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -180,10 +212,10 @@
         "refs": [
           "s5"
         ],
-        "title": "FMA 路径 fp8 操作数拓宽时机调整",
-        "analysis": "在 FMA 路径中，decomposeMixedModeDotOp 在点积操作数（已处于 blocked 布局）上拓宽 fp8 操作数，但该布局会复制操作数。此改动将拓宽提前到布局转换之前，避免不必要的复制。",
-        "impact": "使用 fp8 FMA 路径的 Triton XPU 用户，可能获得性能提升。",
-        "brief": "调整 fp8 拓宽时机，避免布局复制",
+        "title": "修复 fp8 FMA 点积操作数拓宽时机",
+        "analysis": "在 FMA 路径上，decomposeMixedModeDotOp 在点积操作数已处于 blocked 布局时拓宽 fp8 操作数，但该布局会复制操作数，导致拓宽无效。本提交将拓宽提前到布局转换之前，确保正确性。",
+        "impact": "影响使用 fp8 FMA 路径的 Triton XPU 编译，修复潜在错误结果。",
+        "brief": "提前拓宽 fp8 操作数",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -196,7 +228,7 @@
           "s6"
         ],
         "title": "base_height 改为运行时操作数",
-        "analysis": "将 ttig.2d_block_load_from_ptr 的 base_height 从编译期 I32Attr 改为运行时 i32 操作数，这是 #8615 的非功能部分，为后续功能做准备。",
+        "analysis": "将 ttig.2d_block_load_from_ptr 的 base_height 从编译期 I32Attr 改为运行时 i32 操作数，与 #8615 的 NFC 部分拆分，为后续功能做准备。",
         "impact": null,
         "brief": "base_height 改为运行时操作数",
         "tier": "minor",
@@ -211,7 +243,7 @@
           "s7"
         ],
         "title": "修复 Windows 下 proton 测试构建",
-        "analysis": "修复 proton ChromeTraceWriterTest 在 Windows 上的构建问题，属于平台兼容性修复。",
+        "analysis": "修复 proton ChromeTraceWriterTest 在 Windows 上的构建问题，属于构建修复。",
         "impact": null,
         "brief": "修复 Windows 构建问题",
         "tier": "minor",
@@ -226,8 +258,8 @@
           "s8"
         ],
         "title": "FMA 路径支持 bf16 累加器",
-        "analysis": "允许 bf16 x bf16 和 fp8 x fp8 点积使用 bf16 累加器，但仅限无法使用 DPAS 的形状或函数。这为 FMA 路径提供更多累加器选择。",
-        "impact": "使用 FMA 路径的 Triton XPU 用户，可能获得更灵活的精度选择。",
+        "analysis": "允许 bf16 x bf16 和 fp8 x fp8 点积使用 bf16 累加器，但仅限无法使用 DPAS 的形状或函数。这扩展了 FMA 路径的累加器类型支持。",
+        "impact": "影响使用 bf16/fp8 点积且无法使用 DPAS 的 Triton XPU 用户，可能提升性能。",
         "brief": "FMA 路径支持 bf16 累加器",
         "tier": "major",
         "changeType": "feature",
@@ -240,9 +272,24 @@
         "refs": [
           "s9"
         ],
+        "title": "vLLM XPU 跳过不支持测试",
+        "analysis": "在 vLLM XPU CI 中跳过不支持或随机失败的测试用例：Unlimited_OCR 未正确启用，test_derender_parity 因 logprobs 严格匹配导致随机失败。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "跳过 XPU 不支持测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
         "title": "XPU 复用 GDN 元数据",
-        "analysis": "让 XPU 使用现有 Model Runner V2 路径，复用 KV cache 组间的 GDN 注意力元数据。此前该路径和 mamba align 模式中的对齐状态索引预计算仅限 CUDA，现扩展至 XPU。",
-        "impact": "vLLM XPU 用户，可能获得 KV cache 组间元数据复用的性能提升。",
+        "analysis": "让 XPU 使用 Model Runner V2 路径，复用 KV cache 组间的 GDN attention 元数据。此前该复用路径和 mamba align 模式的 aligned state index 预计算仅限 CUDA，现扩展到 XPU。",
+        "impact": "提升 vLLM XPU 上 KV cache 组间的性能，减少重复计算。",
         "brief": "XPU 复用 GDN 元数据",
         "tier": "major",
         "changeType": "feature",
@@ -253,12 +300,12 @@
       },
       {
         "refs": [
-          "s10"
+          "s11"
         ],
         "title": "vLLM XPU 升级至 torch 2.15",
-        "analysis": "将 vLLM 的 XPU 后端升级到 torch 2.15，以适配新版本 PyTorch 的 API 和特性。",
-        "impact": "vLLM XPU 用户，需确保环境使用 torch 2.15。",
-        "brief": "vLLM XPU 升级 torch 2.15",
+        "analysis": "将 vLLM XPU 的 torch 版本升级到 2.15，以适配新特性或修复。",
+        "impact": "vLLM XPU 用户需更新 torch 依赖。",
+        "brief": "升级 torch 至 2.15",
         "tier": "major",
         "changeType": "sync",
         "isTrueFix": false,
@@ -268,12 +315,42 @@
       },
       {
         "refs": [
-          "s11"
+          "s12"
         ],
-        "title": "Arc B580 驱动 DXR 崩溃报告",
-        "analysis": "报告者称在 Call of Duty HQ 中，使用驱动 32.0.101.9154 Beta 时发生 DXR/光线追踪崩溃，错误为 LKD 0x141 BBHANG / GuC Scheduler error。报告者认为这是驱动问题，但尚未确认根因。",
-        "impact": "使用 Arc B580 和该 Beta 驱动的用户，可能遇到光线追踪崩溃。",
-        "brief": "Arc B580 驱动 DXR 崩溃报告",
+        "title": "SGLang XPU Docker 版本更新",
+        "analysis": "SGLang XPU Docker 镜像发布 v0.5.23，更新 cookbook 中的拉取命令。",
+        "impact": "SGLang XPU 用户需使用新 Docker 镜像。",
+        "brief": "更新 XPU Docker 版本",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "Intel 发布 Arc 驱动 101.9175 WHQL",
+        "analysis": "Intel 发布 Arc GPU 图形驱动 101.9175 WHQL，包含对多款游戏的优化和问题修复。",
+        "impact": "Arc GPU 用户可更新驱动以获取优化和修复。",
+        "brief": "发布新 WHQL 驱动",
+        "tier": "major",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "ACC 在驱动 9150 上崩溃",
+        "analysis": "报告者称 Assetto Corsa Competizione 在驱动 9150 上出现 D3D Device Lost 错误并崩溃。报告者认为可能与驱动相关，但未提供根因。",
+        "impact": "使用该驱动的 ACC 玩家可能遇到崩溃。",
+        "brief": "ACC 崩溃问题报告",
         "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
@@ -283,12 +360,27 @@
       },
       {
         "refs": [
-          "s12"
+          "s15"
         ],
-        "title": "oneDNN v3.14.2 发布",
-        "analysis": "oneDNN 发布 v3.14.2 版本，具体变更内容未提供摘要。",
-        "impact": "使用 oneDNN 的开发者，可升级到 v3.14.2 获取最新修复。",
-        "brief": "oneDNN v3.14.2 发布",
+        "title": "Arc B580 驱动 9154 下 DXR 崩溃",
+        "analysis": "报告者称在 Arc B580 上使用驱动 32.0.101.9154 Beta 运行 Call of Duty HQ 时出现 DXR/光追崩溃（LKD 0x141 BBHANG / GuC Scheduler error）。报告者认为与驱动相关，但未确认根因。",
+        "impact": "使用该驱动的 Arc B580 用户可能遇到光追崩溃。",
+        "brief": "DXR 崩溃问题报告",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s16"
+        ],
+        "title": "oneDNN 发布 v3.14.2",
+        "analysis": "oneDNN 发布 v3.14.2 版本，具体变更未提供摘要。",
+        "impact": "使用 oneDNN 的开发者可升级到新版本。",
+        "brief": "oneDNN 发布 v3.14.2",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": false,
