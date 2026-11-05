@@ -1,0 +1,301 @@
+{
+  "date": "2026-11-05",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[INTEL] Adapt to the upstream fp fusion default change (#8314)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/2b65336a2f19568939bc62c8ef513bcdb3929156",
+      "updated": "2026-11-04T09:58:43Z",
+      "score": 57
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[SimplifySignedArithmetic] Don't treat every unsigned result as non-negative (#8638)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/f0f45d3ff71d6ca57991bd59d6424dc57118c5ab",
+      "updated": "2026-11-04T20:37:32Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM][CI] Run vllm-tests-bmg/pvc.yml 5 hours earlier (#8648)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a6d7f377b0fd8896e612a05bc29b2f4455c48013",
+      "updated": "2026-11-04T20:28:32Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmark] Add grouped-matmul row-limit-mask micro-benchmark (covers #8565) (#8640)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6da05e2d5960839b78ba4a3d4a76451647559dff",
+      "updated": "2026-11-04T19:06:54Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Widen fp8 FMA dot operands before layout conversion (#8641)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/f242df44366bd99681213844e80175015d423ce7",
+      "updated": "2026-11-04T16:24:19Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Make `base_height` a runtime operand of `2d_block_load_from_ptr` (#8645)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/46c53eed17d9f4a52d8f12583b380fdf9d891b11",
+      "updated": "2026-11-04T14:10:41Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Fix proton ChromeTraceWriterTest build on Windows",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/7af37e8057a8c16fa189d0c36963f588eb4f8ef5",
+      "updated": "2026-11-04T10:19:20Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Accumulate FMA-path dots with a bf16 accumulator in fp32 (#8499)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/79e68e2963dd002f8cb8308cf0cd0237f0e7a1af",
+      "updated": "2026-11-04T08:20:50Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Perf] Reuse GDN metadata across KV cache groups on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/64479",
+      "updated": "2026-11-04T23:45:04Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] upgrade to torch 2.15",
+      "url": "https://github.com/vllm-project/vllm/pull/63977",
+      "updated": "2026-11-04T08:46:47Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "[Arc B580][Driver 32.0.101.9154 Beta] DXR / Ray Tracing crash (LKD 0x141 BBHANG / GuC Scheduler error) in Call of Duty HQ",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1606",
+      "updated": "2026-11-04T23:40:26Z",
+      "score": 18
+    },
+    {
+      "ref": "s12",
+      "source": "GitHub Release: oneapi-src/oneDNN",
+      "title": "v3.14.2",
+      "url": "https://github.com/uxlfoundation/oneDNN/releases/tag/v3.14.2",
+      "updated": "2026-11-04T08:36:47.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "XPU 跟随上游默认关闭隐式 FP 融合",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "修复 SimplifySignedArithmetic 对无符号结果的错误假设",
+        "refs": [
+          "s2"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "适配上游 FP 融合默认值变更",
+        "analysis": "上游 triton-lang/triton#11270 将隐式 FP 融合改为 opt-in，并新增 TRITON_FORCE_DISABLE_FP_FUSION。XPU 侧回滚 #8395，使共享开关默认恢复为 False，与上游行为保持一致。",
+        "impact": "使用 Triton XPU 后端的用户，若依赖默认开启的 FP 融合，需显式启用相关开关。",
+        "brief": "回滚 #8395，默认关闭隐式 FP 融合",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "修复无符号结果非负性误判",
+        "analysis": "isNonNegative 无条件接受 remui/divui 的结果，但无符号操作仅表示操作数按无符号读取，不保证结果非负。该修复避免将无符号结果错误视为非负，影响后续符号相关优化。",
+        "impact": "使用 Triton XPU 编译器的用户，可能获得更准确的符号推导，避免潜在错误优化。",
+        "brief": "修正无符号结果非负性判断",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "vLLM CI 提前 5 小时运行",
+        "analysis": "将 vllm-tests-bmg/pvc.yml 的调度时间提前 5 小时，以避开仓库活动高峰期，减少资源竞争和等待时间。",
+        "impact": null,
+        "brief": "调整 vLLM CI 调度时间",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "新增 grouped-matmul 行限制掩码基准",
+        "analysis": "为 grouped-matmul 添加 row-limit-mask 微基准测试，覆盖 #8565 的场景，用于验证相关优化或修复。",
+        "impact": null,
+        "brief": "添加 grouped-matmul 微基准",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "FMA 路径 fp8 操作数拓宽时机调整",
+        "analysis": "在 FMA 路径中，decomposeMixedModeDotOp 在点积操作数（已处于 blocked 布局）上拓宽 fp8 操作数，但该布局会复制操作数。此改动将拓宽提前到布局转换之前，避免不必要的复制。",
+        "impact": "使用 fp8 FMA 路径的 Triton XPU 用户，可能获得性能提升。",
+        "brief": "调整 fp8 拓宽时机，避免布局复制",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "base_height 改为运行时操作数",
+        "analysis": "将 ttig.2d_block_load_from_ptr 的 base_height 从编译期 I32Attr 改为运行时 i32 操作数，这是 #8615 的非功能部分，为后续功能做准备。",
+        "impact": null,
+        "brief": "base_height 改为运行时操作数",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "修复 Windows 下 proton 测试构建",
+        "analysis": "修复 proton ChromeTraceWriterTest 在 Windows 上的构建问题，属于平台兼容性修复。",
+        "impact": null,
+        "brief": "修复 Windows 构建问题",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "FMA 路径支持 bf16 累加器",
+        "analysis": "允许 bf16 x bf16 和 fp8 x fp8 点积使用 bf16 累加器，但仅限无法使用 DPAS 的形状或函数。这为 FMA 路径提供更多累加器选择。",
+        "impact": "使用 FMA 路径的 Triton XPU 用户，可能获得更灵活的精度选择。",
+        "brief": "FMA 路径支持 bf16 累加器",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "XPU 复用 GDN 元数据",
+        "analysis": "让 XPU 使用现有 Model Runner V2 路径，复用 KV cache 组间的 GDN 注意力元数据。此前该路径和 mamba align 模式中的对齐状态索引预计算仅限 CUDA，现扩展至 XPU。",
+        "impact": "vLLM XPU 用户，可能获得 KV cache 组间元数据复用的性能提升。",
+        "brief": "XPU 复用 GDN 元数据",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "vLLM XPU 升级至 torch 2.15",
+        "analysis": "将 vLLM 的 XPU 后端升级到 torch 2.15，以适配新版本 PyTorch 的 API 和特性。",
+        "impact": "vLLM XPU 用户，需确保环境使用 torch 2.15。",
+        "brief": "vLLM XPU 升级 torch 2.15",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "Arc B580 驱动 DXR 崩溃报告",
+        "analysis": "报告者称在 Call of Duty HQ 中，使用驱动 32.0.101.9154 Beta 时发生 DXR/光线追踪崩溃，错误为 LKD 0x141 BBHANG / GuC Scheduler error。报告者认为这是驱动问题，但尚未确认根因。",
+        "impact": "使用 Arc B580 和该 Beta 驱动的用户，可能遇到光线追踪崩溃。",
+        "brief": "Arc B580 驱动 DXR 崩溃报告",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "oneDNN v3.14.2 发布",
+        "analysis": "oneDNN 发布 v3.14.2 版本，具体变更内容未提供摘要。",
+        "impact": "使用 oneDNN 的开发者，可升级到 v3.14.2 获取最新修复。",
+        "brief": "oneDNN v3.14.2 发布",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
