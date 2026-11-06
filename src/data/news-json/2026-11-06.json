@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-06",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Analysis] Stop under-approximating loop-carried ranges in IntegerRangeAnalysis (#8621)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8939c1b08a8e14cfde9da009b17b251cede57d7f",
+      "updated": "2026-11-05T21:08:51Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "GitHub Release: intel/intel-graphics-compiler",
+      "title": "v2.43.3:  vISA: Revert merge scalar pass tuning",
+      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.3",
+      "updated": "2026-11-05T11:19:04.000Z",
+      "score": 29
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[XPU][UT] Enable FPSan test cases for `test_matmul_mixed_fp8_matches_upcast` (#8662)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/1651e244c9968b151af091d1ce2836fd90349568",
+      "updated": "2026-11-05T23:17:22Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Use row-limit masks as dynamic `base_height` for prefetch (#8664)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/d983190cfe12cf0c3a77398b16624da684eefbb3",
+      "updated": "2026-11-05T22:24:29Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Correct rank-reducing 2D block stores and fold unit-dim-adding reshapes into them (#8593)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/f84d87bfa838932f65b30dcbfe4e21e89963e5eb",
+      "updated": "2026-11-05T21:24:41Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[AxisInfo][StrideInfo] Fix unsound deductions for signed division and remainder (#8610)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e38f5eb08cdf2d639a59fd25a972b65f91a8755b",
+      "updated": "2026-11-05T20:33:52Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Lower row-limit masks on `2d_block_load_from_ptr` to `base_height` (#8651)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8e13b628dd85fbb214d1d3a69a252e45f7e6c042",
+      "updated": "2026-11-05T19:11:08Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[NFC] Migrate the Intel backend off deprecated op builders (#8654)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/28b0ff8e1be44252042718033d2cdcab9e7aad8d",
+      "updated": "2026-11-05T11:38:05Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[AccelerateMatmul] Spread chained-dot warps along N when the duplicat… (#8475)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/863afd7eae586ef3e4277aef21311285da20ed5e",
+      "updated": "2026-11-05T10:06:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Add fma_rz to Intel libdevice",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/214b8265accbdcd1338cfba62c997bcc4b682394",
+      "updated": "2026-11-05T07:46:59Z",
+      "score": 25
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "修复整数范围分析对循环携带值的低估，解决两个复现问题",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "2D 块加载/存储利用行限制掩码优化，提升性能",
+        "refs": [
+          "s4",
+          "s7",
+          "s5"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "修复循环携带值范围低估",
+        "analysis": "IntegerRangeAnalysis 之前对循环携带的迭代参数范围采用低估，导致分析不精确。此改动停止低估，修复了两个复现问题，但若循环读取的外部值在计数用完后变化，迭代参数仍可能丢失值。",
+        "impact": "依赖该分析的优化（如向量化、边界检查）可能受益，但需注意剩余边界情况。",
+        "brief": "修复循环携带值范围低估，解决两个复现问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
