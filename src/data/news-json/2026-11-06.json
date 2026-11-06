@@ -80,6 +80,30 @@
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/214b8265accbdcd1338cfba62c997bcc4b682394",
       "updated": "2026-11-05T07:46:59Z",
       "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] increase gpu_memory_utilization for test_granite4_vision.py",
+      "url": "https://github.com/vllm-project/vllm/pull/66029",
+      "updated": "2026-11-06T05:12:54Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][UT] Temporarily Skip CUDA-IPC weight cache test",
+      "url": "https://github.com/vllm-project/vllm/pull/64478",
+      "updated": "2026-11-06T00:25:52Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Feat] [XPU] quant: Add MXFP8 W8A8 compressed-tensors",
+      "url": "https://github.com/sgl-project/sglang/pull/41532",
+      "updated": "2026-11-06T01:45:43Z",
+      "score": 25
     }
   ],
   "output": {
@@ -93,11 +117,16 @@
       },
       {
         "status": "Merged",
-        "title": "2D 块加载/存储利用行限制掩码优化，提升性能",
+        "title": "修复 2D 块存储降维时的错误，并合并单位维度重塑",
         "refs": [
-          "s4",
-          "s7",
           "s5"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "新增 MXFP8 W8A8 量化支持，XPU 可用 scaled_mm 后端",
+        "refs": [
+          "s13"
         ]
       }
     ],
@@ -106,13 +135,193 @@
         "refs": [
           "s1"
         ],
-        "title": "修复循环携带值范围低估",
-        "analysis": "IntegerRangeAnalysis 之前对循环携带的迭代参数范围采用低估，导致分析不精确。此改动停止低估，修复了两个复现问题，但若循环读取的外部值在计数用完后变化，迭代参数仍可能丢失值。",
-        "impact": "依赖该分析的优化（如向量化、边界检查）可能受益，但需注意剩余边界情况。",
-        "brief": "修复循环携带值范围低估，解决两个复现问题",
+        "title": "修复循环携带范围低估问题",
+        "analysis": "IntegerRangeAnalysis 之前对循环携带值范围采用低估近似，导致两个复现用例结果不精确。本次修复停止低估，但若循环读取的外部值在计数耗尽后变化，迭代参数仍可能丢失值。",
+        "impact": "依赖该分析的优化（如边界推断）可能产生更精确结果，但需注意剩余边界情况。",
+        "brief": "修复循环携带范围低估，仍有边界情况",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "vISA 回退标量合并调优",
+        "analysis": "IGC v2.43.3 发布，回退了 vISA 中的标量合并调优改动，可能因该调优引入性能或正确性问题。",
+        "impact": "使用 IGC 的 Intel GPU 用户可能受性能或行为变化影响，建议更新到该版本。",
+        "brief": "IGC 发布 v2.43.3，回退标量合并调优",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "启用 FP8 混合 matmul 的 FPSan 测试",
+        "analysis": "为 test_matmul_mixed_fp8_matches_upcast 启用 FPSan 测试用例，属于测试覆盖增强，不涉及功能改动。",
+        "impact": null,
+        "brief": "启用 FP8 混合 matmul 的 FPSan 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "预取使用行限制掩码作为动态 base_height",
+        "analysis": "当预取掩码匹配行限制模式时，将其用作动态 base_height，以优化预取行为。该改动从 #8615 拆分出来，根据评审反馈调整。",
+        "impact": "影响 Triton Intel GPU 后端的预取优化，可能提升特定模式下的性能。",
+        "brief": "预取掩码映射到动态 base_height",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "修复 2D 块存储降维错误",
+        "analysis": "rank-reducing 的 tt.descriptor_store（描述符 1xMxN，值 MxN）在降低到 2D 块存储时忽略了某些维度信息，导致错误。本次修复并折叠单位维度添加的重塑操作。",
+        "impact": "修复了使用降维描述符存储的代码生成正确性问题，相关用户应更新。",
+        "brief": "修复 2D 块存储降维错误",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "修复有符号除法余数的推断不健全",
+        "analysis": "AxisInfo 和 StrideInfo 对有符号除法和余数的推断使用了不健全的 floor-division 近似，导致可能错误的常量性/连续性结论。本次修复了这些推断。",
+        "impact": "影响依赖这些推断的优化，可能提升正确性。",
+        "brief": "修复有符号除法余数推断不健全",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "行限制掩码降低到 base_height",
+        "analysis": "在 2d_block_load_from_ptr 上，当掩码匹配 (rowBase + arange) < bound 模式时，将其降低为 base_height 参数，以利用硬件特性。",
+        "impact": "影响 Triton Intel GPU 后端的 2D 块加载优化，可能提升性能。",
+        "brief": "行限制掩码映射到 base_height",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "迁移弃用的 op 构建器",
+        "analysis": "MLIR 弃用了混合属性列表的 Op::create 方法，Intel 后端迁移到新的构建方式，属于 NFC 改动，不影响功能。",
+        "impact": null,
+        "brief": "迁移弃用 op 构建器",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "链式 dot 沿 N 分布 warp",
+        "analysis": "当链式 dot 的 M 适配单个 DPAS tile 时，之前所有 warp 沿 M 分布，导致每个 warp 保留完整 B 和累加器。本次改为沿 N 分布，减少冗余。",
+        "impact": "影响 AccelerateMatmul 优化，可能提升特定形状下的性能。",
+        "brief": "链式 dot warp 沿 N 分布",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "Intel libdevice 添加 fma_rz",
+        "analysis": "为 Intel libdevice 添加 fma_rz 函数，提供向零舍入的融合乘加支持。",
+        "impact": "使用该函数的用户可获得对应精度行为。",
+        "brief": "添加 fma_rz 到 Intel libdevice",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "提高 XPU 测试的 gpu_memory_utilization",
+        "analysis": "为 test_granite4_vision.py 在 XPU 上增加 gpu_memory_utilization，以解决测试内存不足问题，属于测试调整。",
+        "impact": null,
+        "brief": "提高 XPU 测试内存利用率",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "临时跳过 CUDA-IPC 权重缓存测试",
+        "analysis": "在非 CUDA/ROCm 平台临时跳过 test_weight_cache.py，因为 IPC 权重缓存计划在 XPU 支持但依赖新版 pytorch，属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "临时跳过 IPC 权重缓存测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "XPU 支持 MXFP8 W8A8 量化",
+        "analysis": "为 XPU 添加 MXFP8 W8A8 压缩张量支持，使用 torch.nn.functional.scaled_mm，并启用 xpu_scaled_mm 作为 fp8-gemm-backend 选项。",
+        "impact": "使用 MXFP8 量化的用户可在 XPU 上获得支持，需更新相关配置。",
+        "brief": "XPU 新增 MXFP8 W8A8 支持",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
