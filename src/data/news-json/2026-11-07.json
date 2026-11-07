@@ -92,13 +92,21 @@
     {
       "ref": "s12",
       "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] skip test_online_hadamard_target_wraps_resolved_method UT",
+      "url": "https://github.com/vllm-project/vllm/pull/66125",
+      "updated": "2026-11-07T04:05:53Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][CI] Correct deselected file path in entrypoints/scale_out test",
       "url": "https://github.com/vllm-project/vllm/pull/66039",
       "updated": "2026-11-06T08:25:22Z",
       "score": 25
     },
     {
-      "ref": "s13",
+      "ref": "s14",
       "source": "TechPowerUp (Windows 驱动与硬件)",
       "title": "Unreleased Radeon RX 7500 and Intel Razor Lake-H/HX/S Appear in Latest HWiNFO Beta",
       "url": "https://www.techpowerup.com/354555/unreleased-radeon-rx-7500-and-intel-razor-lake-h-hx-s-appear-in-latest-hwinfo-beta",
@@ -106,7 +114,7 @@
       "score": 18
     },
     {
-      "ref": "s14",
+      "ref": "s15",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "PETAFAB: Bot Invasion - Crash to desktop",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1609",
@@ -118,14 +126,14 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "移除 flex attention 测试跳过，驱动已修复挂起",
+        "title": "移除因驱动挂起而跳过的 flex attention 测试",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "Triton 版本升至 3.9.1 以适配 PyTorch 2.16",
+        "title": "Triton 版本升级至 3.9.1 以适配 PyTorch 2.16",
         "refs": [
           "s3"
         ]
@@ -136,13 +144,13 @@
         "refs": [
           "s1"
         ],
-        "title": "恢复 flex attention 测试，移除旧驱动规避",
-        "analysis": "此前因 IGC 2.40.x 导致 GPU 挂起而跳过 flex attention 测试，现新驱动已验证修复，故撤销该跳过。属于移除临时规避，恢复测试覆盖。",
-        "impact": "恢复 flex attention 测试覆盖，需确保 CI 使用新驱动。",
-        "brief": "移除 flex attention 测试跳过，驱动已修复。",
+        "title": "恢复被跳过的 flex attention 测试",
+        "analysis": "该测试此前因 IGC 2.40.x 驱动导致 GPU 挂起而被跳过，现新驱动已验证修复，故撤销跳过。",
+        "impact": "恢复该测试的 CI 覆盖，确保 flex attention 在 XPU 上持续验证。",
+        "brief": "撤销因驱动挂起跳过的 flex attention 测试",
         "tier": "minor",
         "changeType": "test_fix",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -153,8 +161,8 @@
         ],
         "title": "适配上游 elementwise 与 true-mask 折叠改动",
         "analysis": "Intel 后端需同步上游 Triton 的 elementwise lowering 和 true-mask folding 变更，以保持行为一致。",
-        "impact": "影响 Intel 后端代码生成，需验证相关算子正确性。",
-        "brief": "同步上游 elementwise 与 mask 折叠改动。",
+        "impact": "影响所有使用 elementwise 和 mask 折叠的 XPU 编译路径，需回归验证。",
+        "brief": "同步上游 elementwise 与 mask 折叠改动",
         "tier": "major",
         "changeType": "sync",
         "isTrueFix": false,
@@ -166,10 +174,10 @@
         "refs": [
           "s3"
         ],
-        "title": "Triton 版本更新至 3.9.1",
-        "analysis": "为适配 PyTorch 2.16，将 Triton 版本从 3.9.0 升至 3.9.1。后续可能需升级至 3.10 取决于上游。",
-        "impact": "影响所有使用该后端的用户，需重新构建并验证兼容性。",
-        "brief": "Triton 版本升至 3.9.1。",
+        "title": "Triton 版本从 3.9.0 升至 3.9.1",
+        "analysis": "为适配 PyTorch 2.16 将 Triton 版本升级至 3.9.1，后续可能需升级至 3.10。",
+        "impact": "影响所有依赖 Triton 的 XPU 编译和运行时，需验证兼容性。",
+        "brief": "升级 Triton 至 3.9.1 适配 PyTorch 2.16",
         "tier": "major",
         "changeType": "sync",
         "isTrueFix": false,
@@ -181,10 +189,10 @@
         "refs": [
           "s4"
         ],
-        "title": "SymbolicBounds 新增 materializeForm 与 splat 归一化",
-        "analysis": "新增 materializeForm 让 pass 能将 prover 已知信息转回 IR，splat-leaf 归一化模式用于 #8651 的行数限制场景。",
-        "impact": "影响依赖 SymbolicBounds 的优化 pass，如行限制相关优化。",
-        "brief": "SymbolicBounds 新增 IR 物化与归一化模式。",
+        "title": "SymbolicBounds 新增 materializeForm 与 splat-leaf 归一化",
+        "analysis": "新增 materializeForm 让 prover 的结论可转回 IR，并支持 splat-leaf 归一化模式，用于行限制场景。",
+        "impact": "为需要行限制信息的优化（如 #8651）提供基础能力。",
+        "brief": "SymbolicBounds 支持将证明结果物化为 IR",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -196,10 +204,10 @@
         "refs": [
           "s5"
         ],
-        "title": "循环内 convert 重物化至锚点",
-        "analysis": "在 RemoveLayoutConversions 中，将循环内 convert 重物化至锚点，以修复 #8596 中 per-row scale load 的布局问题。",
-        "impact": "影响布局转换优化，可能改善相关算子性能。",
-        "brief": "循环内 convert 重物化修复布局问题。",
+        "title": "RemoveLayoutConversions 重物化循环内转换",
+        "analysis": "在循环内将转换重物化到锚点，以修复 #8596 中每行 scale 加载的布局问题。",
+        "impact": "改善涉及循环内布局转换的 matmul 性能与正确性。",
+        "brief": "循环内转换重物化修复 scale 加载布局",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -212,10 +220,10 @@
           "s6"
         ],
         "title": "移除 ScanOpToLLVM fork，改用 warpScan 钩子",
-        "analysis": "将 600 行重复的 ScanOpToLLVM 实现替换为 TargetInfoBase 的 warpScan 钩子，减少代码重复。",
-        "impact": "影响扫描算子代码生成，需验证功能一致性。",
-        "brief": "移除 ScanOpToLLVM fork，改用钩子。",
-        "tier": "major",
+        "analysis": "将 600 行重复的 ScanOpToLLVM 实现替换为上游的 warpScan 钩子，减少维护成本。",
+        "impact": "减少代码重复，降低维护负担，需验证扫描操作行为一致。",
+        "brief": "用 warpScan 钩子替代 ScanOpToLLVM fork",
+        "tier": "minor",
         "changeType": "refactor",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -226,12 +234,12 @@
         "refs": [
           "s7"
         ],
-        "title": "新增 rank-3 分组矩阵乘行限制基准",
-        "analysis": "添加 rank-3 分组矩阵乘行限制掩码的微基准，作为 #8640 的后续，用于测试相关优化。",
-        "impact": "影响基准测试，便于性能评估。",
-        "brief": "新增 rank-3 分组矩阵乘基准。",
+        "title": "新增 rank-3 分组 matmul 行限制掩码基准",
+        "analysis": "添加 rank-3 变体的分组 matmul 行限制掩码微基准，作为 #8640 的后续。",
+        "impact": "为行限制掩码优化提供性能基准。",
+        "brief": "新增 rank-3 分组 matmul 行限制基准",
         "tier": "minor",
-        "changeType": "test_fix",
+        "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -242,9 +250,9 @@
           "s8"
         ],
         "title": "合并 Intel 单元测试为单一可执行文件",
-        "analysis": "将 15 个 Intel Analysis/Dialect 单元测试合并为一个 TritonIntelUnitTests 可执行文件，减少链接开销。",
-        "impact": "影响测试构建和运行，需验证测试结果。",
-        "brief": "合并 Intel 单元测试可执行文件。",
+        "analysis": "将 15 个 Intel Analysis/Dialect 单元测试合并为一个可执行文件，减少链接开销。",
+        "impact": "降低测试构建时间，简化 CI 配置。",
+        "brief": "合并 Intel 单元测试可执行文件",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -256,10 +264,10 @@
         "refs": [
           "s9"
         ],
-        "title": "Proton 插件链接 ProtonIntelGPUToLLVM",
-        "analysis": "修复 TritonProton 插件未链接 ProtonIntelGPUToLLVM 的问题，使 createConvertProtonIntelGPUToLLVMPass 可用。",
-        "impact": "影响 Proton 插件功能，需重新构建。",
-        "brief": "修复 Proton 插件链接问题。",
+        "title": "将 ProtonIntelGPUToLLVM 链接进 TritonProton 插件",
+        "analysis": "修复 TritonProton 插件未链接 ProtonIntelGPUToLLVM 导致符号缺失的问题。",
+        "impact": "使 Proton 的 instrumentation 模式在 XPU 上可用。",
+        "brief": "修复 Proton 插件链接缺失",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -271,10 +279,10 @@
         "refs": [
           "s10"
         ],
-        "title": "XPU 启用 Proton instrumentation 模式",
-        "analysis": "启用 Proton 的 instrumentation 模式，支持内核内性能分析，提供 TTGIR 覆盖等。",
-        "impact": "影响使用 Proton 进行性能分析的用户。",
-        "brief": "XPU 支持 Proton 内核内分析。",
+        "title": "为 XPU 启用 Proton instrumentation 模式",
+        "analysis": "启用 Proton 的 instrumentation 模式，支持内核内性能分析。",
+        "impact": "为 XPU 开发者提供内核级 profiling 能力。",
+        "brief": "XPU 启用 Proton instrumentation 模式",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -286,10 +294,10 @@
         "refs": [
           "s11"
         ],
-        "title": "文档化测试跳过与 xfail 列表规则",
-        "analysis": "明确失败测试应放入 skip 列表（平台限制）或 xfail 列表（已知 bug）的规则，与 #8609 对齐。",
-        "impact": "影响测试维护者，需遵循新规则。",
-        "brief": "文档化 skip/xfail 列表规则。",
+        "title": "文档说明失败测试应入 skip 或 xfail 列表的规则",
+        "analysis": "明确平台限制导致的失败测试应放入 xfail 列表，而非 skip 列表，以区分 bug 与平台限制。",
+        "impact": "规范测试管理，帮助维护者正确分类失败测试。",
+        "brief": "文档化 skip 与 xfail 列表使用规则",
         "tier": "minor",
         "changeType": "doc",
         "isTrueFix": false,
@@ -301,10 +309,10 @@
         "refs": [
           "s12"
         ],
-        "title": "修正 vLLM 测试取消选择的文件路径",
-        "analysis": "在 vLLM 的 Intel CI 中，修正 entrypoints/scale_out 测试的取消选择路径，添加缺失的 tests/ 前缀，使测试真正被排除。",
-        "impact": "影响 vLLM Intel CI 测试执行，确保测试被正确跳过。",
-        "brief": "修正 vLLM 测试路径。",
+        "title": "XPU 跳过 online hadamard 相关单元测试",
+        "analysis": "由于 XPU 上可用的 MXFP4 线性内核仅支持动态激活，跳过该测试。",
+        "impact": "测试跳过，根因未解决，属于平台限制。",
+        "brief": "XPU 跳过 hadamard 测试因内核限制",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -316,10 +324,25 @@
         "refs": [
           "s13"
         ],
-        "title": "HWiNFO 识别未发布 Radeon RX 7500 与 Razor Lake",
-        "analysis": "HWiNFO 最新 beta 添加了对 AMD Radeon RX 7500 和 Intel Razor Lake-H/HX/S 的识别，但规格未知。",
-        "impact": "影响硬件检测工具用户，需更新 HWiNFO。",
-        "brief": "HWiNFO 识别新硬件。",
+        "title": "修正 CI 中 deselected 文件路径",
+        "analysis": "在路径前添加 tests/ 前缀，使测试真正被排除在 Intel-CI 运行之外。",
+        "impact": "修复 CI 配置错误，确保测试正确跳过。",
+        "brief": "修正 CI 排除文件路径",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "HWiNFO 新增对 Razor Lake-H/HX/S 的识别",
+        "analysis": "HWiNFO 最新 beta 添加了对未发布的 Intel Razor Lake-H/HX/S 处理器的识别，具体规格未知。",
+        "impact": "为未来硬件提供初步支持，对开发者无直接影响。",
+        "brief": "HWiNFO 识别 Razor Lake 系列",
         "tier": "minor",
         "changeType": "driver_update",
         "isTrueFix": false,
@@ -329,12 +352,12 @@
       },
       {
         "refs": [
-          "s14"
+          "s15"
         ],
         "title": "PETAFAB 游戏崩溃问题报告",
-        "analysis": "用户报告 PETAFAB: Bot Invasion 游戏在最新驱动下崩溃到桌面，但未提供更多细节。",
-        "impact": "影响该游戏玩家，需等待驱动或游戏更新。",
-        "brief": "PETAFAB 游戏崩溃报告。",
+        "analysis": "用户报告 PETAFAB: Bot Invasion 游戏在最新驱动下崩溃到桌面，具体原因未知。",
+        "impact": "影响该游戏玩家，需驱动团队调查。",
+        "brief": "PETAFAB 游戏崩溃报告",
         "tier": "minor",
         "changeType": "issue_report",
         "isTrueFix": false,
