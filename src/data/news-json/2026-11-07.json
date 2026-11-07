@@ -1,0 +1,347 @@
+{
+  "date": "2026-11-07",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Revert \"[CI] Skip flex attention test that wedges the GPU on IGC 2.40.x\" (#8671)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/cac6d0b9226df32171e404df74ddd100f65f54c2",
+      "updated": "2026-11-06T15:47:01Z",
+      "score": 57
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Adapt Intel backend to upstream elementwise lowering and true-mask folding changes",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/736eb8f0e9497c3eeedae2b8f9d1f8a3cadcd7ad",
+      "updated": "2026-11-06T08:58:40Z",
+      "score": 43
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Update Triton version: 3.9.0 -> 3.9.1 (#8598)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e21e246bb2e007595e6b33a6f1c7e8330b7470cd",
+      "updated": "2026-11-06T18:44:47Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[SymbolicBounds] Add materializeForm and a splat-leaf normalization mode (#8665)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/d677b4013a01dafa61eda2a10fed7b343ca04f79",
+      "updated": "2026-11-06T17:52:56Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[RemoveLayoutConversions] Rematerialize in-loop converts up to their anchors (#8631)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/be2655d759f59c8801ae35e872a345f0d8e7c8e4",
+      "updated": "2026-11-06T17:10:37Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[XPU] Drop the ScanOpToLLVM fork by adding a warpScan hook to TargetInfoBase (#8678)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/fc396f7b790679281e835a2f6d61343f6a2db069",
+      "updated": "2026-11-06T16:42:19Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmark] Add rank-3 grouped-matmul row-limit-mask micro-benchmark (#8669)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/325e37d91ef69e229ded43f39208aa4de367a78c",
+      "updated": "2026-11-06T15:54:48Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[XPU][UT] Merge the Intel unit tests into one executable (#8676)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/dfc13041240359b83ce44ce19ed4f810d8fb9158",
+      "updated": "2026-11-06T15:50:06Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Proton] Link ProtonIntelGPUToLLVM into the TritonProton plugin (#8677)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/24c67cddef223680775a0931958e700ac1688f2b",
+      "updated": "2026-11-06T13:15:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Proton] Enable `instrumentation` mode for XPU (#8437)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/546220e3751cdc5e396ba9811ac86f7a66f3ca0c",
+      "updated": "2026-11-06T11:16:51Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[DOC] State when a failing test goes in the skip list or the xfail list (#8656)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8e86bfb85004aa842eea3cd7d38f98383e38c83f",
+      "updated": "2026-11-06T08:01:14Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] Correct deselected file path in entrypoints/scale_out test",
+      "url": "https://github.com/vllm-project/vllm/pull/66039",
+      "updated": "2026-11-06T08:25:22Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "TechPowerUp (Windows 驱动与硬件)",
+      "title": "Unreleased Radeon RX 7500 and Intel Razor Lake-H/HX/S Appear in Latest HWiNFO Beta",
+      "url": "https://www.techpowerup.com/354555/unreleased-radeon-rx-7500-and-intel-razor-lake-h-hx-s-appear-in-latest-hwinfo-beta",
+      "updated": "2026-11-07T00:02:47.000Z",
+      "score": 18
+    },
+    {
+      "ref": "s14",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "PETAFAB: Bot Invasion - Crash to desktop",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1609",
+      "updated": "2026-11-06T21:16:35Z",
+      "score": 18
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "移除 flex attention 测试跳过，驱动已修复挂起",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "Triton 版本升至 3.9.1 以适配 PyTorch 2.16",
+        "refs": [
+          "s3"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "恢复 flex attention 测试，移除旧驱动规避",
+        "analysis": "此前因 IGC 2.40.x 导致 GPU 挂起而跳过 flex attention 测试，现新驱动已验证修复，故撤销该跳过。属于移除临时规避，恢复测试覆盖。",
+        "impact": "恢复 flex attention 测试覆盖，需确保 CI 使用新驱动。",
+        "brief": "移除 flex attention 测试跳过，驱动已修复。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "适配上游 elementwise 与 true-mask 折叠改动",
+        "analysis": "Intel 后端需同步上游 Triton 的 elementwise lowering 和 true-mask folding 变更，以保持行为一致。",
+        "impact": "影响 Intel 后端代码生成，需验证相关算子正确性。",
+        "brief": "同步上游 elementwise 与 mask 折叠改动。",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "Triton 版本更新至 3.9.1",
+        "analysis": "为适配 PyTorch 2.16，将 Triton 版本从 3.9.0 升至 3.9.1。后续可能需升级至 3.10 取决于上游。",
+        "impact": "影响所有使用该后端的用户，需重新构建并验证兼容性。",
+        "brief": "Triton 版本升至 3.9.1。",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "SymbolicBounds 新增 materializeForm 与 splat 归一化",
+        "analysis": "新增 materializeForm 让 pass 能将 prover 已知信息转回 IR，splat-leaf 归一化模式用于 #8651 的行数限制场景。",
+        "impact": "影响依赖 SymbolicBounds 的优化 pass，如行限制相关优化。",
+        "brief": "SymbolicBounds 新增 IR 物化与归一化模式。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "循环内 convert 重物化至锚点",
+        "analysis": "在 RemoveLayoutConversions 中，将循环内 convert 重物化至锚点，以修复 #8596 中 per-row scale load 的布局问题。",
+        "impact": "影响布局转换优化，可能改善相关算子性能。",
+        "brief": "循环内 convert 重物化修复布局问题。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "移除 ScanOpToLLVM fork，改用 warpScan 钩子",
+        "analysis": "将 600 行重复的 ScanOpToLLVM 实现替换为 TargetInfoBase 的 warpScan 钩子，减少代码重复。",
+        "impact": "影响扫描算子代码生成，需验证功能一致性。",
+        "brief": "移除 ScanOpToLLVM fork，改用钩子。",
+        "tier": "major",
+        "changeType": "refactor",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "新增 rank-3 分组矩阵乘行限制基准",
+        "analysis": "添加 rank-3 分组矩阵乘行限制掩码的微基准，作为 #8640 的后续，用于测试相关优化。",
+        "impact": "影响基准测试，便于性能评估。",
+        "brief": "新增 rank-3 分组矩阵乘基准。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "合并 Intel 单元测试为单一可执行文件",
+        "analysis": "将 15 个 Intel Analysis/Dialect 单元测试合并为一个 TritonIntelUnitTests 可执行文件，减少链接开销。",
+        "impact": "影响测试构建和运行，需验证测试结果。",
+        "brief": "合并 Intel 单元测试可执行文件。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "Proton 插件链接 ProtonIntelGPUToLLVM",
+        "analysis": "修复 TritonProton 插件未链接 ProtonIntelGPUToLLVM 的问题，使 createConvertProtonIntelGPUToLLVMPass 可用。",
+        "impact": "影响 Proton 插件功能，需重新构建。",
+        "brief": "修复 Proton 插件链接问题。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "XPU 启用 Proton instrumentation 模式",
+        "analysis": "启用 Proton 的 instrumentation 模式，支持内核内性能分析，提供 TTGIR 覆盖等。",
+        "impact": "影响使用 Proton 进行性能分析的用户。",
+        "brief": "XPU 支持 Proton 内核内分析。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "文档化测试跳过与 xfail 列表规则",
+        "analysis": "明确失败测试应放入 skip 列表（平台限制）或 xfail 列表（已知 bug）的规则，与 #8609 对齐。",
+        "impact": "影响测试维护者，需遵循新规则。",
+        "brief": "文档化 skip/xfail 列表规则。",
+        "tier": "minor",
+        "changeType": "doc",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "修正 vLLM 测试取消选择的文件路径",
+        "analysis": "在 vLLM 的 Intel CI 中，修正 entrypoints/scale_out 测试的取消选择路径，添加缺失的 tests/ 前缀，使测试真正被排除。",
+        "impact": "影响 vLLM Intel CI 测试执行，确保测试被正确跳过。",
+        "brief": "修正 vLLM 测试路径。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "HWiNFO 识别未发布 Radeon RX 7500 与 Razor Lake",
+        "analysis": "HWiNFO 最新 beta 添加了对 AMD Radeon RX 7500 和 Intel Razor Lake-H/HX/S 的识别，但规格未知。",
+        "impact": "影响硬件检测工具用户，需更新 HWiNFO。",
+        "brief": "HWiNFO 识别新硬件。",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "PETAFAB 游戏崩溃问题报告",
+        "analysis": "用户报告 PETAFAB: Bot Invasion 游戏在最新驱动下崩溃到桌面，但未提供更多细节。",
+        "impact": "影响该游戏玩家，需等待驱动或游戏更新。",
+        "brief": "PETAFAB 游戏崩溃报告。",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      }
+    ]
+  }
+}
