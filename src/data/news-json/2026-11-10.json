@@ -1,0 +1,309 @@
+{
+  "date": "2026-11-10",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][Spec Decode][XPU] greedy_argmax: treat NaN as -inf on the torch fallback",
+      "url": "https://github.com/vllm-project/vllm/pull/64897",
+      "updated": "2026-11-09T21:58:43Z",
+      "score": 39
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Opt-in relayout of non-dot descriptor loads for 2D block reads (#8491)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/2234613d3bc1b7eb3d51a79da8da1352f528b227",
+      "updated": "2026-11-09T19:47:11Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[DOCS] Sync upstream README to the Intel README (#8702)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/12ee329ada25ae4dc72a3d5eba3a870e87724610",
+      "updated": "2026-11-09T17:15:52Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[RemoveLayoutConversions] Hoist converts over multiple ext/broadcast ops (#8681)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/83c268486af15b98f688bea672520ba133dcf9f8",
+      "updated": "2026-11-09T15:49:12Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Update pin (#8659)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e00d144413c865b71b6742a4fde42f85d612981e",
+      "updated": "2026-11-09T14:47:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[SGLANG] Remove `test_seqlen_1` from skiplist (#8689)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6dcaefff373a525570a71539a95f8cb1a909f83f",
+      "updated": "2026-11-09T10:46:51Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Permit block IO in `MaterializeBlockPointer` for row-limit masked loads (#8615)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/73fae932d85ca57a0b18f3cb2768eca353a519db",
+      "updated": "2026-11-09T10:44:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "Phoronix (Linux Graphics/Driver)",
+      "title": "Intel ANV Lands Bitrate Control For AV1 Encoding",
+      "url": "https://www.phoronix.com/news/Intel-ANV-AV1-Bitrate-Control",
+      "updated": "2026-11-09T10:30:24.000Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Model] Gemma4: route MoE with topk_softmax on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/63330",
+      "updated": "2026-11-09T23:46:21Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Attention] Enable tuned large-head prefill config on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/61630",
+      "updated": "2026-11-09T23:45:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[CI][XPU] Use supported block sizes in UCX backend tests",
+      "url": "https://github.com/vllm-project/vllm/pull/64834",
+      "updated": "2026-11-09T21:18:29Z",
+      "score": 23
+    },
+    {
+      "ref": "s12",
+      "source": "GitHub Release: intel/compute-runtime",
+      "title": "26.44.40734.6: performance: enable 8-byte buffer copy for large CRI copies",
+      "url": "https://github.com/intel/compute-runtime/releases/tag/26.44.40734.6",
+      "updated": "2026-11-09T12:24:26.000Z",
+      "score": 15
+    },
+    {
+      "ref": "s13",
+      "source": "GitHub Release: intel/compute-runtime",
+      "title": "26.40.40196.17: fix: always defer backing of mid thread preemption surfaces",
+      "url": "https://github.com/intel/compute-runtime/releases/tag/26.40.40196.17",
+      "updated": "2026-11-09T08:42:01.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "vLLM XPU 修复 greedy_argmax NaN 处理，恢复主分支正确性",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "Triton XPU 后端优化 2D 块读取布局，提升归约性能",
+        "refs": [
+          "s2"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "修复 greedy_argmax 的 NaN 处理",
+        "analysis": "vLLM XPU 主分支因 #57770 引入回归，greedy_argmax 的 torch fallback 未将 NaN 视为 -inf，与文档契约和 Triton 路径不一致。此 PR 修复该行为，使 XPU 主分支恢复正确。",
+        "impact": "使用 vLLM XPU 主分支的开发者需更新至包含此修复的版本，否则贪心解码可能产生错误结果。",
+        "brief": "修复 XPU greedy_argmax NaN 处理回归",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "2D 块读取布局重排优化",
+        "analysis": "针对 tensor-descriptor 加载小 tile 并用于归约（如 vLLM reduce_segments 的 fp32 [16,D] tile）的场景，引入可选的重排布局，以支持 2D 块读取，提升归约性能。",
+        "impact": "使用 vLLM 的 reduce_segments 等归约操作的 XPU 用户可能获得性能提升，需启用该选项。",
+        "brief": "优化 2D 块读取布局，提升归约性能",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "提升布局转换提升能力",
+        "analysis": "移植上游 triton-lang/triton#12298，使 RemoveLayoutConversions 能将布局转换提升到多个 ext/broadcast 操作之上，而不仅限于单个操作，修复 #8555。",
+        "impact": "Triton XPU 后端用户可能受益于更优的布局优化，减少不必要的转换。",
+        "brief": "布局转换可跨多个操作提升",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "更新 vLLM 依赖 pin",
+        "analysis": "更新 vLLM 的 pin 版本，关闭 #8661 和 #8435 两个问题，并创建新问题 #8680 跟踪后续工作。",
+        "impact": "vLLM XPU 用户需同步更新依赖以获取修复。",
+        "brief": "更新 vLLM pin 版本",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "移除 SGLANG 测试跳过项",
+        "analysis": "从 skiplist 中移除 test_seqlen_1，关闭 #8601，表明该测试已通过，不再需要跳过。",
+        "impact": "SGLANG 测试覆盖恢复，但根因是否解决未明确。",
+        "brief": "恢复 SGLANG test_seqlen_1 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "允许行限制掩码加载使用块 IO",
+        "analysis": "修复 #8565，MaterializeBlockPointer 之前拒绝在行维度掩码常量为 1 的 tt.load 上标记 ttig.block_io，现在允许，以支持更多场景的块 IO 优化。",
+        "impact": "Triton XPU 后端用户可能获得更好的块 IO 性能，特别是行限制掩码加载场景。",
+        "brief": "允许行限制掩码加载使用块 IO",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "ANV 驱动支持 AV1 编码码率控制",
+        "analysis": "Mesa ANV 驱动新增 AV1 编码的码率控制支持，由 Igalia 的 Hyunjun Ko 持续改进 Vulkan Video 支持。",
+        "impact": "使用 Intel 显卡进行 AV1 编码的用户可获得更可控的码率。",
+        "brief": "ANV 驱动新增 AV1 码率控制",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "Gemma4 MoE 路由改用 topk_softmax",
+        "analysis": "XPU 上 Gemma4 的 MoE 路由从 Triton 内核切换到 topk_softmax MoE 操作，数学等价，但使用 XPU 内核实现，可能提升性能或兼容性。",
+        "impact": "使用 Gemma4 模型的 vLLM XPU 用户将自动受益，无需手动操作。",
+        "brief": "Gemma4 MoE 路由切换至 topk_softmax",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "XPU 启用大头部 prefill 配置",
+        "analysis": "在 Intel Arc Pro B70 上启用 head_size 256 的 tuned_large_head prefill 启动配置，此前仅限 SM100。短多查询批次（推测解码验证）保持 3D 形状，可能提升性能。",
+        "impact": "使用 Arc Pro B70 的 vLLM XPU 用户可能获得 prefill 性能提升。",
+        "brief": "XPU 启用大头部 prefill 配置",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "UCX 测试使用支持的块大小",
+        "analysis": "UCX 测试硬编码 16-token 块，但 XPU FlashAttention 要求 64 的倍数，导致设置失败。通过复用 maybe_update_block_size(16) 修复，不改变测试用例。",
+        "impact": "修复 CI 设置失败，属于测试调整，根因未解决。",
+        "brief": "UCX 测试块大小适配 XPU 要求",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "计算运行时启用 8 字节缓冲区复制",
+        "analysis": "compute-runtime 26.44.40734.6 版本为大型 CRI 复制启用 8 字节缓冲区复制，提升性能。",
+        "impact": "使用该版本计算运行时的用户可能获得复制性能提升。",
+        "brief": "计算运行时优化大型复制性能",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "计算运行时修复线程抢占表面延迟",
+        "analysis": "compute-runtime 26.40.40196.17 修复了中线程抢占表面始终延迟备份的问题，可能影响稳定性。",
+        "impact": "使用该版本的用户可能获得稳定性改进。",
+        "brief": "计算运行时修复抢占表面备份",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
