@@ -27,6 +27,22 @@
     },
     {
       "ref": "s4",
+      "source": "Reddit r/IntelArc (社区实测与讨论)",
+      "title": "Ace Combat 8: Workaround to fix crashes",
+      "url": "https://www.reddit.com/r/IntelArc/comments/1xt9943/ace_combat_8_workaround_to_fix_crashes/",
+      "updated": "2026-11-11T05:13:14.000Z",
+      "score": 27
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Lower a runtime column limit on `2d_block_load_from_ptr` (#8745)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/1bb8b00152e74cc4c8c64f559cfba2fd3d6fbd03",
+      "updated": "2026-11-11T02:55:18Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Let small INT8 dots fall back to FMA (#8734)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/372730efd35de746d48ac0e9aa64d657a747afad",
@@ -34,7 +50,7 @@
       "score": 25
     },
     {
-      "ref": "s5",
+      "ref": "s7",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Analysis] Treat data-dependent `tt.load` addresses as possible reuse (#8722)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a89bb56a66df1eee26ccc7820bf4f4f005297e8a",
@@ -42,7 +58,7 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s8",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[TritonIntelGPU] Accept an i64 row index in `matchRowLimitMask` (#8727)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0ab43cf0791b200ec47681a138f6c5817a49ef34",
@@ -50,7 +66,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s9",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "Add CRI arch to arch_parser.c (#8717)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ce452a32544950801e7f6f82e77bcb5f189c9bac",
@@ -58,7 +74,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s10",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "Restore warpScan hook call dropped by the merge",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/11a589d125627bf9d69b46ebc62b8c84c335fd6b",
@@ -66,7 +82,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s11",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[SGLANG] Update sgl-kernel-xpu pin to `7da01c5`  (#8697)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/84c773b3200cb2b7c4213a0000c4f9cbdc590d76",
@@ -74,7 +90,23 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s12",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] Skip LMCacheMPConnector tests when lmcache is not installed",
+      "url": "https://github.com/vllm-project/vllm/pull/66924",
+      "updated": "2026-11-11T06:46:49Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] fix test_dots_ocr.py::test_dots_ocr_vision_without_host_sync",
+      "url": "https://github.com/vllm-project/vllm/pull/66758",
+      "updated": "2026-11-11T05:05:04Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][CI] Keep all devices visible for external LB",
       "url": "https://github.com/vllm-project/vllm/pull/66446",
@@ -82,7 +114,7 @@
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s15",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][CI]Migrate more B70 jobs from intel_gpu to intel_gpu_k8s",
       "url": "https://github.com/vllm-project/vllm/pull/66603",
@@ -90,7 +122,7 @@
       "score": 25
     },
     {
-      "ref": "s12",
+      "ref": "s16",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Segfault on vkCreateGraphicsPipelines on Slang generated spirv",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1612",
@@ -98,7 +130,7 @@
       "score": 18
     },
     {
-      "ref": "s13",
+      "ref": "s17",
       "source": "GitHub Release: intel/intel-graphics-compiler",
       "title": "v2.43.9",
       "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.9",
@@ -106,7 +138,7 @@
       "score": 15
     },
     {
-      "ref": "s14",
+      "ref": "s18",
       "source": "GitHub Release: intel/intel-graphics-compiler",
       "title": "v2.43.8",
       "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.8",
@@ -114,7 +146,7 @@
       "score": 15
     },
     {
-      "ref": "s15",
+      "ref": "s19",
       "source": "GitHub Release: intel/intel-graphics-compiler",
       "title": "v2.43.7:  LegalizationPass: now produces efficient splat from",
       "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.7",
@@ -122,27 +154,11 @@
       "score": 15
     },
     {
-      "ref": "s16",
+      "ref": "s20",
       "source": "GitHub Release: intel/intel-graphics-compiler",
       "title": "v2.43.6:  Keep single-element vector type in promoted private loads",
       "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.6",
       "updated": "2026-11-10T11:24:58.000Z",
-      "score": 15
-    },
-    {
-      "ref": "s17",
-      "source": "GitHub Release: intel/intel-graphics-compiler",
-      "title": "v2.43.5:  Fix the WAR dependence issue caused by ACC",
-      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.5",
-      "updated": "2026-11-10T11:23:17.000Z",
-      "score": 15
-    },
-    {
-      "ref": "s18",
-      "source": "GitHub Release: intel/intel-graphics-compiler",
-      "title": "v2.43.4:  IGCCoalescer: can coalesce fdiv",
-      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.4",
-      "updated": "2026-11-10T11:20:43.000Z",
       "score": 15
     }
   ],
@@ -157,11 +173,11 @@
       },
       {
         "status": "Merged",
-        "title": "回退 scan 泛化改动，恢复稳定",
+        "title": "回退 scan 泛化，恢复稳定",
         "refs": [
           "s2",
           "s3",
-          "s8"
+          "s10"
         ]
       }
     ],
@@ -171,9 +187,9 @@
           "s1"
         ],
         "title": "修复 bool 张量描述符加载/存储崩溃",
-        "analysis": "通过张量描述符加载或存储 bool 张量时，编译器触发 LLVM \"Invalid cast!\" 断言。修复了加载和存储路径中的类型转换问题。",
-        "impact": "使用 bool 张量描述符的 Triton 内核开发者",
-        "brief": "修复 bool 描述符加载/存储的 LLVM 断言崩溃",
+        "analysis": "加载或存储 bool 张量时，编译器触发 LLVM \"Invalid cast!\" 断言。修复了加载和存储路径中的类型转换问题。",
+        "impact": "使用 bool 张量描述符的 Triton 内核不再崩溃。",
+        "brief": "修复 bool 描述符类型转换崩溃",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -185,29 +201,14 @@
         "refs": [
           "s2",
           "s3",
-          "s8"
+          "s10"
         ],
-        "title": "回退 scan 泛化及 NVIDIA 相关改动",
-        "analysis": "回退了 scan 泛化到线性布局的改动和 NVIDIA 的 shuffle-up 边界谓词复用，并恢复了合并时丢失的 warpScan 钩子调用。这些回退可能是为了修复回归或保持一致性。",
-        "impact": "依赖 scan 操作的 Triton 内核开发者",
-        "brief": "回退 scan 相关改动并恢复 warpScan 钩子",
+        "title": "回退 scan 泛化，恢复稳定",
+        "analysis": "回退了 scan lowering 泛化到线性布局的提交，以及 NVIDIA 的 shuffle-up 边界谓词复用，并恢复了合并时丢失的 warpScan hook 调用。这些回退旨在解决 scan 相关回归。",
+        "impact": "使用 scan 操作的 Triton 内核恢复稳定。",
+        "brief": "回退 scan 相关改动",
         "tier": "major",
         "changeType": "bugfix",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s4"
-        ],
-        "title": "小 INT8 dot 回退到 FMA",
-        "analysis": "允许小尺寸 INT8 dot 在 DPAS 无法处理时回退到 FMA。此前因 INT8 FMA 路径结果错误而保留了最小尺寸限制，现在该问题已修复，可以放宽限制。",
-        "impact": "使用小尺寸 INT8 dot 的 Triton 内核开发者",
-        "brief": "放宽 INT8 dot 的 FMA 回退限制",
-        "tier": "major",
-        "changeType": "feature",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -217,13 +218,13 @@
         "refs": [
           "s5"
         ],
-        "title": "将数据相关加载地址视为可能复用",
-        "analysis": "AnnotateCacheControl 将没有复用证据的 tt.load 标记为 .cg，但复用分析无法识别通过数据相关地址（如 table[idx]）的复用。此改动将这类地址视为可能复用，避免过度使用 .cg。",
-        "impact": "使用数据相关加载地址的 Triton 内核开发者",
-        "brief": "改进缓存控制分析，识别数据相关地址复用",
-        "tier": "major",
+        "title": "降低 2D 块加载运行时列限制",
+        "analysis": "为 `2d_block_load_from_ptr` 添加运行时列限制标记，降低列数限制，以支持更灵活的块加载。",
+        "impact": "使用 2D 块加载的内核可处理更小的列数。",
+        "brief": "降低 2D 块加载列限制",
+        "tier": "minor",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -232,11 +233,11 @@
         "refs": [
           "s6"
         ],
-        "title": "matchRowLimitMask 接受 i64 行索引",
-        "analysis": "作为 #8565 的后续，允许 matchRowLimitMask 接受 i64 类型的行索引，以支持运行时行限制掩码的加载。",
-        "impact": "使用运行时行限制掩码的 Triton 内核开发者",
-        "brief": "扩展行限制掩码匹配以支持 i64 索引",
-        "tier": "minor",
+        "title": "小 INT8 dot 回退到 FMA",
+        "analysis": "允许小尺寸 INT8 dot 回退到 FMA 路径，此前因正确性问题被限制。修复了相关路径后，现在可以启用。",
+        "impact": "小尺寸 INT8 dot 性能提升。",
+        "brief": "小 INT8 dot 回退 FMA",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -247,10 +248,40 @@
         "refs": [
           "s7"
         ],
-        "title": "arch_parser 添加 CRI 架构支持",
-        "analysis": "parse_device_arch 现在将 intel_gpu_cri（Crescent Island）映射到 \"cri\"，与 compiler.py 中已有的检查保持一致。",
-        "impact": "使用 Crescent Island 硬件的开发者",
-        "brief": "添加 CRI 架构解析支持",
+        "title": "数据依赖地址视为可能复用",
+        "analysis": "AnnotateCacheControl 分析无法识别通过数据依赖地址（如 `table[idx]`）的复用，导致标记为 `.cg`。现在将此类地址视为可能复用，避免错误标记。",
+        "impact": "数据依赖地址的加载不再被错误标记为 `.cg`，可能提升缓存性能。",
+        "brief": "数据依赖地址视为复用",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "matchRowLimitMask 接受 i64 行索引",
+        "analysis": "`matchRowLimitMask` 现在接受 i64 行索引，以支持运行时行限制掩码的加载。",
+        "impact": "使用运行时行限制的加载可正确处理 i64 索引。",
+        "brief": "支持 i64 行索引",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "添加 CRI 架构支持",
+        "analysis": "`parse_device_arch` 现在映射 `intel_gpu_cri` 到 `\"cri\"`，与 `compiler.py` 中的检查一致。",
+        "impact": "Crescent Island 架构的设备可被正确识别。",
+        "brief": "支持 CRI 架构",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": true,
@@ -260,12 +291,12 @@
       },
       {
         "refs": [
-          "s9"
+          "s11"
         ],
         "title": "更新 sgl-kernel-xpu 固定版本",
-        "analysis": "将 sgl-kernel-xpu 的固定版本更新到 7da01c5，以获取最新的内核改进。",
-        "impact": "使用 SGLANG 的开发者",
-        "brief": "更新 sgl-kernel-xpu 依赖版本",
+        "analysis": "将 sgl-kernel-xpu 的固定版本更新到 `7da01c5`，以获取最新修复。",
+        "impact": "SGLANG 相关功能使用新版本。",
+        "brief": "更新 sgl-kernel-xpu 版本",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": false,
@@ -275,27 +306,57 @@
       },
       {
         "refs": [
-          "s10"
+          "s12"
         ],
-        "title": "修复 XPU 外部 LB 测试设备可见性",
-        "analysis": "修复 XPU Rust 前端外部 LB 测试，通过保持所有节点 XPU 对外部启动的 DP rank 可见，解决 Buildkite 失败。",
-        "impact": "vLLM XPU CI 维护者",
-        "brief": "修复外部 LB 测试的设备可见性问题",
+        "title": "跳过未安装 lmcache 的测试",
+        "analysis": "当 lmcache 未安装时，跳过 LMCacheMPConnector 相关测试，避免导入错误。",
+        "impact": "CI 在无 lmcache 环境不再失败。",
+        "brief": "跳过 lmcache 测试",
         "tier": "minor",
         "changeType": "test_fix",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
-          "s11"
+          "s13"
         ],
-        "title": "迁移更多 B70 作业到 intel_gpu_k8s",
-        "analysis": "将更多 B70 作业从 intel_gpu 迁移到 intel_gpu_k8s，以优化 CI 资源利用。",
-        "impact": "vLLM XPU CI 维护者",
-        "brief": "迁移 B70 CI 作业到 intel_gpu_k8s",
+        "title": "修复 Dots OCR 测试平台选择",
+        "analysis": "测试使用活动平台设备而非硬编码 CUDA，使测试可在 Intel XPU 上运行，并跳过不支持的同步检查。",
+        "impact": "Dots OCR 测试可在 XPU 上运行。",
+        "brief": "修复 Dots OCR 测试平台",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "外部 LB 测试保持设备可见",
+        "analysis": "修复外部 LB 测试中 XPU 设备不可见的问题，确保所有节点 XPU 对 DP rank 可见。",
+        "impact": "外部 LB 测试在 XPU 上通过。",
+        "brief": "修复外部 LB 测试设备可见性",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "迁移 B70 作业到 intel_gpu_k8s",
+        "analysis": "将更多 B70 作业从 intel_gpu 迁移到 intel_gpu_k8s，以优化 CI 资源。",
+        "impact": "CI 作业迁移，无功能影响。",
+        "brief": "迁移 B70 作业",
         "tier": "minor",
         "changeType": "ci",
         "isTrueFix": false,
@@ -305,12 +366,12 @@
       },
       {
         "refs": [
-          "s12"
+          "s16"
         ],
-        "title": "Slang 生成 SPIR-V 时 vkCreateGraphicsPipelines 段错误",
-        "analysis": "报告者认为在 Slang 生成的 SPIR-V 上调用 vkCreateGraphicsPipelines 时发生段错误，但根因未确认。",
+        "title": "Slang 生成 SPIR-V 导致驱动崩溃",
+        "analysis": "报告者认为 vkCreateGraphicsPipelines 在 Slang 生成的 SPIR-V 上触发段错误，但根因未确认。",
         "impact": null,
-        "brief": "报告 Slang SPIR-V 创建图形管线段错误",
+        "brief": "驱动崩溃报告",
         "tier": "minor",
         "changeType": "issue_report",
         "isTrueFix": false,
@@ -320,17 +381,15 @@
       },
       {
         "refs": [
-          "s13",
-          "s14",
-          "s15",
-          "s16",
           "s17",
-          "s18"
+          "s18",
+          "s19",
+          "s20"
         ],
-        "title": "Intel Graphics Compiler 发布多个版本",
-        "analysis": "Intel Graphics Compiler 发布了 v2.43.4 至 v2.43.9 多个版本，包含 fdiv 合并、WAR 依赖修复、单元素向量类型保留等改进。",
-        "impact": "使用 Intel GPU 驱动栈的开发者",
-        "brief": "IGC 发布 v2.43.4-v2.43.9 版本",
+        "title": "IGC 发布多个版本",
+        "analysis": "Intel Graphics Compiler 发布 v2.43.6 至 v2.43.9，包含 LegalizationPass 优化和单元素向量类型保留等改进。",
+        "impact": "使用 IGC 的驱动获得更新。",
+        "brief": "IGC 发布多个版本",
         "tier": "minor",
         "changeType": "driver_update",
         "isTrueFix": false,
