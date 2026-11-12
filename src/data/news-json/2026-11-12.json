@@ -60,13 +60,21 @@
     {
       "ref": "s8",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Fix the fp8 -> fp16 SPIR-V builtin names (EXT, not INTEL) (#8769)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/de830f716c7c8160df9c361236d544af4df96924",
+      "updated": "2026-11-12T00:51:39Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Benchmarks] Route GEMM shapes with a mostly empty last wave to stream-K (#8611)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9b4b1c768739fc8f8ebed27749b1f9a26e11b286",
       "updated": "2026-11-11T21:03:28Z",
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s10",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "Check reserved FP8 NaN bytes for a quiet NaN in the FP8 -> BF16 tests",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ac6528480fe9e89d34cbd792df01b19f27171358",
@@ -74,7 +82,7 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s11",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[SYCL-TLA] Bump to v0.9.1 and add a stream-K GEMM reference (#8658)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/c393ee7ddd72e89b32f17fef39cb61c2547bba1e",
@@ -82,7 +90,7 @@
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s12",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[StageLargeFMADotsViaSLM] Stage fp8 dot operands decoded (#8628)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ca230c520b7075dbd447ad6c2fae91d055cd70c0",
@@ -90,7 +98,7 @@
       "score": 25
     },
     {
-      "ref": "s12",
+      "ref": "s13",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Convert fp8 DPAS operands one DPAS operand at a time (#8693)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/07383f53824b6ae666c466751ec66ccf58e44feb",
@@ -98,7 +106,7 @@
       "score": 25
     },
     {
-      "ref": "s13",
+      "ref": "s14",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Subclass upstream DecomposeScaledBlocked instead of carrying a copy (#8657)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ad227adcc6b2d0609d03c674cd7a909968a4067d",
@@ -106,7 +114,7 @@
       "score": 25
     },
     {
-      "ref": "s14",
+      "ref": "s15",
       "source": "Phoronix (Linux Graphics/Driver)",
       "title": "Intel Continues Enabling The GPU D-Series \"Crescent Island\" Driver Support For Linux 7.5",
       "url": "https://www.phoronix.com/news/More-Intel-D-Series-Linux-7.5",
@@ -114,27 +122,51 @@
       "score": 25
     },
     {
-      "ref": "s15",
+      "ref": "s16",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][UT] Increase the prompt length in the late chunking test to allow prefix cache hits on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/66978",
+      "updated": "2026-11-12T03:38:14Z",
+      "score": 25
+    },
+    {
+      "ref": "s17",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][XPU] Remove CUDA-only dependencies from Unlimited-OCR-2 DASH attention",
+      "url": "https://github.com/vllm-project/vllm/pull/66495",
+      "updated": "2026-11-12T02:49:41Z",
+      "score": 25
+    },
+    {
+      "ref": "s18",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] support adaptive verification for deepseek-v4",
+      "url": "https://github.com/vllm-project/vllm/pull/62309",
+      "updated": "2026-11-12T02:06:04Z",
+      "score": 25
+    },
+    {
+      "ref": "s19",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI]Update working_dir from /workspace/vllm to /vllm-workspace/",
+      "url": "https://github.com/vllm-project/vllm/pull/66973",
+      "updated": "2026-11-12T01:29:06Z",
+      "score": 25
+    },
+    {
+      "ref": "s20",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][UT] Add device-specific logic to enable DFlash MXFP8 context KV test for XPU",
       "url": "https://github.com/vllm-project/vllm/pull/66952",
       "updated": "2026-11-11T08:34:38Z",
       "score": 25
-    },
-    {
-      "ref": "s16",
-      "source": "上游合入: vLLM (upstream XPU)",
-      "title": "[CI][XPU] skip one more TP=2 test in Distributed Shutdown job",
-      "url": "https://github.com/vllm-project/vllm/pull/66568",
-      "updated": "2026-11-11T07:01:01Z",
-      "score": 23
     }
   ],
   "output": {
     "overview": [
       {
         "status": "Merged",
-        "title": "dp4a 规避仅保留在 LTS 分支，主分支移除",
+        "title": "dp4a 规避仅保留在 LTS，主分支移除后回退",
         "refs": [
           "s2",
           "s3",
@@ -143,10 +175,9 @@
       },
       {
         "status": "Merged",
-        "title": "2D block load 行限制回退后重新检查指针打包",
+        "title": "修复 FP8 转 FP16 SPIR-V 内建函数名错误",
         "refs": [
-          "s5",
-          "s1"
+          "s8"
         ]
       }
     ],
@@ -157,10 +188,10 @@
           "s3",
           "s4"
         ],
-        "title": "dp4a 规避仅保留在 LTS 分支",
-        "analysis": "此前 #8732 移除了针对 #7854 的 dp4a 规避，但该改动在 LTS 上失败，因此 #8750 回退。随后 #8758 将规避限制在 LTS 分支，主分支继续移除。",
-        "impact": "主分支用户不再受旧规避影响，LTS 用户保持原有行为。",
-        "brief": "dp4a 规避仅保留在 LTS 分支",
+        "title": "dp4a 规避仅保留在 LTS，主分支移除后回退",
+        "analysis": "此前 #8732 移除了针对 #7854 的 dp4a 规避，但该改动在 LTS 上失败，因此 #8750 回退。随后 #8758 将规避限制在 LTS 分支，主分支不再保留。",
+        "impact": "LTS 分支用户继续使用规避，主分支用户不受影响。",
+        "brief": "dp4a 规避仅保留在 LTS，主分支移除后回退",
         "tier": "major",
         "changeType": "workaround",
         "isTrueFix": false,
@@ -170,12 +201,41 @@
       },
       {
         "refs": [
-          "s5",
+          "s8"
+        ],
+        "title": "修复 FP8 转 FP16 SPIR-V 内建函数名错误",
+        "analysis": "FP8 转 FP16 的 SPIR-V 内建函数名使用了 INTEL 后缀，但 SPIR-V 翻译器只识别 EXT 后缀，导致转换失败。已修正为正确的 EXT 名称。",
+        "impact": "使用 FP8 转 FP16 的 Triton 内核在 Intel GPU 上可正确编译。",
+        "brief": "修正 FP8 转 FP16 内建函数名后缀",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
           "s1"
         ],
-        "title": "2D block load 行限制回退后检查指针打包",
-        "analysis": "当行限制掩码的边界落在 tile 的 batch 维时，会回退到掩码路径并重新选择 tile，这可能改变指针打包。此改动在回退后重新检查打包，并修正了相关注释。",
-        "impact": "修复了特定形状下 2D block load 的错误打包，影响使用该路径的 GEMM 性能与正确性。",
+        "title": "修正指针打包检查注释",
+        "analysis": "这是对 #8746 的后续，仅修正注释，说明行限制回退不会改变 numPackedVals，因为打包只取决于布局和元素大小。",
+        "impact": null,
+        "brief": "仅注释修正，无功能变化",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "行限制回退后检查指针打包",
+        "analysis": "当行限制掩码的边界落在 tile 的批处理维度时，会回退到掩码路径并重新选择 tile，这可能改变指针打包。此改动在回退后重新检查打包。",
+        "impact": "修复了特定形状下 2D 块加载可能错误打包指针的问题。",
         "brief": "回退后重新检查指针打包",
         "tier": "major",
         "changeType": "bugfix",
@@ -186,27 +246,12 @@
       },
       {
         "refs": [
-          "s8"
-        ],
-        "title": "GEMM 基准将空尾波路由到 stream-K",
-        "analysis": "将输出 tile 最后波大部分为空的 GEMM 形状路由到 stream-K 内核，以提升性能。",
-        "impact": "影响 GEMM 基准测试的调度，可能提升特定形状的性能。",
-        "brief": "空尾波 GEMM 路由到 stream-K",
-        "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s9"
         ],
-        "title": "FP8 转 BF16 测试检查保留 NaN 字节",
-        "analysis": "在 FP8 到 BF16 的转换测试中，增加对保留 NaN 字节的检查，确保 quiet NaN 正确。",
-        "impact": null,
-        "brief": "测试增强，检查 quiet NaN",
+        "title": "GEMM 基准测试路由至 stream-K",
+        "analysis": "将最后一个 wave 大部分为空的 GEMM 形状路由到 stream-K 内核，以提升性能。这是基准测试调整，基于 #8445 的提议。",
+        "impact": "基准测试结果更准确，但用户代码无影响。",
+        "brief": "基准测试路由至 stream-K",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -218,9 +263,24 @@
         "refs": [
           "s10"
         ],
-        "title": "SYCL-TLA 升级到 v0.9.1 并添加 stream-K 参考",
-        "analysis": "将 SYCL-TLA 依赖从预 0.9.0 版本升级到 v0.9.1，并添加 stream-K GEMM 参考实现。",
-        "impact": "依赖升级，可能带来新功能或修复。",
+        "title": "FP8 转 BF16 测试检查保留 NaN 字节",
+        "analysis": "在 FP8 转 BF16 测试中，检查保留的 FP8 NaN 字节是否为 quiet NaN，以增强测试覆盖。",
+        "impact": null,
+        "brief": "增强 FP8 NaN 测试覆盖",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "SYCL-TLA 升级至 v0.9.1 并添加 stream-K 参考",
+        "analysis": "将 SYCL-TLA 固定版本升级到 v0.9.1，并添加 stream-K GEMM 参考实现，用于基准测试。",
+        "impact": "依赖 SYCL-TLA 的构建将使用新版本。",
         "brief": "SYCL-TLA 升级并添加参考",
         "tier": "minor",
         "changeType": "sync",
@@ -231,28 +291,13 @@
       },
       {
         "refs": [
-          "s11"
-        ],
-        "title": "SLM 暂存 fp8 dot 操作数解码",
-        "analysis": "在 StageLargeFMADotsViaSLM 中，对复制的 fp8 FMA dot 操作数在布局转换前进行解码，避免重复解码。",
-        "impact": "提升 fp8 FMA dot 的性能，减少冗余计算。",
-        "brief": "fp8 操作数解码提前",
-        "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s12"
         ],
-        "title": "fp8 DPAS 操作数逐个转换",
-        "analysis": "将 fp8 DPAS 操作数的扩展从整体转换改为逐个操作数转换，可能改善寄存器压力或调度。",
-        "impact": "影响 fp8 DPAS 路径的编译与性能。",
-        "brief": "fp8 DPAS 操作数逐个转换",
-        "tier": "minor",
+        "title": "SLM 暂存 fp8 dot 操作数解码",
+        "analysis": "在 StageLargeFMADotsViaSLM 中，将复制的 fp8 FMA dot 操作数在布局转换前解码，使多指令解码每个元素只执行一次，减少冗余。",
+        "impact": "提升 fp8 FMA dot 在 Intel GPU 上的性能。",
+        "brief": "优化 fp8 dot 操作数解码",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -263,12 +308,12 @@
         "refs": [
           "s13"
         ],
-        "title": "继承上游 DecomposeScaledBlocked 替代复制",
-        "analysis": "将自有的 DecomposeScaledBlocked 实现改为继承上游版本，减少维护成本，并支持原生 f8E8M0FNU 缩放。",
-        "impact": "减少代码重复，可能修复 f8E8M0FNU 缩放问题。",
-        "brief": "继承上游实现减少复制",
-        "tier": "minor",
-        "changeType": "refactor",
+        "title": "逐个转换 fp8 DPAS 操作数",
+        "analysis": "在无 fp8 DPAS 时，decomposeMixedModeDotOp 将 fp8 dot 操作数整体扩展为 fp16，导致大量直线代码。此改动改为逐个操作数转换，减少代码膨胀。",
+        "impact": "减少编译时间和代码大小，可能提升性能。",
+        "brief": "逐个转换 fp8 DPAS 操作数",
+        "tier": "major",
+        "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -278,12 +323,12 @@
         "refs": [
           "s14"
         ],
-        "title": "Linux 7.5 继续支持 GPU D 系列",
-        "analysis": "Intel 继续为 Crescent Island（GPU D 系列）添加 Linux 内核驱动支持，为 Linux 7.5 做准备。",
-        "impact": "影响使用该硬件的 Linux 用户，驱动支持逐步完善。",
-        "brief": "GPU D 系列驱动持续开发",
+        "title": "子类化上游 DecomposeScaledBlocked",
+        "analysis": "Intel 的 DecomposeScaledBlocked 原本是上游的完整拷贝，现改为子类化，减少维护成本并支持原生 f8E8M0FNU 缩放。",
+        "impact": "减少代码重复，便于同步上游改动。",
+        "brief": "子类化上游 DecomposeScaledBlocked",
         "tier": "minor",
-        "changeType": "driver_update",
+        "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -293,12 +338,12 @@
         "refs": [
           "s15"
         ],
-        "title": "vLLM 启用 XPU 的 DFlash MXFP8 测试",
-        "analysis": "由于 XPU 支持 mxfp8 线性内核，此 PR 在 XPU 上启用 DFlash mxfp8 context KV 单元测试。",
-        "impact": "vLLM XPU 用户获得更全面的测试覆盖。",
-        "brief": "XPU 启用 DFlash MXFP8 测试",
-        "tier": "minor",
-        "changeType": "test_fix",
+        "title": "Linux 7.5 继续支持 GPU D 系列",
+        "analysis": "Intel 持续为 Crescent Island（GPU D 系列）添加 Linux 内核驱动支持，Linux 7.5 将包含更多相关改动。",
+        "impact": "GPU D 系列硬件用户可在 Linux 7.5 获得更好支持。",
+        "brief": "Linux 7.5 继续支持 GPU D 系列",
+        "tier": "major",
+        "changeType": "driver_update",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -308,15 +353,75 @@
         "refs": [
           "s16"
         ],
-        "title": "vLLM CI 跳过更多 TP=2 测试",
-        "analysis": "现有跳过条件不足以防止测试挂起，因此增加跳过更多 TP=2 测试。属于测试调整，根因未解决。",
+        "title": "增加测试提示长度以支持 XPU 前缀缓存",
+        "analysis": "在 late chunking 测试中增加提示长度，使 XPU 上能命中前缀缓存，属于测试调整。",
         "impact": null,
-        "brief": "CI 跳过更多 TP=2 测试",
+        "brief": "调整测试提示长度",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s17"
+        ],
+        "title": "移除 Unlimited-OCR-2 的 CUDA 依赖",
+        "analysis": "Unlimited-OCR-2 DASH attention 路径硬编码了 CUDA 依赖，现移除以支持非 CUDA Triton 后端（如 Intel XPU）。",
+        "impact": "Intel XPU 用户可使用该 attention 路径。",
+        "brief": "移除 CUDA 依赖以支持 XPU",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s18"
+        ],
+        "title": "支持 Deepseek-v4 自适应验证",
+        "analysis": "为 Deepseek-v4 启用自适应验证功能，在 8 张 B70 卡上运行。",
+        "impact": "Deepseek-v4 用户可在 XPU 上使用自适应验证。",
+        "brief": "支持 Deepseek-v4 自适应验证",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s19"
+        ],
+        "title": "更新 Intel GPU CI 工作目录",
+        "analysis": "将 CI 工作目录从 /workspace/vllm 更新为 /vllm-workspace/，属于 CI 调整。",
+        "impact": null,
+        "brief": "更新 CI 工作目录",
         "tier": "minor",
         "changeType": "ci",
         "isTrueFix": false,
         "claimOwner": "maintainer",
-        "rootCauseConfirmed": false,
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s20"
+        ],
+        "title": "启用 XPU 的 DFlash MXFP8 上下文 KV 测试",
+        "analysis": "XPU 支持 mxfp8 线性内核，因此启用 DFlash mxfp8 上下文 KV 单元测试。",
+        "impact": null,
+        "brief": "启用 XPU 的 MXFP8 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
@@ -324,9 +429,9 @@
           "s6"
         ],
         "title": "Arc B580 冷启动冻结问题持续",
-        "analysis": "社区报告 B580 冷启动冻结问题已持续 5 个月以上，Intel 尚未修复。",
-        "impact": "影响 B580 用户，尤其是 Acer Nitro 型号。",
-        "brief": "B580 冷启动冻结未修复",
+        "analysis": "社区报告 Arc B580（尤其 Acer Nitro）存在 5 个月以上的 Windows 启动冻结问题，Intel 未修复。",
+        "impact": "受影响用户可关注 IGCIT #1560 进展。",
+        "brief": "B580 启动冻结问题未解决",
         "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
@@ -339,9 +444,9 @@
           "s7"
         ],
         "title": "Ace Combat 8 崩溃的社区规避",
-        "analysis": "社区提供了 Ace Combat 8 崩溃的规避方法，但具体内容未在摘要中说明。",
-        "impact": "游戏玩家可参考规避方法。",
-        "brief": "Ace Combat 8 崩溃规避",
+        "analysis": "社区提供 Ace Combat 8 崩溃的规避方法，但未说明具体细节。",
+        "impact": null,
+        "brief": "社区提供游戏崩溃规避",
         "tier": "minor",
         "changeType": "workaround",
         "isTrueFix": false,
