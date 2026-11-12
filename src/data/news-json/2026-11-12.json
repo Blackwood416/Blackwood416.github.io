@@ -1,0 +1,354 @@
+{
+  "date": "2026-11-12",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[NFC][LowerTo2DBlockLoad] Fix the pointer-packing check comment (#8760)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e6304c953c967ad6cfdd934c08a3ed40974700b3",
+      "updated": "2026-11-11T16:58:33Z",
+      "score": 57
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Keep #7854 dp4a workaround on LTS only (#8758)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/112b7a0bde4c8907b8a58a7a93f5dff0056ab4a1",
+      "updated": "2026-11-11T17:16:35Z",
+      "score": 39
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Revert \"[TritonIntelGPU] Remove #7854 dp4a workaround (#8732)\" (#8750)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0fa902a72b7c64f90b6680953ffc4f5c260b7991",
+      "updated": "2026-11-11T13:03:03Z",
+      "score": 39
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[TritonIntelGPU] Remove #7854 dp4a workaround (#8732)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/58af7990b6e1f9ceda43c0ecf407bfa5b12a56a1",
+      "updated": "2026-11-11T08:37:38Z",
+      "score": 39
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[LowerTo2DBlockLoad] Check pointer packing after the row-limit fallback (#8746)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/bfb5476bd53fc1f1380a4600fc3cea14805d6bd2",
+      "updated": "2026-11-11T08:16:08Z",
+      "score": 39
+    },
+    {
+      "ref": "s6",
+      "source": "Reddit r/IntelArc (社区实测与讨论)",
+      "title": "Intel Arc B580 (especially Acer Nitro models) has had a critical Windows boot-freeze bug for 5+ months with no fix from Intel",
+      "url": "https://www.reddit.com/r/IntelArc/comments/1xtk2uv/intel_arc_b580_especially_acer_nitro_models_has/",
+      "updated": "2026-11-11T15:06:18.000Z",
+      "score": 33
+    },
+    {
+      "ref": "s7",
+      "source": "Reddit r/IntelArc (社区实测与讨论)",
+      "title": "Ace Combat 8: Workaround to fix crashes",
+      "url": "https://www.reddit.com/r/IntelArc/comments/1xt9943/ace_combat_8_workaround_to_fix_crashes/",
+      "updated": "2026-11-11T05:13:14.000Z",
+      "score": 27
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmarks] Route GEMM shapes with a mostly empty last wave to stream-K (#8611)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9b4b1c768739fc8f8ebed27749b1f9a26e11b286",
+      "updated": "2026-11-11T21:03:28Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Check reserved FP8 NaN bytes for a quiet NaN in the FP8 -> BF16 tests",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ac6528480fe9e89d34cbd792df01b19f27171358",
+      "updated": "2026-11-11T20:38:03Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[SYCL-TLA] Bump to v0.9.1 and add a stream-K GEMM reference (#8658)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/c393ee7ddd72e89b32f17fef39cb61c2547bba1e",
+      "updated": "2026-11-11T15:43:03Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[StageLargeFMADotsViaSLM] Stage fp8 dot operands decoded (#8628)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ca230c520b7075dbd447ad6c2fae91d055cd70c0",
+      "updated": "2026-11-11T11:49:39Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Convert fp8 DPAS operands one DPAS operand at a time (#8693)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/07383f53824b6ae666c466751ec66ccf58e44feb",
+      "updated": "2026-11-11T09:30:28Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Subclass upstream DecomposeScaledBlocked instead of carrying a copy (#8657)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/ad227adcc6b2d0609d03c674cd7a909968a4067d",
+      "updated": "2026-11-11T09:17:10Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
+      "source": "Phoronix (Linux Graphics/Driver)",
+      "title": "Intel Continues Enabling The GPU D-Series \"Crescent Island\" Driver Support For Linux 7.5",
+      "url": "https://www.phoronix.com/news/More-Intel-D-Series-Linux-7.5",
+      "updated": "2026-11-11T21:04:00.000Z",
+      "score": 25
+    },
+    {
+      "ref": "s15",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][UT] Add device-specific logic to enable DFlash MXFP8 context KV test for XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/66952",
+      "updated": "2026-11-11T08:34:38Z",
+      "score": 25
+    },
+    {
+      "ref": "s16",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[CI][XPU] skip one more TP=2 test in Distributed Shutdown job",
+      "url": "https://github.com/vllm-project/vllm/pull/66568",
+      "updated": "2026-11-11T07:01:01Z",
+      "score": 23
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "dp4a 规避仅保留在 LTS 分支，主分支移除",
+        "refs": [
+          "s2",
+          "s3",
+          "s4"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "2D block load 行限制回退后重新检查指针打包",
+        "refs": [
+          "s5",
+          "s1"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "title": "dp4a 规避仅保留在 LTS 分支",
+        "analysis": "此前 #8732 移除了针对 #7854 的 dp4a 规避，但该改动在 LTS 上失败，因此 #8750 回退。随后 #8758 将规避限制在 LTS 分支，主分支继续移除。",
+        "impact": "主分支用户不再受旧规避影响，LTS 用户保持原有行为。",
+        "brief": "dp4a 规避仅保留在 LTS 分支",
+        "tier": "major",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5",
+          "s1"
+        ],
+        "title": "2D block load 行限制回退后检查指针打包",
+        "analysis": "当行限制掩码的边界落在 tile 的 batch 维时，会回退到掩码路径并重新选择 tile，这可能改变指针打包。此改动在回退后重新检查打包，并修正了相关注释。",
+        "impact": "修复了特定形状下 2D block load 的错误打包，影响使用该路径的 GEMM 性能与正确性。",
+        "brief": "回退后重新检查指针打包",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "GEMM 基准将空尾波路由到 stream-K",
+        "analysis": "将输出 tile 最后波大部分为空的 GEMM 形状路由到 stream-K 内核，以提升性能。",
+        "impact": "影响 GEMM 基准测试的调度，可能提升特定形状的性能。",
+        "brief": "空尾波 GEMM 路由到 stream-K",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "FP8 转 BF16 测试检查保留 NaN 字节",
+        "analysis": "在 FP8 到 BF16 的转换测试中，增加对保留 NaN 字节的检查，确保 quiet NaN 正确。",
+        "impact": null,
+        "brief": "测试增强，检查 quiet NaN",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "SYCL-TLA 升级到 v0.9.1 并添加 stream-K 参考",
+        "analysis": "将 SYCL-TLA 依赖从预 0.9.0 版本升级到 v0.9.1，并添加 stream-K GEMM 参考实现。",
+        "impact": "依赖升级，可能带来新功能或修复。",
+        "brief": "SYCL-TLA 升级并添加参考",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "SLM 暂存 fp8 dot 操作数解码",
+        "analysis": "在 StageLargeFMADotsViaSLM 中，对复制的 fp8 FMA dot 操作数在布局转换前进行解码，避免重复解码。",
+        "impact": "提升 fp8 FMA dot 的性能，减少冗余计算。",
+        "brief": "fp8 操作数解码提前",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "fp8 DPAS 操作数逐个转换",
+        "analysis": "将 fp8 DPAS 操作数的扩展从整体转换改为逐个操作数转换，可能改善寄存器压力或调度。",
+        "impact": "影响 fp8 DPAS 路径的编译与性能。",
+        "brief": "fp8 DPAS 操作数逐个转换",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "继承上游 DecomposeScaledBlocked 替代复制",
+        "analysis": "将自有的 DecomposeScaledBlocked 实现改为继承上游版本，减少维护成本，并支持原生 f8E8M0FNU 缩放。",
+        "impact": "减少代码重复，可能修复 f8E8M0FNU 缩放问题。",
+        "brief": "继承上游实现减少复制",
+        "tier": "minor",
+        "changeType": "refactor",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "Linux 7.5 继续支持 GPU D 系列",
+        "analysis": "Intel 继续为 Crescent Island（GPU D 系列）添加 Linux 内核驱动支持，为 Linux 7.5 做准备。",
+        "impact": "影响使用该硬件的 Linux 用户，驱动支持逐步完善。",
+        "brief": "GPU D 系列驱动持续开发",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "vLLM 启用 XPU 的 DFlash MXFP8 测试",
+        "analysis": "由于 XPU 支持 mxfp8 线性内核，此 PR 在 XPU 上启用 DFlash mxfp8 context KV 单元测试。",
+        "impact": "vLLM XPU 用户获得更全面的测试覆盖。",
+        "brief": "XPU 启用 DFlash MXFP8 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s16"
+        ],
+        "title": "vLLM CI 跳过更多 TP=2 测试",
+        "analysis": "现有跳过条件不足以防止测试挂起，因此增加跳过更多 TP=2 测试。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "CI 跳过更多 TP=2 测试",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "Arc B580 冷启动冻结问题持续",
+        "analysis": "社区报告 B580 冷启动冻结问题已持续 5 个月以上，Intel 尚未修复。",
+        "impact": "影响 B580 用户，尤其是 Acer Nitro 型号。",
+        "brief": "B580 冷启动冻结未修复",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": "b580-cold-boot-screen-freeze"
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "Ace Combat 8 崩溃的社区规避",
+        "analysis": "社区提供了 Ace Combat 8 崩溃的规避方法，但具体内容未在摘要中说明。",
+        "impact": "游戏玩家可参考规避方法。",
+        "brief": "Ace Combat 8 崩溃规避",
+        "tier": "minor",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      }
+    ]
+  }
+}
