@@ -15,6 +15,9 @@ import {
 	validateDailyMarkdown,
 	isIntelGpuRelated,
 	renderQuietDayMarkdown,
+	classifySource,
+	extractDriverVersionKey,
+	isValuableNewRepo,
 } from '../scripts/daily-lib.mjs';
 
 const fixturePath = path.resolve('tests/fixtures/news-replay-sample.json');
@@ -201,5 +204,88 @@ pubDate: "2026-09-19T08:30:00.000Z"
 		expect(renderedMinor).toContain('<details class="news-minor">');
 		expect(renderedMinor).toContain('<summary>其他 1 项小改动</summary>');
 		expect(renderedMinor).toContain('- CI 放宽超时');
+	});
+
+	it('classifies expanded sources and filters discovery radar repos cleanly', () => {
+		// 1. 新增信源分类精度（尤其是子库不与主库混淆）
+		expect(classifySource('上游合入: vllm-xpu-kernels')).toEqual({ section: 'downstream', module: 'vllm-xpu-kernels' });
+		expect(classifySource('上游合入: vLLM (upstream XPU)')).toEqual({ section: 'upstream', module: 'vLLM XPU' });
+		expect(classifySource('上游合入: intel/torch-xpu-ops')).toEqual({ section: 'downstream', module: 'torch-xpu-ops' });
+		expect(classifySource('MistVVK/XeStrata (Commit/Patch)')).toEqual({ section: 'downstream', module: 'XeStrata' });
+		expect(classifySource('GitHub Release: IntelLabs/Xe-Forge')).toEqual({ section: 'downstream', module: 'IntelLabs/Xe-Forge' });
+		expect(classifySource('VideoCardz (Windows 驱动与硬件)')).toEqual({ section: 'drivers', module: 'Windows 驱动' });
+		expect(classifySource('Mesa (Linux 图形栈 Tag)')).toEqual({ section: 'drivers', module: 'Linux 图形栈' });
+		expect(classifySource('开源新项目雷达 (GitHub Discovery)')).toEqual({ section: 'community', module: '开源新项目雷达' });
+		expect(classifySource('Reddit r/LocalLLaMA (社区推理生态)')).toEqual({ section: 'community', module: 'Reddit r/LocalLLaMA' });
+
+		// 2. 驱动版本号去重特征键
+		expect(extractDriverVersionKey('Intel Arc Graphics Driver 32.0.101.6632 WHQL')).toBe('driver:101.6632');
+		expect(extractDriverVersionKey('No driver version here')).toBeNull();
+
+		// 3. 新项目发现雷达过滤逻辑
+		const known = new Set(['mistvvk/xestrata']);
+		const history = { 'user/existing-xpu-tool': { stars: 60 } };
+
+		// 命中已知仓库 -> 跳过
+		expect(isValuableNewRepo({
+			full_name: 'MistVVK/XeStrata',
+			description: 'SYCL inference engine for Intel Arc GPUs',
+			stargazers_count: 500,
+		}, known, history)).toBe(false);
+
+		// 同名非 GPU 项目（如 Arc Browser 主题） -> 跳过
+		expect(isValuableNewRepo({
+			full_name: 'someone/arc-clean-theme',
+			description: 'A sleek CSS theme for Arc browser users',
+			stargazers_count: 200,
+		}, known, history)).toBe(false);
+
+		// 真正的 XPU/SYCL 新项目 -> 通过
+		expect(isValuableNewRepo({
+			full_name: 'dev/sycl-flash-moe',
+			description: 'Fast MoE SYCL kernels for Intel Arc B580 XPU inference',
+			stargazers_count: 42,
+		}, known, history)).toBe(true);
+
+		// 历史已报道仓库未翻倍 -> 不刷屏
+		expect(isValuableNewRepo({
+			full_name: 'user/existing-xpu-tool',
+			description: 'OpenVINO and SYCL GPU monitoring utility',
+			stargazers_count: 90,
+		}, known, history)).toBe(false);
+
+		// 历史已报道仓库 Star 暴涨（>= 160） -> 触发二次里程碑报道
+		expect(isValuableNewRepo({
+			full_name: 'user/existing-xpu-tool',
+			description: 'OpenVINO and SYCL GPU monitoring utility',
+			stargazers_count: 180,
+		}, known, history)).toBe(true);
+
+		// 4. CI skip test 即使含 crash 也不拿高分，且同源限额防止单一仓库霸屏
+		const ciSkipItem = {
+			source: 'intel/intel-xpu-backend-for-triton (Commit/Patch)',
+			title: '[vLLM][CI] Skip the vLLM kda test that crashes with SIGFPE (#8777)',
+			url: 'https://github.com/intel/intel-xpu-backend-for-triton/commit/1234567',
+			summary: '',
+		};
+		expect(scoreItemImportance(ciSkipItem)).toBeLessThan(15);
+
+		const floodItems = Array.from({ length: 8 }, (_, idx) => ({
+			source: '上游合入: intel/torch-xpu-ops',
+			title: `Optimize XPU kernel #${idx}`,
+			url: `https://github.com/intel/torch-xpu-ops/pull/${100 + idx}`,
+			summary: 'SYCL kernel optimization',
+		}));
+		floodItems.push({
+			source: '开源新项目雷达 (GitHub Discovery)',
+			title: 'dev/new-sycl-runner (⭐ 88)',
+			url: 'https://github.com/dev/new-sycl-runner',
+			stars: 88,
+			summary: 'SYCL runner',
+		});
+		const capped = filterAndRankItems(floodItems, [], 15, 20, 3);
+		const opsCount = capped.filter(i => i.source === '上游合入: intel/torch-xpu-ops').length;
+		expect(opsCount).toBe(3);
+		expect(capped.some(i => i.source.includes('开源新项目雷达'))).toBe(true);
 	});
 });

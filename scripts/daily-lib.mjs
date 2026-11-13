@@ -64,6 +64,11 @@ export const SECTION_TITLES = {
 
 const MODULE_RULES = [
 	// [匹配 source 的正则, 板块, 模块名]
+	// 先匹配子仓库与专用算子库，避免被宽泛上游规则抢占
+	[/vllm-xpu-kernels/i, 'downstream', 'vllm-xpu-kernels'],
+	[/torch-xpu-ops/i, 'downstream', 'torch-xpu-ops'],
+	[/xestrata/i, 'downstream', 'XeStrata'],
+	[/xe-forge/i, 'downstream', 'IntelLabs/Xe-Forge'],
 	[/上游合入:\s*vllm/i, 'upstream', 'vLLM XPU'],
 	[/上游合入:\s*sglang/i, 'upstream', 'SGLang XPU'],
 	[/上游合入:\s*pytorch/i, 'upstream', 'PyTorch XPU'],
@@ -71,19 +76,27 @@ const MODULE_RULES = [
 	[/上游合入:\s*comfyui/i, 'upstream', 'ComfyUI'],
 	[/上游合入:\s*ollama/i, 'upstream', 'Ollama'],
 	[/上游合入:\s*deepspeed/i, 'upstream', 'DeepSpeed'],
+	[/上游合入:\s*transformers/i, 'upstream', 'HuggingFace Transformers'],
+	[/上游合入:\s*bitsandbytes/i, 'upstream', 'bitsandbytes XPU'],
+	[/上游合入:\s*strata/i, 'upstream', 'Strata'],
 	[/上游合入/i, 'upstream', '其他框架'],
 	[/intel-xpu-backend-for-triton/i, 'downstream', 'Triton XPU 后端'],
 	[/llm-scaler/i, 'downstream', 'intel/llm-scaler'],
+	[/optimum-intel/i, 'downstream', 'Optimum-Intel'],
 	[/openvino/i, 'downstream', 'OpenVINO'],
 	[/onednn/i, 'downstream', 'oneDNN'],
 	[/onemkl/i, 'downstream', 'oneMKL'],
+	[/oneccl/i, 'downstream', 'oneCCL'],
 	[/intel\/llvm/i, 'downstream', 'SYCL 编译器'],
 	[/compute-runtime/i, 'drivers', 'compute-runtime'],
 	[/intel-graphics-compiler/i, 'drivers', 'IGC 图形编译器'],
 	[/level-zero/i, 'drivers', 'Level Zero'],
-	[/techpowerup/i, 'drivers', 'Windows 驱动'],
-	[/phoronix/i, 'drivers', 'Linux 图形栈'],
+	[/techpowerup|videocardz|guru3d/i, 'drivers', 'Windows 驱动'],
+	[/phoronix|mesa|drm\/xe|igt-gpu-tools/i, 'drivers', 'Linux 图形栈'],
+	[/开源新项目雷达|新项目发现/i, 'community', '开源新项目雷达'],
 	[/igcit|社区驱动追踪/i, 'community', 'IGCIT 问题追踪'],
+	[/localllama/i, 'community', 'Reddit r/LocalLLaMA'],
+	[/hacker news/i, 'community', 'Hacker News 讨论'],
 	[/reddit/i, 'community', 'Reddit r/IntelArc'],
 ];
 
@@ -103,8 +116,15 @@ export function deriveLinkLabel(url = '', source = '') {
 	if ((m = url.match(/\/issues\/(\d+)/))) return `#${m[1]}`;
 	if ((m = url.match(/\/commit\/([a-f0-9]{7})/i))) return `commit ${m[1]}`;
 	if ((m = url.match(/\/releases\/tag\/([^/?#]+)/))) return decodeURIComponent(m[1]);
+	if ((m = url.match(/\/\/github\.com\/([^/]+\/[^/?#]+)\/?$/))) return m[1];
 	if (/phoronix/i.test(url)) return 'Phoronix';
 	if (/techpowerup/i.test(url)) return 'TechPowerUp';
+	if (/videocardz/i.test(url)) return 'VideoCardz';
+	if (/guru3d/i.test(url)) return 'Guru3D';
+	if (/gitlab\.freedesktop\.org\/mesa/i.test(url)) return 'Mesa';
+	if (/gitlab\.freedesktop\.org\/drm\/xe/i.test(url)) return 'drm/xe';
+	if (/gitlab\.freedesktop\.org\/drm\/igt/i.test(url)) return 'IGT';
+	if (/news\.ycombinator\.com/i.test(url)) return 'HN';
 	if (/reddit/i.test(url)) return 'Reddit';
 	return source.split(/[\s(]/)[0] || '来源';
 }
@@ -195,6 +215,46 @@ export function isIntelGpuRelated(text = '') {
 	return /\bintel\b/i.test(text) && GPU_CONTEXT_RE.test(text);
 }
 
+/**
+ * 提取 Windows Intel 显卡驱动版本号特征键（如 101.6632），用于多媒体跨天去重
+ */
+export function extractDriverVersionKey(text = '') {
+	const m = String(text).match(/\b(?:3[0-9]\.0\.)?(101\.\d{4,5})\b/);
+	return m ? `driver:${m[1]}` : null;
+}
+
+const NEW_REPO_XPU_RE = /\b(xpu|sycl|xe2|xe3|battlemage|alchemist|intel[-\s]?arc|arc[-\s]?b\d{3}|arc[-\s]?a\d{3}|arc[-\s]?pro|level[-\s]?zero|oneapi|openvino|xmx|esimd)\b/i;
+const NEW_REPO_COMPUTE_RE = /\b(gpu|inference|llm|kernel|triton|pytorch|vllm|sglang|llama|vulkan|driver|quant|gemm|attention|moe|sycl|compute|cuda|benchmark|ai)\b/i;
+const NEW_REPO_NOISE_RE = /\b(awesome-|interview|cheatsheet|homework|course|dotfiles|wallpaper|theme|arc-browser|arcgis|rust-arc)\b/i;
+
+/**
+ * 过滤 GitHub 主动发现的新仓库：防重名误报（如 Arc Browser）、防垃圾水仓、防已报道仓库刷屏
+ */
+export function isValuableNewRepo(repo, knownReposSet = new Set(), discoveredHistory = {}) {
+	if (!repo || !repo.full_name) return false;
+	if (repo.archived || repo.fork || repo.disabled) return false;
+
+	const fullNameLower = repo.full_name.toLowerCase();
+	if (knownReposSet.has(fullNameLower)) return false;
+
+	const text = [repo.full_name, repo.description || '', ...(repo.topics || [])].join(' ');
+	if (NEW_REPO_NOISE_RE.test(text)) return false;
+	if (!repo.description || repo.description.trim().length < 10) return false;
+
+	// 双重校验：必须命中明确 Intel XPU/Arc 信号词，且命中至少一个计算/GPU/推理语义词
+	if (!NEW_REPO_XPU_RE.test(text) || !NEW_REPO_COMPUTE_RE.test(text)) return false;
+
+	// 已在历史雷达库中的项目，只有 Star 暴涨（至少翻倍且增量 >= 100）才再次触发报道
+	const prev = discoveredHistory[fullNameLower];
+	if (prev) {
+		const stars = repo.stargazers_count || 0;
+		const threshold = Math.max((prev.stars || 0) * 2, (prev.stars || 0) + 100);
+		if (stars < threshold) return false;
+	}
+
+	return true;
+}
+
 export function scoreItemImportance(item, matchedThreads = []) {
 	let score = 0;
 	const source = (item.source || '').toLowerCase();
@@ -206,28 +266,38 @@ export function scoreItemImportance(item, matchedThreads = []) {
 	// 常规快照与杂务
 	if (/(?:nightly|weekly|daily build|sycl-latest-good|latest-good|latest-buildable|snapshot)/i.test(fullText)) score -= 25;
 	if (/(?:bump version|update readme|update changelog|license|typo|fix typo|format code|clang-format|pre-commit)/i.test(title)) score -= 25;
-	if (/^(?:\[(?:ci|test|tests)\]|(?:ci|chore|build|test|style|workflow)(?:\([^\)]+\))?:)\s*/i.test(title)) score -= 20;
+	const isTestOrCiTitle = /\[(?:ci|test|tests|skip)\]/i.test(title) || /^(?:ci|chore|build|test|style|workflow)(?:\([^\)]+\))?:/i.test(title) || /\b(?:skip|disable|adapt|refactor)\s+.*\btests?\b|\btemporarily skip\b|\brun\s+.*\btests?\s+on\b|\btest fixture\b/i.test(title);
+	if (isTestOrCiTitle) score -= 20;
 	if (/(?:github actions?|workflows?|ci runner|cache action|dependency update|dependabot|docker|sync branch|merge branch)/i.test(fullText)) score -= 20;
 
-	// Reddit
+	// Reddit 社区讨论区分：r/IntelArc 水帖较多降权；r/LocalLLaMA 相关性不足降权
 	if (source.includes('reddit')) {
 		if (/(?:steam machine|clone|setup|psu|power supply|should i buy|thoughts|fan noise|case build|help me)/i.test(fullText)) score -= 20;
+		else if (source.includes('localllama') && isIntelGpuRelated(`${title} ${summary}`)) score += 10;
 		else score -= 5;
 	}
 
 	// 旧 Issue
 	if (item.issueType === 'old') score -= 15;
 
-	// 新闻站：与 Intel GPU 无关的直接重罚
-	if ((source.includes('phoronix') || source.includes('techpowerup')) && !isIntelGpuRelated(`${title} ${summary}`)) {
+	// 媒体源（Phoronix / TechPowerUp / VideoCardz / Guru3D）：与 Intel GPU 无关直接重罚
+	if (/(?:phoronix|techpowerup|videocardz|guru3d)/.test(source) && !isIntelGpuRelated(`${title} ${summary}`)) {
 		score -= 40;
 	}
 
 	// 加分
-	if (source.includes('techpowerup') && /(?:driver|drivers|whql|game ready|beta release)/i.test(fullText)) score += 20;
+	if (/(?:techpowerup|videocardz|guru3d)/.test(source) && /(?:driver|drivers|whql|game on|game ready|beta release|xess)/i.test(fullText)) score += 20;
 	if (source.includes('phoronix') && /(?:drm\/xe|mesa|anv|kernel|vram|fred|xe2|xe3)/i.test(fullText)) score += 15;
-	if (/(?:crash|freeze|hang|regression|black screen|bsod|segfault|corruption|deadlock|data loss|stutter)/i.test(fullText)) score += 18;
-	if (source.includes('上游合入') || source.includes('triton')) score += 15;
+	if (/(?:mesa|drm\/xe|igt-gpu-tools)/.test(source) && !/\brc\d+\b/i.test(title)) score += 16;
+	if (!isTestOrCiTitle && /(?:crash|freeze|hang|regression|black screen|bsod|segfault|corruption|deadlock|data loss|stutter)/i.test(fullText)) score += 18;
+	if (/(?:上游合入|triton|torch-xpu-ops|vllm-xpu-kernels|xestrata|xe-forge|oneccl)/.test(source)) score += 15;
+	if (source.includes('开源新项目雷达')) {
+		score += 18;
+		if ((item.stars || 0) >= 100) score += 5;
+	}
+	if (source.includes('hacker news')) {
+		score += isIntelGpuRelated(`${title} ${summary}`) ? 12 : -40;
+	}
 	if (/(?:workaround|fallback|revert|root cause|hotfix|security advisory)/i.test(fullText)) score += 14;
 	if (/(?:triton|xpu|sycl|kernel|subgroup|xmx|esimd|usm|anv|kv cache|attention|quant|moe|fp8|int8|int4)/i.test(fullText)) score += 10;
 	if (source.includes('release') && !/(?:nightly|snapshot|latest-good|latest-buildable)/i.test(fullText)) score += 15;
@@ -237,15 +307,29 @@ export function scoreItemImportance(item, matchedThreads = []) {
 	return score;
 }
 
-export function filterAndRankItems(items, threads = [], minScore = 15, limit = 20) {
-	return items
+export function filterAndRankItems(items, threads = [], minScore = 15, limit = 20, maxPerSource = 5) {
+	const ranked = items
 		.map(item => {
 			const matchedThreads = matchNewsThreads(item, threads);
 			return { ...item, matchedThreads, score: scoreItemImportance(item, matchedThreads) };
 		})
 		.filter(item => item.score >= minScore)
-		.sort((a, b) => b.score - a.score)
-		.slice(0, limit);
+		.sort((a, b) => b.score - a.score);
+
+	if (!maxPerSource || maxPerSource <= 0) return ranked.slice(0, limit);
+
+	const sourceCounts = new Map();
+	const picked = [];
+	for (const item of ranked) {
+		const srcKey = (item.source || '').toLowerCase();
+		const isExempt = srcKey.includes('release') || srcKey.includes('开源新项目雷达');
+		const count = sourceCounts.get(srcKey) || 0;
+		if (!isExempt && count >= maxPerSource) continue;
+		sourceCounts.set(srcKey, count + 1);
+		picked.push(item);
+		if (picked.length >= limit) break;
+	}
+	return picked;
 }
 
 /**
@@ -304,7 +388,8 @@ ${yesterday}
 }
 
 【字段约束】
-- refs：只能使用输入中出现的 ID（如 "s3"）。同一件事的多条信源（例如版本号提升 + 对应依赖更新）合并为一个 item，refs 写多个。
+- refs：只能使用输入中出现的 ID（如 "s3"）。同一件事的多条信源（例如多家媒体报道同一版 Windows 驱动、或版本号提升 + 对应依赖更新）必须合并为一个 item，refs 写多个。
+- 若信源为「开源新项目雷达」，请在 analysis 中简述项目定位、底层技术栈（如 SYCL/Level Zero/Triton）与当前 Star 量级。
 - overview：1~3 条，只放今天最值得看的结论；title 是结论而不是标题复述。内容少就少写，不要凑数。
 - status 只允许 "Merged" | "Released" | "Workaround" | "Issue" | "Testing"。
 - tier："major" 表示影响实际使用、性能、正确性或兼容性；测试放宽、跳过测试、CI 调整、上游同步、构建告警一律 "minor"。

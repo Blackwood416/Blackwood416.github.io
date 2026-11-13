@@ -6,6 +6,8 @@ import {
 	filterAndRankItems,
 	assignRefs,
 	isIntelGpuRelated,
+	extractDriverVersionKey,
+	isValuableNewRepo,
 	buildDailyPrompts,
 	parseDailyJsonOutput,
 	validateDailyJson,
@@ -36,11 +38,12 @@ function loadEnv() {
 
 loadEnv();
 
+const DRY_RUN_COLLECT = process.argv.includes('--dry-run-collect');
 const RADEON_API_KEY = process.env.RADEON_API_KEY;
 const RADEON_BASE_URL = process.env.RADEON_BASE_URL || 'https://developer.amd.com.cn/radeon/api/v1';
 const RADEON_MODEL = process.env.RADEON_MODEL || 'DeepSeek-V4-Flash';
 
-if (!RADEON_API_KEY) {
+if (!RADEON_API_KEY && !DRY_RUN_COLLECT) {
 	console.error('\x1b[31m[Error] 缺少 RADEON_API_KEY 环境变量！\x1b[0m');
 	process.exit(1);
 }
@@ -93,6 +96,12 @@ function loadReportedHistory(currentDateStr) {
 			if (commitMatch) seenKeys.add(`commit:${commitMatch[1].slice(0, 7)}`);
 		}
 
+		// 提取历史日报中提及的 Windows Intel 驱动版本号（如 101.6632），防止多源跨天重复报道
+		const driverMatches = content.matchAll(/\b(?:3[0-9]\.0\.)?(101\.\d{4,5})\b/g);
+		for (const dm of driverMatches) {
+			seenKeys.add(`driver:${dm[1]}`);
+		}
+
 		// 提取最新一期（即昨日）的核心速览部分
 		if (i === 0) {
 			const coreMatch = content.match(/## (?:核心速览|今日要点)([\s\S]*?)(?=\n## |$)/);
@@ -107,18 +116,34 @@ function loadReportedHistory(currentDateStr) {
 
 // --- 1. 抓取逻辑 ---
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function extractTextField(field) {
+	if (!field) return '';
+	if (typeof field === 'string') return field;
+	if (typeof field === 'object') return field['#text'] || field['__cdata'] || '';
+	return String(field);
+}
+
 // 1.1 GitHub Atom Releases
 const ATOM_REPOS = [
 	'intel/llm-scaler',
 	'intel/intel-xpu-backend-for-triton',
+	'vllm-project/vllm-xpu-kernels',
 	'intel/compute-runtime',
 	'intel/intel-graphics-compiler',
 	'intel/llvm',
 	'oneapi-src/oneDNN',
 	'oneapi-src/oneMKL',
 	'oneapi-src/level-zero',
+	'uxlfoundation/oneCCL',
 	'openvinotoolkit/openvino',
 	'openvinotoolkit/openvino.genai',
+	'huggingface/optimum-intel',
+	'MistVVK/XeStrata',
+	'IntelLabs/Xe-Forge',
 ];
 
 async function fetchAtomReleases(repo) {
@@ -136,12 +161,13 @@ async function fetchAtomReleases(repo) {
 		for (const e of entryList) {
 			const updated = new Date(e.updated || e.published);
 			if (updated >= cutoffDate) {
+				const rawContent = extractTextField(e.content);
 				results.push({
 					source: `GitHub Release: ${repo}`,
-					title: e.title,
+					title: extractTextField(e.title),
 					url: e.link?.['@_href'] || e.link,
 					updated: updated.toISOString(),
-					summary: typeof e.content === 'string' ? e.content.replace(/<[^>]+>/g, '').slice(0, 300) : '',
+					summary: rawContent.replace(/<[^>]+>/g, '').slice(0, 300),
 				});
 			}
 		}
@@ -152,38 +178,17 @@ async function fetchAtomReleases(repo) {
 	}
 }
 
-// 1.2.1 intel/llm-scaler 最新 Commits
-async function fetchLlmScalerCommits() {
-	const sinceStr = cutoffDate.toISOString();
-	const url = `https://api.github.com/repos/intel/llm-scaler/commits?since=${sinceStr}&per_page=20`;
-	try {
-		const res = await fetch(url, { headers: FETCH_HEADERS });
-		if (!res.ok) return [];
-		const commits = await res.json();
-		if (!Array.isArray(commits)) return [];
-		return commits
-			.filter(c => {
-				const msg = c.commit?.message || '';
-				// 过滤纯更新版本号或简单 merge、readme
-				return !/^update readme/i.test(msg) && !/^merge /i.test(msg);
-			})
-			.map(c => ({
-				source: 'intel/llm-scaler (Commit/Patch)',
-				title: c.commit?.message?.split('\n')[0] || 'Untitled commit',
-				url: c.html_url,
-				updated: c.commit?.author?.date,
-				summary: c.commit?.message?.slice(0, 250),
-			}));
-	} catch (err) {
-		console.warn('[llm-scaler commits] 抓取警告:', err.message);
-		return [];
-	}
-}
+// 1.2 核心迭代仓库最新 Commits（底层内核与新兴高热引擎）
+const COMMIT_REPOS = [
+	'intel/llm-scaler',
+	'intel/intel-xpu-backend-for-triton',
+	'MistVVK/XeStrata',
+	'IntelLabs/Xe-Forge',
+];
 
-// 1.2.2 intel/intel-xpu-backend-for-triton 最新 Commits
-async function fetchTritonXpuCommits() {
+async function fetchRepoCommits(repo) {
 	const sinceStr = cutoffDate.toISOString();
-	const url = `https://api.github.com/repos/intel/intel-xpu-backend-for-triton/commits?since=${sinceStr}&per_page=20`;
+	const url = `https://api.github.com/repos/${repo}/commits?since=${sinceStr}&per_page=20`;
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
 		if (!res.ok) return [];
@@ -195,47 +200,68 @@ async function fetchTritonXpuCommits() {
 				return !/^update readme/i.test(msg) && !/^merge /i.test(msg);
 			})
 			.map(c => ({
-				source: 'intel/intel-xpu-backend-for-triton (Commit/Patch)',
+				source: `${repo} (Commit/Patch)`,
 				title: c.commit?.message?.split('\n')[0] || 'Untitled commit',
 				url: c.html_url,
 				updated: c.commit?.author?.date,
 				summary: c.commit?.message?.slice(0, 250),
 			}));
 	} catch (err) {
-		console.warn('[triton commits] 抓取警告:', err.message);
+		console.warn(`[${repo} commits] 抓取警告:`, err.message);
 		return [];
 	}
 }
 
-// 1.3 上游框架与模型生态 PR
+// 1.3 上游框架与底层算子库 PR
+const dateCutoffStr = cutoffDate.toISOString().split('T')[0];
 const SEARCH_QUERIES = [
 	{
 		label: 'PyTorch (torch.xpu)',
-		query: `repo:pytorch/pytorch is:pr is:merged label:"module: xpu" merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:pytorch/pytorch is:pr is:merged label:"module: xpu" merged:>=${dateCutoffStr}`,
+	},
+	{
+		label: 'intel/torch-xpu-ops',
+		query: `repo:intel/torch-xpu-ops is:pr is:merged merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'vLLM (upstream XPU)',
-		query: `repo:vllm-project/vllm is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:vllm-project/vllm is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${dateCutoffStr}`,
+	},
+	{
+		label: 'vllm-xpu-kernels',
+		query: `repo:vllm-project/vllm-xpu-kernels is:pr is:merged merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'llama.cpp (sycl/openvino/intel)',
-		query: `repo:ggerganov/llama.cpp is:pr is:merged (sycl OR openvino OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:ggml-org/llama.cpp is:pr is:merged (sycl OR openvino OR "intel gpu") in:title merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'SGLang (XPU)',
-		query: `repo:sgl-project/sglang is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:sgl-project/sglang is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'ComfyUI (Intel/XPU)',
-		query: `repo:comfyanonymous/ComfyUI is:pr is:merged (xpu OR intel) in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:comfyanonymous/ComfyUI is:pr is:merged (xpu OR intel) in:title merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'Ollama (SYCL/Intel)',
-		query: `repo:ollama/ollama is:pr is:merged (sycl OR intel OR oneapi) in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:ollama/ollama is:pr is:merged (sycl OR intel OR oneapi) in:title merged:>=${dateCutoffStr}`,
 	},
 	{
 		label: 'DeepSpeed (XPU)',
-		query: `repo:microsoft/DeepSpeed is:pr is:merged xpu in:title merged:>=${cutoffDate.toISOString().split('T')[0]}`,
+		query: `repo:microsoft/DeepSpeed is:pr is:merged xpu in:title merged:>=${dateCutoffStr}`,
+	},
+	{
+		label: 'Transformers (XPU)',
+		query: `repo:huggingface/transformers is:pr is:merged (xpu OR "intel gpu") in:title merged:>=${dateCutoffStr}`,
+	},
+	{
+		label: 'bitsandbytes (XPU)',
+		query: `repo:bitsandbytes-foundation/bitsandbytes is:pr is:merged (xpu OR intel) in:title merged:>=${dateCutoffStr}`,
+	},
+	{
+		label: 'Strata (XPU/SYCL)',
+		query: `repo:Niko1221/Strata is:pr is:merged (xpu OR sycl OR intel OR "level zero") merged:>=${dateCutoffStr}`,
 	},
 ];
 
@@ -243,7 +269,10 @@ async function fetchSearchPRs(label, query) {
 	const url = `https://api.github.com/search/issues?q=${encodeURIComponent(query)}&sort=updated&order=desc&per_page=10`;
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
-		if (!res.ok) return [];
+		if (!res.ok) {
+			console.warn(`[GitHub Search] ${label} HTTP ${res.status}`);
+			return [];
+		}
 		const data = await res.json();
 		if (!data.items || !Array.isArray(data.items)) return [];
 
@@ -279,20 +308,16 @@ async function fetchPhoronix() {
 			if (pubDate < cutoffDate) continue;
 
 			const titleLower = (item.title || '').toLowerCase();
-			const descLower = (item.description || '').toLowerCase();
-			const fullText = `${titleLower} ${descLower}`;
+			if (excludeKeywords.some(ex => titleLower.includes(ex))) continue;
 
-			const isExcluded = excludeKeywords.some(ex => titleLower.includes(ex));
-			if (isExcluded) continue;
-
-			// 整词匹配，避免 "search" / "architecture" 之类误命中 arc、xe
-			if (isIntelGpuRelated(`${item.title || ''} ${item.description || ''}`)) {
+			const desc = extractTextField(item.description);
+			if (isIntelGpuRelated(`${item.title || ''} ${desc}`)) {
 				results.push({
 					source: 'Phoronix (Linux Graphics/Driver)',
 					title: item.title,
 					url: item.link,
 					updated: pubDate.toISOString(),
-					summary: (item.description || '').replace(/<[^>]+>/g, '').slice(0, 250),
+					summary: desc.replace(/<[^>]+>/g, '').slice(0, 250),
 				});
 			}
 		}
@@ -303,49 +328,52 @@ async function fetchPhoronix() {
 	}
 }
 
-// 1.5 TechPowerUp News RSS (Windows Intel 显卡驱动与硬件发布第一时间监控)
-async function fetchTechPowerUpDrivers() {
-	const url = 'https://www.techpowerup.com/rss/news';
-	const intelTitleRe = /\b(intel|arc|battlemage|alchemist)\b/i;
-	const driverRe = /\b(drivers?|whql|game on|graphics)\b/i;
+// 1.5 Windows Intel 显卡驱动双源交叉监控 (TechPowerUp / Guru3D)
+const DRIVER_MEDIA_FEEDS = [
+	{ name: 'TechPowerUp (Windows 驱动与硬件)', url: 'https://www.techpowerup.com/rss/news' },
+	{ name: 'Guru3D (Windows 驱动与硬件)', url: 'https://www.guru3d.com/rss.xml' },
+];
+
+async function fetchDriverNewsFeed(sourceName, url) {
+	const intelTitleRe = /\b(intel|arc|battlemage|alchemist|xess)\b/i;
+	const driverRe = /\b(drivers?|whql|game on|game ready|graphics|101\.\d{4}|xess)\b/i;
 	try {
 		const res = await fetch(url, { headers: FETCH_HEADERS });
 		if (!res.ok) return [];
 		const xml = await res.text();
 		const parsed = parser.parse(xml);
-		const items = parsed.rss?.channel?.item;
-		if (!items) return [];
+		const rawItems = parsed.rss?.channel?.item || parsed.feed?.entry;
+		if (!rawItems) return [];
 
-		const itemList = Array.isArray(items) ? items : [items];
+		const itemList = Array.isArray(rawItems) ? rawItems : [rawItems];
 		const results = [];
 		for (const item of itemList) {
-			const pubDate = new Date(item.pubDate);
-			if (pubDate < cutoffDate) continue;
+			const pubDate = new Date(item.pubDate || item.published || item.updated);
+			if (Number.isNaN(pubDate.getTime()) || pubDate < cutoffDate) continue;
 
-			const titleLower = (item.title || '').toLowerCase();
-			const descLower = (item.description || '').toLowerCase();
-			const fullText = `${titleLower} ${descLower}`;
+			const title = extractTextField(item.title);
+			const desc = extractTextField(item.description || item.content || item.summary);
+			const fullText = `${title} ${desc}`;
 
-			const hasIntel = intelTitleRe.test(titleLower);
-			const hasDriver = driverRe.test(fullText);
-			if (hasIntel && hasDriver) {
+			if (intelTitleRe.test(title) && driverRe.test(fullText)) {
+				const link = typeof item.link === 'string' ? item.link : (item.link?.['@_href'] || '');
 				results.push({
-					source: 'TechPowerUp (Windows 驱动与硬件)',
-					title: item.title,
-					url: item.link,
+					source: sourceName,
+					title,
+					url: link,
 					updated: pubDate.toISOString(),
-					summary: (item.description || '').replace(/<[^>]+>/g, '').slice(0, 300),
+					summary: desc.replace(/<[^>]+>/g, '').slice(0, 300),
 				});
 			}
 		}
 		return results;
 	} catch (err) {
-		console.warn('[TechPowerUp] 抓取警告:', err.message);
+		console.warn(`[${sourceName}] 抓取警告:`, err.message);
 		return [];
 	}
 }
 
-// 1.6 Intel GPU Community Issue Tracker (IGCIT) (监控 Windows 驱动实际 Bug/BSOD 与修复进展)
+// 1.6 Intel GPU Community Issue Tracker (IGCIT)
 async function fetchIGCITIssues() {
 	const sinceStr = cutoffDate.toISOString();
 	const url = `https://api.github.com/repos/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues?since=${sinceStr}&per_page=15`;
@@ -357,16 +385,10 @@ async function fetchIGCITIssues() {
 
 		const results = [];
 		for (const item of issues) {
-			// 排除 PR
 			if (item.pull_request) continue;
-
 			const createdAt = new Date(item.created_at);
 			const isNew = createdAt >= cutoffDate;
-
-			// 如果是旧 issue（创建于 28 小时之前），若没有评论（comments === 0），说明仅为修改标签/分配人等元数据刷新，直接过滤
-			if (!isNew && (!item.comments || item.comments === 0)) {
-				continue;
-			}
+			if (!isNew && (!item.comments || item.comments === 0)) continue;
 
 			results.push({
 				source: isNew ? 'Intel 官方社区驱动追踪 (新提交 Issue)' : 'Intel 官方社区驱动追踪 (Issue 进展更新)',
@@ -385,7 +407,7 @@ async function fetchIGCITIssues() {
 	}
 }
 
-// 1.5 Reddit r/IntelArc (过滤硬核测试、工具更新和特定驱动讨论)
+// 1.8 Reddit r/IntelArc 与 r/LocalLLaMA
 async function fetchRedditArc() {
 	const url = 'https://www.reddit.com/r/IntelArc/.rss';
 	const valuableKeywords = ['benchmark', 'tok/s', 'vllm', 'sycl', 'overclock', 'arc power', 'fix', 'driver', 'performance', 'linux', 'b580', 'b570', 'b70', 'b60', 'a770'];
@@ -403,54 +425,223 @@ async function fetchRedditArc() {
 			const updated = new Date(e.updated || e.published);
 			if (updated < cutoffDate) continue;
 
-			const titleLower = (e.title || '').toLowerCase();
+			const title = extractTextField(e.title);
+			const titleLower = title.toLowerCase();
 			const matched = valuableKeywords.some(k => titleLower.includes(k));
-			// 过滤纯提问与低质贴
 			if (!matched || titleLower.startsWith('help') || titleLower.startsWith('can’t play') || titleLower.includes('is a 500wat')) continue;
 
 			results.push({
 				source: 'Reddit r/IntelArc (社区实测与讨论)',
-				title: e.title,
+				title,
 				url: e.link?.['@_href'] || e.link,
 				updated: updated.toISOString(),
-				summary: typeof e.content === 'string' ? e.content.replace(/<[^>]+>/g, '').slice(0, 200) : '',
+				summary: extractTextField(e.content).replace(/<[^>]+>/g, '').slice(0, 200),
 			});
 		}
 		return results;
 	} catch (err) {
-		console.warn('[Reddit] 抓取警告:', err.message);
+		console.warn('[Reddit r/IntelArc] 抓取警告:', err.message);
 		return [];
 	}
 }
 
+async function fetchRedditLocalLLaMA() {
+	const url = 'https://www.reddit.com/r/LocalLLaMA/.rss';
+	const titleFilterRe = /\b(intel\s*arc|intel\s*gpu|xpu|sycl|openvino|b580|b60|b70|a770|battlemage|xestrata|llm-scaler)\b/i;
+	try {
+		const res = await fetch(url, { headers: FETCH_HEADERS });
+		if (!res.ok) return [];
+		const xml = await res.text();
+		const parsed = parser.parse(xml);
+		const entries = parsed.feed?.entry;
+		if (!entries) return [];
+
+		const entryList = Array.isArray(entries) ? entries : [entries];
+		const results = [];
+		for (const e of entryList) {
+			const updated = new Date(e.updated || e.published);
+			if (updated < cutoffDate) continue;
+
+			const title = extractTextField(e.title);
+			const contentText = extractTextField(e.content).replace(/<[^>]+>/g, '');
+			if (!titleFilterRe.test(`${title} ${contentText.slice(0, 300)}`)) continue;
+
+			results.push({
+				source: 'Reddit r/LocalLLaMA (社区推理生态)',
+				title,
+				url: e.link?.['@_href'] || e.link,
+				updated: updated.toISOString(),
+				summary: contentText.slice(0, 220),
+			});
+		}
+		return results;
+	} catch (err) {
+		console.warn('[Reddit r/LocalLLaMA] 抓取警告:', err.message);
+		return [];
+	}
+}
+
+// 1.9 主动生态雷达：GitHub 新兴项目发现 + Hacker News
+const DISCOVERED_REPOS_PATH = path.resolve('src/data/discovered-repos.json');
+
+function loadDiscoveredRepos() {
+	if (!fs.existsSync(DISCOVERED_REPOS_PATH)) return {};
+	try {
+		return JSON.parse(fs.readFileSync(DISCOVERED_REPOS_PATH, 'utf-8'));
+	} catch {
+		return {};
+	}
+}
+
+function saveDiscoveredRepos(map) {
+	fs.mkdirSync(path.dirname(DISCOVERED_REPOS_PATH), { recursive: true });
+	fs.writeFileSync(DISCOVERED_REPOS_PATH, JSON.stringify(map, null, 2) + '\n', 'utf-8');
+}
+
+const KNOWN_REPOS = new Set([
+	...ATOM_REPOS.map(r => r.toLowerCase()),
+	...COMMIT_REPOS.map(r => r.toLowerCase()),
+	'pytorch/pytorch',
+	'vllm-project/vllm',
+	'ggml-org/llama.cpp',
+	'ggerganov/llama.cpp',
+	'sgl-project/sglang',
+	'comfyanonymous/comfyui',
+	'ollama/ollama',
+	'microsoft/deepspeed',
+	'huggingface/transformers',
+	'bitsandbytes-foundation/bitsandbytes',
+	'niko1221/strata',
+	'igcit/intel-gpu-community-issue-tracker-igcit',
+	'intel/ipex-llm',
+	'intel/intel-extension-for-pytorch',
+]);
+
+async function fetchDiscoveredRepos(discoveredHistory) {
+	const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+	const queries = [
+		// 1. 近期两周内新建且快速获星的新项目（最容易捕捉 XeStrata 这类新黑马）
+		`("intel arc" OR "intel gpu" OR "intel xpu" OR "sycl" OR "battlemage" OR "level zero") created:>=${twoWeeksAgo} stars:>=15`,
+		// 2. 全网过去 28 小时有推送且包含 Intel GPU/XPU 关键特征的高星活跃项目（捕捉新接入 Intel 支持的热门库）
+		`("intel arc" OR "intel xpu" OR "intel gpu" OR "sycl" OR "battlemage") pushed:>=${dateCutoffStr} stars:>=30`,
+	];
+
+	const candidateRepos = new Map();
+	for (const q of queries) {
+		const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=15`;
+		try {
+			const res = await fetch(url, { headers: FETCH_HEADERS });
+			if (!res.ok) {
+				console.warn(`[Discovery Radar] GitHub Repo 搜索 HTTP ${res.status}`);
+				continue;
+			}
+			const data = await res.json();
+			for (const repo of data.items || []) {
+				if (!candidateRepos.has(repo.full_name.toLowerCase())) {
+					candidateRepos.set(repo.full_name.toLowerCase(), repo);
+				}
+			}
+		} catch (err) {
+			console.warn('[Discovery Radar] GitHub Repo 搜索警告:', err.message);
+		}
+		await sleep(350);
+	}
+
+	const results = [];
+	for (const repo of candidateRepos.values()) {
+		if (!isValuableNewRepo(repo, KNOWN_REPOS, discoveredHistory)) continue;
+		const isMilestone = Boolean(discoveredHistory[repo.full_name.toLowerCase()]);
+		results.push({
+			source: '开源新项目雷达 (GitHub Discovery)',
+			title: `${isMilestone ? '[热度跃迁] ' : ''}${repo.full_name} (⭐ ${repo.stargazers_count})`,
+			url: repo.html_url,
+			updated: repo.pushed_at || repo.updated_at,
+			stars: repo.stargazers_count,
+			repoFullName: repo.full_name,
+			summary: `语言: ${repo.language || 'Unknown'} | Stars: ${repo.stargazers_count} | Topics: ${(repo.topics || []).join(', ') || '无'} | 简介: ${repo.description}`,
+		});
+	}
+	return results;
+}
+
+async function fetchHackerNews() {
+	const cutoffEpoch = Math.floor(cutoffDate.getTime() / 1000);
+	const queries = ['"intel arc"', '"intel gpu"', '"xpu"'];
+	const seenIds = new Set();
+	const results = [];
+
+	for (const q of queries) {
+		const url = `https://hn.algolia.com/api/v1/search_by_date?query=${encodeURIComponent(q)}&tags=story&numericFilters=created_at_i>${cutoffEpoch},points>=10`;
+		try {
+			const res = await fetch(url);
+			if (!res.ok) continue;
+			const data = await res.json();
+			for (const hit of data.hits || []) {
+				if (seenIds.has(hit.objectID)) continue;
+				seenIds.add(hit.objectID);
+
+				const title = hit.title || '';
+				const storyUrl = hit.url || `https://news.ycombinator.com/item?id=${hit.objectID}`;
+				if (!isIntelGpuRelated(title)) continue;
+
+				results.push({
+					source: 'Hacker News (社区热点讨论)',
+					title: `${title} (${hit.points} pts, ${hit.num_comments || 0} comments)`,
+					url: storyUrl,
+					updated: hit.created_at,
+					summary: `HN 讨论地址: https://news.ycombinator.com/item?id=${hit.objectID} | 热度: ${hit.points} 分 / ${hit.num_comments || 0} 评论`,
+				});
+			}
+		} catch (err) {
+			console.warn('[Hacker News] 抓取警告:', err.message);
+		}
+	}
+	return results;
+}
+
 // --- 2. 汇总与组装 ---
-async function collectAllUpdates(history) {
-	console.log('[1/4] 正在并发采集 Intel GPU 生态动态...');
+async function collectAllUpdates(history, discoveredHistory) {
+	console.log('[1/4] 正在并发采集 Intel GPU 生态动态（含多源驱动与新项目雷达）...');
 	const rawItems = [];
 
-	const [atoms, llmCommits, tritonCommits, phoronix, techpowerup, igcit, reddit] = await Promise.all([
+	const [
+		atoms,
+		repoCommits,
+		phoronix,
+		driverMedia,
+		igcit,
+		redditArc,
+		redditLlama,
+		hnItems,
+	] = await Promise.all([
 		Promise.all(ATOM_REPOS.map(fetchAtomReleases)),
-		fetchLlmScalerCommits(),
-		fetchTritonXpuCommits(),
+		Promise.all(COMMIT_REPOS.map(fetchRepoCommits)),
 		fetchPhoronix(),
-		fetchTechPowerUpDrivers(),
+		Promise.all(DRIVER_MEDIA_FEEDS.map(f => fetchDriverNewsFeed(f.name, f.url))),
 		fetchIGCITIssues(),
 		fetchRedditArc(),
+		fetchRedditLocalLLaMA(),
+		fetchHackerNews(),
 	]);
 
 	for (const a of atoms) rawItems.push(...a);
-	rawItems.push(...llmCommits);
-	rawItems.push(...tritonCommits);
+	for (const c of repoCommits) rawItems.push(...c);
 	rawItems.push(...phoronix);
-	rawItems.push(...techpowerup);
+	for (const d of driverMedia) rawItems.push(...d);
 	rawItems.push(...igcit);
-	rawItems.push(...reddit);
+	rawItems.push(...redditArc);
+	rawItems.push(...redditLlama);
+	rawItems.push(...hnItems);
 
-	// 上游 PR 逐个执行（微小间隔防 403）
+	// GitHub Search（PR 与 新项目雷达）带轻微间隔串行执行，避免触发 Secondary Rate Limit
 	for (const sq of SEARCH_QUERIES) {
 		const prs = await fetchSearchPRs(sq.label, sq.query);
 		rawItems.push(...prs);
+		await sleep(350);
 	}
+
+	const discoveredRepos = await fetchDiscoveredRepos(discoveredHistory);
+	rawItems.push(...discoveredRepos);
 
 	// 按 URL 与历史已报道记录进行深度去重
 	const seenUrls = new Set();
@@ -467,7 +658,7 @@ async function collectAllUpdates(history) {
 			continue;
 		}
 
-		// 2. 检查 PR 编号是否已被收录
+		// 2. 检查 PR/Issue 编号是否已被收录
 		const prMatch = cleanUrl.match(/\/(?:pull|issues)\/(\d+)/);
 		if (prMatch && history.seenKeys.has(`pr:${prMatch[1]}`)) {
 			skippedHistoryCount++;
@@ -481,7 +672,14 @@ async function collectAllUpdates(history) {
 			continue;
 		}
 
-		// 4. 本次采集内部去重
+		// 4. 检查 Windows 驱动版本号是否已在往期报道过
+		const drvKey = extractDriverVersionKey(`${item.title || ''} ${item.summary || ''}`);
+		if (drvKey && history.seenKeys.has(drvKey)) {
+			skippedHistoryCount++;
+			continue;
+		}
+
+		// 5. 本次采集内部去重
 		if (!seenUrls.has(cleanUrl)) {
 			seenUrls.add(cleanUrl);
 			deduplicated.push(item);
@@ -589,12 +787,21 @@ async function main() {
 	const history = loadReportedHistory(todayStr);
 	console.log(`[Deduplicate] 从历史日报中提取了 ${history.seenUrls.size} 个已报道链接和 ${history.seenKeys.size} 个特征键。`);
 
-	const rawItems = await collectAllUpdates(history);
+	const discoveredHistory = loadDiscoveredRepos();
+	const rawItems = await collectAllUpdates(history, discoveredHistory);
 	const threads = loadNewsThreads();
 	console.log(`[Threads] 载入了 ${threads.length} 个长期追踪技术事件。`);
 
-	const items = assignRefs(filterAndRankItems(rawItems, threads, 15, 20));
+	const items = assignRefs(filterAndRankItems(rawItems, threads, 15, 22));
 	console.log(`[Rank] 阈值 15：${rawItems.length} 条候选中保留 ${items.length} 条。`);
+
+	if (DRY_RUN_COLLECT) {
+		console.log('\n[Dry-Run] 保留的候选条目详情:');
+		for (const it of items) {
+			console.log(`  [${it.ref}] (score=${it.score}) [${it.source}] ${it.title} -> ${it.url}`);
+		}
+		return;
+	}
 
 	if (items.length === 0) {
 		console.log('[Notice] 今日没有达到门槛的动态，发布简报。');
@@ -621,6 +828,24 @@ async function main() {
 		sources: items.map(({ ref, source, title, url, updated, score }) => ({ ref, source, title, url, updated, score })),
 		output: jsonData,
 	});
+
+	// 4. 仅在成功发布后记录本次入选的新项目，避免刷屏重复报道
+	const usedRefs = new Set((jsonData.items || []).flatMap(it => it.refs || []));
+	let discoveredUpdated = false;
+	for (const it of items) {
+		if (it.repoFullName && usedRefs.has(it.ref)) {
+			discoveredHistory[it.repoFullName.toLowerCase()] = {
+				fullName: it.repoFullName,
+				stars: it.stars || 0,
+				lastReported: todayStr,
+			};
+			discoveredUpdated = true;
+		}
+	}
+	if (discoveredUpdated) {
+		saveDiscoveredRepos(discoveredHistory);
+		console.log(`✔ 新项目雷达记录已更新: ${DISCOVERED_REPOS_PATH}`);
+	}
 }
 
 main().catch(err => {
