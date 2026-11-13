@@ -1,0 +1,371 @@
+{
+  "date": "2026-11-13",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM][CI] Skip the vLLM kda test that crashes with SIGFPE (#8777)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/60debf36ead37cda1e94996b932b70467b0247e3",
+      "updated": "2026-11-12T23:05:37Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Adapt Intel tests to upstream warp specialization and vector packing changes",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9dfda170710e41a9fc18c72862a30061876d4bda",
+      "updated": "2026-11-12T08:39:23Z",
+      "score": 43
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Temporarily skip 4x2k chunked-prefill unified attention configs (#8742) (#8766)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e2c1f5a6175120d13505ff9d8a4d3e2c7fe7fdcd",
+      "updated": "2026-11-12T18:02:49Z",
+      "score": 39
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Revert \"[BACKEND] Fix CTA split on small shapes (#12658)\"",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/d5681181b399b54354212239dbe0f346a8018e27",
+      "updated": "2026-11-12T08:50:42Z",
+      "score": 39
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmarks] Fall back to a tensor of pointers in the GEMM benchmarks when a tensor descriptor cannot be used (#8770)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/536a577ff2377a4b2245af1897859bde857ffd3c",
+      "updated": "2026-11-12T21:35:52Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Analysis] Accept only known ops when applying an assume backward (#8736)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/81ca9694b7e5f793c9816689ea3e37d5848788e0",
+      "updated": "2026-11-12T18:38:29Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[LowerTo2DBlockLoad] Match a row-limit mask conjunct by conjunct (#8761)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a7aac2ce4457f5f8cf0d39df04c2af86ace265bc",
+      "updated": "2026-11-12T17:28:29Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Pipeliner] Opt-in cost model for dropping a gapped dot-operand prefetch (#8653)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/843e88ccb21d07a9f9fb42f36fa8d101e9ae1ea4",
+      "updated": "2026-11-12T15:16:51Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[INTEL] Emit the f32 tl.fma contract pair after the LLVM optimizer (#8776)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a5de3374ba96e9d9ba174a5bd03adf47f650f3bf",
+      "updated": "2026-11-12T15:04:00Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Support native fp4e2m1x2 operands in tt.dot_scaled (#8724)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/780370768155a8f3fc447ba19fbbc616371efe96",
+      "updated": "2026-11-12T07:43:58Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "Phoronix (Linux Graphics/Driver)",
+      "title": "Intel Xe Driver Preparing SR-IOV Provisioning For vGPU Profiles",
+      "url": "https://www.phoronix.com/news/Linux-7.5-Intel-Xe-vGPU-Profile",
+      "updated": "2026-11-12T11:11:11.000Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] Re-enable `test_reset_prefix_cache_e2e` and `test_scheduler_e2e` on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/62656",
+      "updated": "2026-11-12T08:41:36Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Feat] [XPU] GDN: support speculative decoding",
+      "url": "https://github.com/sgl-project/sglang/pull/44017",
+      "updated": "2026-11-12T02:06:46Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[CI][XPU] skip one more TP=2 test in Distributed Shutdown job",
+      "url": "https://github.com/vllm-project/vllm/pull/66568",
+      "updated": "2026-11-11T07:01:01Z",
+      "score": 23
+    },
+    {
+      "ref": "s15",
+      "source": "GitHub Release: intel/compute-runtime",
+      "title": "26.44.40734.8: fix: track dependency for staging buffers optimization",
+      "url": "https://github.com/intel/compute-runtime/releases/tag/26.44.40734.8",
+      "updated": "2026-11-12T11:33:09.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "vLLM 多个 CI 测试因驱动崩溃或未知根因被跳过",
+        "refs": [
+          "s1",
+          "s3"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "Intel 后端适配上游 warp specialization 与向量打包变更",
+        "refs": [
+          "s2"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "跳过 vLLM kda 测试，因驱动 load_binary 崩溃",
+        "analysis": "该测试在 Intel 驱动 load_binary 中触发 SIGFPE 崩溃，属于测试调整，根因未解决。",
+        "impact": "vLLM CI 中该测试被跳过，需关注驱动崩溃问题。",
+        "brief": "跳过崩溃的 vLLM kda 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "适配上游 warp specialization 和向量打包变更",
+        "analysis": "同步上游对 warp specialization 和向量打包的改动，调整 Intel 测试以匹配新行为。",
+        "impact": "Intel 测试套件需更新以适配上游变更。",
+        "brief": "同步上游变更并调整 Intel 测试",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "临时跳过 4x2k chunked-prefill 统一注意力配置",
+        "analysis": "因根因未知（见 #8742），临时跳过该形状的基准测试，属于测试调整，根因未解决。",
+        "impact": "vLLM 统一注意力基准测试中该配置被跳过。",
+        "brief": "临时跳过 4x2k 配置的基准测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "回退小形状 CTA 拆分修复",
+        "analysis": "回退此前对 CTA 拆分在小形状上的修复，可能因引入回归或未达预期效果。",
+        "impact": "小形状上的 CTA 拆分行为恢复原状，需重新评估。",
+        "brief": "回退 CTA 拆分修复",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "GEMM 基准在无法使用张量描述符时回退到指针张量",
+        "analysis": "新增工具函数，在张量描述符不可用时回退到指针张量，以保持基准测试的兼容性。",
+        "impact": "GEMM 基准测试在特定硬件或配置下可正常运行。",
+        "brief": "GEMM 基准增加指针张量回退",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "范围分析仅接受已知操作应用 assume 反向",
+        "analysis": "将 assume 反向应用的检查从黑名单改为白名单，仅接受已知可安全完成的操作，提高分析正确性。",
+        "impact": "范围分析更保守，可能减少误优化。",
+        "brief": "收紧 assume 反向应用的条件",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "逐项匹配行限制掩码以支持 2D 块加载",
+        "analysis": "将行限制掩码的匹配改为逐项进行，新增 matchBoundaryCheckMask 函数，提升识别能力。",
+        "impact": "2D 块加载优化可覆盖更多边界检查模式。",
+        "brief": "改进 2D 块加载的掩码匹配",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "可选成本模型用于丢弃有间隙的 dot 操作数预取",
+        "analysis": "在长 split-K GEMM 循环中，预取两个操作数可能浪费缓存带宽，新增可选成本模型以决定是否丢弃有间隙的预取。",
+        "impact": "B580 等设备上的长 split-K GEMM 性能可能提升。",
+        "brief": "新增预取丢弃成本模型",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "在 LLVM 优化后生成 f32 tl.fma 契约对",
+        "analysis": "将 f32 tl.fma 契约对的生成移到 LLVM 优化之后，避免优化器干扰，并解决与 bf16 拓宽的冲突。",
+        "impact": "f32 FMA 的代码生成更稳定，可能影响性能。",
+        "brief": "调整 f32 FMA 生成时机",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "支持 tt.dot_scaled 中的原生 fp4e2m1x2 操作数",
+        "analysis": "适配上游新增的 fp4e2m1x2 类型，使 tt.dot_scaled 支持该原生类型操作数。",
+        "impact": "使用 fp4e2m1x2 的模型可在 Intel 后端运行。",
+        "brief": "支持 fp4e2m1x2 点积缩放",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "Intel Xe 驱动准备 SR-IOV vGPU 配置",
+        "analysis": "Linux 7.5 内核周期中，Intel Xe 驱动将支持 SR-IOV 的 vGPU 配置文件。",
+        "impact": "虚拟化场景下可配置 vGPU 配置文件。",
+        "brief": "Xe 驱动准备 SR-IOV 支持",
+        "tier": "major",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "重新启用 XPU 上的前缀缓存端到端测试",
+        "analysis": "优化 XPU 块大小逻辑，使 test_scheduler_e2e 在 XPU 上通过，并移除两个测试的忽略标志。",
+        "impact": "vLLM 在 XPU 上的前缀缓存测试恢复运行。",
+        "brief": "重新启用 XPU 前缀缓存测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "SGLang XPU 支持 GDN 投机解码",
+        "analysis": "用 SGLang 共享 GDN 后端替换 Qwen3.5 专用融合路由，使用独立 SYCL 内核支持 conv1d 和 prefill/decode。",
+        "impact": "XPU 上的 GDN 模型可进行投机解码。",
+        "brief": "XPU 支持 GDN 投机解码",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "跳过更多 TP=2 分布式关闭测试",
+        "analysis": "现有跳过条件不足以防止测试挂起，因此增加跳过范围，属于测试调整，根因未解决。",
+        "impact": "vLLM CI 中更多 TP=2 测试被跳过。",
+        "brief": "扩大 TP=2 测试跳过范围",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "修复暂存缓冲区优化的依赖跟踪",
+        "analysis": "compute-runtime 26.44.40734.8 修复了暂存缓冲区优化中的依赖跟踪问题。",
+        "impact": "使用该版本的驱动可避免相关依赖问题。",
+        "brief": "修复暂存缓冲区依赖跟踪",
+        "tier": "major",
+        "changeType": "driver_update",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
