@@ -1,0 +1,386 @@
+{
+  "date": "2026-11-14",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[sycl free function] migrate Gather and upsample nearest kernels",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5822",
+      "updated": "2026-11-13T05:30:25Z",
+      "score": 57
+    },
+    {
+      "ref": "s2",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Update `test/xpu/` after `torch.jit.script`/`torch.jit.trace` API removal",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6177",
+      "updated": "2026-11-13T14:43:39Z",
+      "score": 43
+    },
+    {
+      "ref": "s3",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Update `test/regressions/` after `torch.jit.script` API removal",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6175",
+      "updated": "2026-11-13T12:42:04Z",
+      "score": 43
+    },
+    {
+      "ref": "s4",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Vectorize and optimize the XPU randn kernel",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5910",
+      "updated": "2026-11-13T08:16:09Z",
+      "score": 43
+    },
+    {
+      "ref": "s5",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Use 64-bit sizes in XPU spatial softmax forward/backward",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5871",
+      "updated": "2026-11-13T09:04:02Z",
+      "score": 39
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Convert f32 -> bf16 eight at a time with the vector bf16 builtin (#8740)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9ba66fef6c25eb0ded9e67bb34ba19b1ff161d8f",
+      "updated": "2026-11-13T14:57:46Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Perf][Spec Decode] Enable triton greedy_argmax on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/67196",
+      "updated": "2026-11-13T20:08:39Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Perf][Kernel][Quantization] Tensor-descriptor path for int4 fused_moe_kernel_gptq_awq (XPU default, sm100 opt-in)",
+      "url": "https://github.com/vllm-project/vllm/pull/52652",
+      "updated": "2026-11-13T09:59:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] reduce memory footprint for test_sagemaker_invocation_validation",
+      "url": "https://github.com/vllm-project/vllm/pull/67379",
+      "updated": "2026-11-13T05:10:37Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[PART3] Sycl kernel porting: MoE routing / data-movement kernels",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/675",
+      "updated": "2026-11-13T02:17:13Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[moe] Remove redundant DP-padding masked_fill in XpuFusedMoe",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/699",
+      "updated": "2026-11-12T02:04:40Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "sycl : use cached device-id in set_main_device",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32013",
+      "updated": "2026-11-12T06:50:56Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "sycl: make oneDNN FA cache thread-safe and memoize runtime failures",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31138",
+      "updated": "2026-11-12T06:58:27Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "[SYCL] SYCL AOT (GGML_SYCL_DEVICE_ARCH=arl-h) produces garbage output (GGGG...) for models > 4 GB",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31873",
+      "updated": "2026-11-12T06:54:59Z",
+      "score": 25
+    },
+    {
+      "ref": "s15",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "Queen's domains demo  : dx11 driver crash",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1615",
+      "updated": "2026-11-13T10:42:57Z",
+      "score": 18
+    },
+    {
+      "ref": "s16",
+      "source": "GitHub Release: oneapi-src/level-zero",
+      "title": "oneAPI Level Zero Loader v1.36.0",
+      "url": "https://github.com/oneapi-src/level-zero/releases/tag/v1.36.0",
+      "updated": "2026-11-13T23:47:42.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "XPU 随机数内核向量化，输出与主分支逐位一致",
+        "refs": [
+          "s4"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "XPU 空间 softmax 修复 64 位尺寸截断问题",
+        "refs": [
+          "s5"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "vLLM XPU 启用 Triton greedy_argmax 加速投机解码",
+        "refs": [
+          "s7"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "重新合入 Gather 与 upsample nearest 的 SYCL free function 迁移",
+        "analysis": "重新提交此前被回滚的 #4962，并加入 #5719 的回归测试（grid-stride 修复已在 main）。修复 #5701 问题。",
+        "impact": "使用 Gather 和 upsample nearest 的 XPU 用户获得修复，需更新至最新版本。",
+        "brief": "重新合入 SYCL free function 迁移并补回归测试",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2",
+          "s3"
+        ],
+        "title": "适配上游移除 TorchScript API 的测试更新",
+        "analysis": "上游 PyTorch PR 移除了废弃的 TorchScript 公共 API，本地测试同步更新，删除相关脚本函数和 gradcheck 调用。",
+        "impact": null,
+        "brief": "同步上游 TorchScript API 移除，更新本地测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "向量化并优化 XPU randn 内核",
+        "analysis": "加速 XPU 空分布内核（normal_、uniform_ 等），采用惰性 Philox 状态和向量化，保证固定种子下输出与主分支逐位一致。",
+        "impact": "XPU 上随机数生成性能提升，且不改变数值结果。",
+        "brief": "XPU 随机数内核向量化，性能提升且输出不变",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "XPU 空间 softmax 改用 64 位尺寸",
+        "analysis": "修复 inner_size 大于 INT_MAX 时尺寸被截断为负数的问题，将 dim/inner/outer 尺寸改为 64 位。",
+        "impact": "处理超大输入尺寸的 XPU softmax 用户受益，避免错误结果。",
+        "brief": "修复空间 softmax 尺寸截断，改用 64 位",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "Triton 内核 f32 转 bf16 向量化转换",
+        "analysis": "修复 #8594：每次转换调用一次 Intel 转换 builtin 导致 IGC 调用过多，改为一次转换 8 个值，减少调用开销。",
+        "impact": "使用 f32 转 bf16 的 Triton 内核性能提升。",
+        "brief": "f32 转 bf16 向量化，减少 builtin 调用",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "XPU 投机解码启用 Triton greedy_argmax",
+        "analysis": "在 XPU 上启用 Triton greedy_argmax，替代 Torch 回退，加速投机解码中的贪心草稿采样。",
+        "impact": "vLLM XPU 投机解码性能提升。",
+        "brief": "XPU 投机解码启用 Triton greedy_argmax",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "int4 MoE 内核新增 tensor-descriptor 路径",
+        "analysis": "为 fused_moe_kernel_gptq_awq 的 int4_w4a16 分组权重添加 tensor-descriptor 路径，XPU 默认启用，sm100 可选。",
+        "impact": "XPU 上 int4 MoE 推理性能提升。",
+        "brief": "int4 MoE 内核新增 TD 路径，XPU 默认启用",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "vLLM 测试减少 GPU 内存占用",
+        "analysis": "将生成验证测试分组到类级 fixture，嵌入测试用函数级 fixture，避免两个服务器同时占用 GPU 内存。",
+        "impact": null,
+        "brief": "测试 fixture 调整减少 GPU 内存占用",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "SYCL 内核移植：MoE 路由与数据移动",
+        "analysis": "将内部 csrc/moe/ 内核更新移植到上游，包括 topk_softmax/topk_sigmoid 的 packed 融合、grouped_topk 的分层内核等。",
+        "impact": "vllm-xpu-kernels 用户获得 MoE 路由性能改进。",
+        "brief": "移植 MoE 路由与数据移动 SYCL 内核",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "移除 XpuFusedMoe 中冗余的 DP padding masked_fill",
+        "analysis": "vLLM 侧已重写 all-negative padding 路由，masked_fill 成为 no-op，移除冗余操作。",
+        "impact": "减少 MoE 内核不必要的计算。",
+        "brief": "移除冗余 masked_fill，简化 MoE 内核",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "SYCL 使用缓存设备 ID 避免互斥锁",
+        "analysis": "ggml_sycl_set_main_device 每次图计算前调用，早期返回时调用 dpct::get_current_device_id 会锁设备管理器互斥锁，改用线程本地缓存 ID。",
+        "impact": "llama.cpp SYCL 图计算性能提升。",
+        "brief": "SYCL 设备 ID 缓存，减少互斥锁开销",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "oneDNN FA 缓存线程安全并记忆运行时失败",
+        "analysis": "修复 oneDNN FA 缓存的线程安全问题，并记忆运行时失败以避免重复尝试。",
+        "impact": "llama.cpp SYCL 用户避免潜在崩溃和重复失败。",
+        "brief": "oneDNN FA 缓存线程安全，记忆失败",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "修复 SYCL AOT 大模型输出垃圾数据问题",
+        "analysis": "SYCL AOT (GGML_SYCL_DEVICE_ARCH=arl-h) 对大于 4GB 模型产生垃圾输出，通过缓冲区大小修复解决。",
+        "impact": "使用 SYCL AOT 的 llama.cpp 用户可正常处理大模型。",
+        "brief": "修复 SYCL AOT 大模型输出垃圾数据",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "Queen's domains demo 触发 DX11 驱动崩溃",
+        "analysis": "报告者称使用最新驱动，游戏未破解或修改，运行 Queen's domains demo 时发生 DX11 驱动崩溃。",
+        "impact": "Intel GPU 驱动团队需调查此崩溃，用户可关注后续修复。",
+        "brief": "新游戏 demo 触发 DX11 驱动崩溃",
+        "tier": "major",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s16"
+        ],
+        "title": "oneAPI Level Zero Loader v1.36.0 发布",
+        "analysis": "基于 oneAPI Level Zero 规范 v1.21.26，包含 API 头文件、加载器和验证层。",
+        "impact": "使用 Level Zero 的开发者可更新加载器以获取最新规范支持。",
+        "brief": "Level Zero Loader v1.36.0 发布",
+        "tier": "minor",
+        "changeType": "driver_update",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
