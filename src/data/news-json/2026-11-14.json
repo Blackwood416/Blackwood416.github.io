@@ -83,38 +83,6 @@
     },
     {
       "ref": "s11",
-      "source": "上游合入: vllm-xpu-kernels",
-      "title": "[moe] Remove redundant DP-padding masked_fill in XpuFusedMoe",
-      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/699",
-      "updated": "2026-11-12T02:04:40Z",
-      "score": 25
-    },
-    {
-      "ref": "s12",
-      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
-      "title": "sycl : use cached device-id in set_main_device",
-      "url": "https://github.com/ggml-org/llama.cpp/pull/32013",
-      "updated": "2026-11-12T06:50:56Z",
-      "score": 25
-    },
-    {
-      "ref": "s13",
-      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
-      "title": "sycl: make oneDNN FA cache thread-safe and memoize runtime failures",
-      "url": "https://github.com/ggml-org/llama.cpp/pull/31138",
-      "updated": "2026-11-12T06:58:27Z",
-      "score": 25
-    },
-    {
-      "ref": "s14",
-      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
-      "title": "[SYCL] SYCL AOT (GGML_SYCL_DEVICE_ARCH=arl-h) produces garbage output (GGGG...) for models > 4 GB",
-      "url": "https://github.com/ggml-org/llama.cpp/pull/31873",
-      "updated": "2026-11-12T06:54:59Z",
-      "score": 25
-    },
-    {
-      "ref": "s15",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Queen's domains demo  : dx11 driver crash",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1615",
@@ -122,7 +90,7 @@
       "score": 18
     },
     {
-      "ref": "s16",
+      "ref": "s12",
       "source": "GitHub Release: oneapi-src/level-zero",
       "title": "oneAPI Level Zero Loader v1.36.0",
       "url": "https://github.com/oneapi-src/level-zero/releases/tag/v1.36.0",
@@ -134,23 +102,23 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "XPU 随机数内核向量化，输出与主分支逐位一致",
+        "title": "XPU 随机数内核向量化提速，输出与主分支逐位一致",
         "refs": [
           "s4"
         ]
       },
       {
         "status": "Merged",
-        "title": "XPU 空间 softmax 修复 64 位尺寸截断问题",
+        "title": "XPU 空间 softmax 改用 64 位尺寸，修复大张量截断",
         "refs": [
           "s5"
         ]
       },
       {
-        "status": "Merged",
-        "title": "vLLM XPU 启用 Triton greedy_argmax 加速投机解码",
+        "status": "Released",
+        "title": "Level Zero Loader v1.36.0 发布，基于规范 v1.21.26",
         "refs": [
-          "s7"
+          "s12"
         ]
       }
     ],
@@ -159,10 +127,10 @@
         "refs": [
           "s1"
         ],
-        "title": "重新合入 Gather 与 upsample nearest 的 SYCL free function 迁移",
-        "analysis": "重新提交此前被回滚的 #4962，并加入 #5719 的回归测试（grid-stride 修复已在 main）。修复 #5701 问题。",
-        "impact": "使用 Gather 和 upsample nearest 的 XPU 用户获得修复，需更新至最新版本。",
-        "brief": "重新合入 SYCL free function 迁移并补回归测试",
+        "title": "重新合入 Gather 与 upsample nearest 的 SYCL 自由函数迁移",
+        "analysis": "重新合入此前被回退的 #4962，并加入 #5719 的回归测试（其 grid-stride 修复已在 main 上）。修复 #5701，将 Gather 和 upsample nearest 内核迁移到 SYCL 自由函数形式。",
+        "impact": "使用这些内核的 XPU 用户获得修复，回归测试覆盖相关场景。",
+        "brief": "重新合入 Gather/upsample 内核迁移并补回归测试",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -172,13 +140,27 @@
       },
       {
         "refs": [
-          "s2",
+          "s2"
+        ],
+        "title": "更新 XPU 测试以适配 TorchScript API 移除",
+        "analysis": "上游 PyTorch PR #203621 移除了废弃的 TorchScript 公共 API 和测试，本地测试同步更新，删除 profiler 测试中的 TorchScript 函数。属于测试调整，根因未涉及。",
+        "impact": null,
+        "brief": "同步上游移除 TorchScript API 的测试变更",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
           "s3"
         ],
-        "title": "适配上游移除 TorchScript API 的测试更新",
-        "analysis": "上游 PyTorch PR 移除了废弃的 TorchScript 公共 API，本地测试同步更新，删除相关脚本函数和 gradcheck 调用。",
+        "title": "更新回归测试以适配 TorchScript API 移除",
+        "analysis": "上游移除 TorchScript API 后，本地回归测试同步更新，删除 torchvision ROI ops 测试中的 TorchScript gradcheck。属于测试调整，根因未涉及。",
         "impact": null,
-        "brief": "同步上游 TorchScript API 移除，更新本地测试",
+        "brief": "同步上游移除 TorchScript API 的回归测试变更",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -190,13 +172,13 @@
         "refs": [
           "s4"
         ],
-        "title": "向量化并优化 XPU randn 内核",
-        "analysis": "加速 XPU 空分布内核（normal_、uniform_ 等），采用惰性 Philox 状态和向量化，保证固定种子下输出与主分支逐位一致。",
-        "impact": "XPU 上随机数生成性能提升，且不改变数值结果。",
-        "brief": "XPU 随机数内核向量化，性能提升且输出不变",
+        "title": "XPU randn 内核向量化优化，输出逐位一致",
+        "analysis": "优化 XPU 空值分布内核（normal_、uniform_、exponential_、bernoulli_、random_ 等），采用惰性 Philox 等策略，不改变生成值，固定种子下输出与主分支逐位一致。",
+        "impact": "XPU 上随机数生成性能提升，数值兼容性不变。",
+        "brief": "向量化优化 XPU 随机数内核，性能提升且输出不变",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -205,9 +187,9 @@
         "refs": [
           "s5"
         ],
-        "title": "XPU 空间 softmax 改用 64 位尺寸",
-        "analysis": "修复 inner_size 大于 INT_MAX 时尺寸被截断为负数的问题，将 dim/inner/outer 尺寸改为 64 位。",
-        "impact": "处理超大输入尺寸的 XPU softmax 用户受益，避免错误结果。",
+        "title": "XPU 空间 softmax 改用 64 位尺寸修复大张量截断",
+        "analysis": "根因是空间 softmax 启动器和 get_wgroup_size_spatial 将 dim/inner/outer 尺寸作为 int，当 inner_size 超过 INT_MAX 时被截断为负数。改用 64 位尺寸修复。",
+        "impact": "修复 XPU 上超大张量 softmax 计算错误，影响使用大 inner_size 的用户。",
         "brief": "修复空间 softmax 尺寸截断，改用 64 位",
         "tier": "major",
         "changeType": "bugfix",
@@ -220,10 +202,10 @@
         "refs": [
           "s6"
         ],
-        "title": "Triton 内核 f32 转 bf16 向量化转换",
-        "analysis": "修复 #8594：每次转换调用一次 Intel 转换 builtin 导致 IGC 调用过多，改为一次转换 8 个值，减少调用开销。",
-        "impact": "使用 f32 转 bf16 的 Triton 内核性能提升。",
-        "brief": "f32 转 bf16 向量化，减少 builtin 调用",
+        "title": "Intel Triton 后端批量转换 f32 到 bf16 提升性能",
+        "analysis": "修复 #8594：内核中逐值调用 Intel 转换内建函数导致 IGC 调用开销大，现改为每次转换 8 个值，使用向量 bf16 内建函数。",
+        "impact": "使用 f32 到 bf16 转换的 Triton 内核在 Intel GPU 上性能提升。",
+        "brief": "批量转换 f32 到 bf16，减少内建函数调用开销",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": true,
@@ -235,13 +217,13 @@
         "refs": [
           "s7"
         ],
-        "title": "XPU 投机解码启用 Triton greedy_argmax",
-        "analysis": "在 XPU 上启用 Triton greedy_argmax，替代 Torch 回退，加速投机解码中的贪心草稿采样。",
-        "impact": "vLLM XPU 投机解码性能提升。",
-        "brief": "XPU 投机解码启用 Triton greedy_argmax",
+        "title": "XPU 启用 Triton greedy_argmax 加速投机解码",
+        "analysis": "启用 Triton greedy_argmax（上游 #57770 引入）以加速投机解码中的贪心草稿采样，此前在 XPU 上回退到 Torch。",
+        "impact": "XPU 上投机解码性能提升，相关用户受益。",
+        "brief": "XPU 启用 Triton greedy_argmax 加速采样",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -250,13 +232,13 @@
         "refs": [
           "s8"
         ],
-        "title": "int4 MoE 内核新增 tensor-descriptor 路径",
-        "analysis": "为 fused_moe_kernel_gptq_awq 的 int4_w4a16 分组权重添加 tensor-descriptor 路径，XPU 默认启用，sm100 可选。",
-        "impact": "XPU 上 int4 MoE 推理性能提升。",
+        "title": "int4 MoE 内核新增张量描述符路径，XPU 默认启用",
+        "analysis": "为 fused_moe_kernel_gptq_awq 的 int4_w4a16 分组权重添加张量描述符路径，镜像 #42436 对 fused_moe_kernel 的改动，XPU 默认启用，SM100 可选。",
+        "impact": "XPU 上 int4 MoE 推理性能提升，SM100 用户可选用。",
         "brief": "int4 MoE 内核新增 TD 路径，XPU 默认启用",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -265,10 +247,10 @@
         "refs": [
           "s9"
         ],
-        "title": "vLLM 测试减少 GPU 内存占用",
-        "analysis": "将生成验证测试分组到类级 fixture，嵌入测试用函数级 fixture，避免两个服务器同时占用 GPU 内存。",
+        "title": "vLLM 测试内存占用优化，避免并发 GPU 占用",
+        "analysis": "将生成验证测试分组到类级 fixture，嵌入测试用函数级 fixture，防止同一测试文件内两个服务器并发占用 GPU 内存。属于测试调整，根因未涉及。",
         "impact": null,
-        "brief": "测试 fixture 调整减少 GPU 内存占用",
+        "brief": "优化测试 fixture 减少 GPU 内存占用",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": false,
@@ -280,13 +262,13 @@
         "refs": [
           "s10"
         ],
-        "title": "SYCL 内核移植：MoE 路由与数据移动",
-        "analysis": "将内部 csrc/moe/ 内核更新移植到上游，包括 topk_softmax/topk_sigmoid 的 packed 融合、grouped_topk 的分层内核等。",
-        "impact": "vllm-xpu-kernels 用户获得 MoE 路由性能改进。",
-        "brief": "移植 MoE 路由与数据移动 SYCL 内核",
+        "title": "vllm-xpu-kernels 移植 MoE 路由与数据移动内核",
+        "analysis": "将内部 csrc/moe/ 内核更新带到上游，包括 topk_softmax/topk_sigmoid 的打包融合 top-k 门控，以及 grouped_topk 的分层单/多组内核。",
+        "impact": "vLLM XPU 后端 MoE 路由性能提升，相关用户受益。",
+        "brief": "移植 MoE 路由内核，含打包 top-k 与分组实现",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -295,71 +277,11 @@
         "refs": [
           "s11"
         ],
-        "title": "移除 XpuFusedMoe 中冗余的 DP padding masked_fill",
-        "analysis": "vLLM 侧已重写 all-negative padding 路由，masked_fill 成为 no-op，移除冗余操作。",
-        "impact": "减少 MoE 内核不必要的计算。",
-        "brief": "移除冗余 masked_fill，简化 MoE 内核",
+        "title": "Queen's domains demo 在 DX11 驱动崩溃",
+        "analysis": "报告者提交问题：Queen's domains demo 在最新驱动下 DX11 崩溃，但未提供更多细节。报告者认为存在驱动问题，但根因未确认。",
+        "impact": null,
+        "brief": "报告 DX11 驱动崩溃，根因未确认",
         "tier": "minor",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s12"
-        ],
-        "title": "SYCL 使用缓存设备 ID 避免互斥锁",
-        "analysis": "ggml_sycl_set_main_device 每次图计算前调用，早期返回时调用 dpct::get_current_device_id 会锁设备管理器互斥锁，改用线程本地缓存 ID。",
-        "impact": "llama.cpp SYCL 图计算性能提升。",
-        "brief": "SYCL 设备 ID 缓存，减少互斥锁开销",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s13"
-        ],
-        "title": "oneDNN FA 缓存线程安全并记忆运行时失败",
-        "analysis": "修复 oneDNN FA 缓存的线程安全问题，并记忆运行时失败以避免重复尝试。",
-        "impact": "llama.cpp SYCL 用户避免潜在崩溃和重复失败。",
-        "brief": "oneDNN FA 缓存线程安全，记忆失败",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s14"
-        ],
-        "title": "修复 SYCL AOT 大模型输出垃圾数据问题",
-        "analysis": "SYCL AOT (GGML_SYCL_DEVICE_ARCH=arl-h) 对大于 4GB 模型产生垃圾输出，通过缓冲区大小修复解决。",
-        "impact": "使用 SYCL AOT 的 llama.cpp 用户可正常处理大模型。",
-        "brief": "修复 SYCL AOT 大模型输出垃圾数据",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s15"
-        ],
-        "title": "Queen's domains demo 触发 DX11 驱动崩溃",
-        "analysis": "报告者称使用最新驱动，游戏未破解或修改，运行 Queen's domains demo 时发生 DX11 驱动崩溃。",
-        "impact": "Intel GPU 驱动团队需调查此崩溃，用户可关注后续修复。",
-        "brief": "新游戏 demo 触发 DX11 驱动崩溃",
-        "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
         "claimOwner": "reporter",
@@ -368,15 +290,15 @@
       },
       {
         "refs": [
-          "s16"
+          "s12"
         ],
-        "title": "oneAPI Level Zero Loader v1.36.0 发布",
-        "analysis": "基于 oneAPI Level Zero 规范 v1.21.26，包含 API 头文件、加载器和验证层。",
+        "title": "Level Zero Loader v1.36.0 发布",
+        "analysis": "发布 oneAPI Level Zero Loader v1.36.0，基于规范 v1.21.26，包含 API 头文件、加载器和验证层。",
         "impact": "使用 Level Zero 的开发者可更新加载器以获取最新规范支持。",
         "brief": "Level Zero Loader v1.36.0 发布",
-        "tier": "minor",
+        "tier": "major",
         "changeType": "driver_update",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
