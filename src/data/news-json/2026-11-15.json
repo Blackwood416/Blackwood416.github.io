@@ -11,30 +11,14 @@
     },
     {
       "ref": "s2",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Remove non-existent upstream tests from skip list",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6195",
-      "updated": "2026-11-13T14:56:58Z",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] Flatten N-D input in XPU MXFP8 linear kernel",
+      "url": "https://github.com/vllm-project/vllm/pull/66494",
+      "updated": "2026-11-15T04:52:53Z",
       "score": 25
     },
     {
       "ref": "s3",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Return False in xpu_equal when tensor contains NaN",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/5765",
-      "updated": "2026-11-13T08:15:58Z",
-      "score": 25
-    },
-    {
-      "ref": "s4",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Use multi-row work-groups for short rows in vectorized LayerNorm forward",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/5977",
-      "updated": "2026-11-13T05:15:02Z",
-      "score": 25
-    },
-    {
-      "ref": "s5",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][MLA] Register XPUFlashAttnMLABackend for FLASH_ATTN_MLA in XPU",
       "url": "https://github.com/vllm-project/vllm/pull/64255",
@@ -42,7 +26,7 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s4",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[Bugfix][XPU] Use int64 token index in the DeepSeek-V4 qnorm/RoPE kernel",
       "url": "https://github.com/vllm-project/vllm/pull/64515",
@@ -50,7 +34,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s5",
       "source": "上游合入: llama.cpp (sycl/openvino/intel)",
       "title": "sycl : optimize mtmd image processing",
       "url": "https://github.com/ggml-org/llama.cpp/pull/32109",
@@ -58,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s6",
       "source": "上游合入: llama.cpp (sycl/openvino/intel)",
       "title": "docs : add OpenVINO backend to ops matrix",
       "url": "https://github.com/ggml-org/llama.cpp/pull/32259",
@@ -70,16 +54,16 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "llama.cpp 为 Intel iGPU 启用 UMA 非缓存内存 GPU 拷贝",
+        "title": "llama.cpp 为 Intel UMA 启用 GPU 拷贝路径",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "torch-xpu-ops 修复 xpu_equal 对 NaN 的错误返回",
+        "title": "vLLM XPU 修复 MXFP8 线性层 3D 输入崩溃",
         "refs": [
-          "s3"
+          "s2"
         ]
       }
     ],
@@ -88,13 +72,13 @@
         "refs": [
           "s1"
         ],
-        "title": "Intel iGPU 启用 UMA 非缓存内存 GPU 拷贝",
-        "analysis": "此前仅对 AMD 启用 slow_host_read 路径，现扩展至 Intel iGPU，因其同样存在拷贝性能问题。该改动通过使用 GPU 拷贝替代主机读取，提升 UMA 内存上的拷贝效率。",
-        "impact": "使用 Intel iGPU 且启用 UMA 的 llama.cpp 用户，拷贝性能可能提升。",
-        "brief": "Intel iGPU 拷贝路径优化，性能提升。",
+        "title": "Intel UMA 启用 GPU 拷贝路径",
+        "analysis": "此前仅对 AMD 启用 slow_host_read 路径，现扩展到 Intel iGPU，因为 Intel 在 UMA 上使用 uncached 内存时 GPU 拷贝更优。",
+        "impact": "使用 Intel iGPU 的 llama.cpp 用户，拷贝性能可能提升。",
+        "brief": "Intel UMA 拷贝路径优化",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -103,25 +87,10 @@
         "refs": [
           "s2"
         ],
-        "title": "清理 torch-xpu-ops 上游不存在的测试跳过项",
-        "analysis": "从 skip_list_common.py 中移除上游已删除或从未存在的测试文件条目，避免无效跳过。属于测试配置清理，不影响功能。",
-        "impact": null,
-        "brief": "清理无效测试跳过项。",
-        "tier": "minor",
-        "changeType": "test_fix",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s3"
-        ],
-        "title": "修复 xpu_equal 对含 NaN 张量的错误返回",
-        "analysis": "xpu_equal 在相同存储快速路径上无条件返回 true，导致含 NaN 的张量比较错误。现仅对整型和布尔类型返回 true，其他类型返回 !self.isnan() 结果，符合 torch.equal 语义。",
-        "impact": "使用 torch.equal 比较含 NaN 张量的 XPU 用户，结果将正确。",
-        "brief": "修复 NaN 比较错误。",
+        "title": "XPU MXFP8 线性层支持 3D 输入",
+        "analysis": "Transformers 后端传入 3D 激活，但 XPU 的 per_token_group_fp8_quant 仅接受 2D，导致引擎初始化失败。通过 reshape 为 2D 并恢复前导维度修复。",
+        "impact": "使用 XPU 且启用 MXFP8 的 vLLM 用户，引擎初始化不再失败。",
+        "brief": "修复 XPU MXFP8 3D 输入崩溃",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -131,14 +100,29 @@
       },
       {
         "refs": [
-          "s4"
+          "s3"
         ],
-        "title": "LayerNorm 前向短行使用多行工作组",
-        "analysis": "原实现每行一个工作组，当行向量数少于 SIMD 宽度时部分通道空闲。现改为多行工作组，提高短行场景下的硬件利用率，提升性能。",
-        "impact": "使用向量化 LayerNorm 前向的 XPU 用户，短行场景性能提升。",
-        "brief": "短行 LayerNorm 性能优化。",
+        "title": "XPU 注册 FLASH_ATTN_MLA 后端",
+        "analysis": "将 FLASH_ATTN_MLA 后端枚举注册到 XPUFlashAttnMLABackend，使 XPU 平台能选择该实现，并更新测试解析。",
+        "impact": "XPU 上启用 MLA 的 vLLM 用户，可使用 FlashAttention MLA 后端。",
+        "brief": "XPU 启用 FlashAttention MLA",
         "tier": "major",
         "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "DeepSeek-V4 XPU 内核 token 索引改 int64",
+        "analysis": "qnorm/RoPE 内核用 int32 计算 token_idx * num_heads * HEAD_DIM，当 token 数超过 65536 时地址回绕。改为 int64 避免溢出。",
+        "impact": "使用 DeepSeek-V4 且长上下文的 XPU 用户，避免地址回绕错误。",
+        "brief": "修复 XPU 大 token 数地址溢出",
+        "tier": "major",
+        "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -148,13 +132,13 @@
         "refs": [
           "s5"
         ],
-        "title": "vLLM XPU 注册 MLA FlashAttention 后端",
-        "analysis": "将 FLASH_ATTN_MLA 后端枚举注册到 XPUFlashAttnMLABackend 实现类，使 XPU 平台能够选择该后端，支持 MLA 注意力加速。",
-        "impact": "使用 vLLM 且启用 MLA 的 XPU 用户，可获得 FlashAttention 加速。",
-        "brief": "XPU 启用 MLA FlashAttention。",
+        "title": "oneDNN 注意力支持空 mask 优化",
+        "analysis": "为 oneDNN 注意力添加空 mask 支持，提升 mtmd 图像处理速度，尤其对 mask 层较少的模型。",
+        "impact": "使用 llama.cpp SYCL 后端且处理多模态图像的模型，推理速度可能提升。",
+        "brief": "优化 mtmd 图像处理速度",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -163,40 +147,10 @@
         "refs": [
           "s6"
         ],
-        "title": "修复 DeepSeek-V4 qnorm/RoPE 内核 token 索引溢出",
-        "analysis": "内核中 token_idx * num_heads * HEAD_DIM 使用 int32 计算，当步长超过 2^31 个 Q 元素时地址回绕。改为 int64 索引，避免大 token 数下的地址错误。",
-        "impact": "使用 DeepSeek-V4 且 token 数大的 XPU 用户，避免地址溢出错误。",
-        "brief": "修复 token 索引溢出。",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s7"
-        ],
-        "title": "SYCL 优化 mtmd 图像处理支持空掩码",
-        "analysis": "为 oneDNN attention 添加空掩码支持，提升 mtmd 图像处理速度，尤其对掩码层较少的模型效果更明显。",
-        "impact": "使用 llama.cpp SYCL 后端处理 mtmd 图像的用户，速度提升。",
-        "brief": "mtmd 图像处理加速。",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s8"
-        ],
-        "title": "llama.cpp 文档添加 OpenVINO 后端算子矩阵",
-        "analysis": "在算子支持矩阵中补充 OpenVINO 后端，便于用户查询算子支持情况。属于文档更新。",
+        "title": "文档补充 OpenVINO 算子支持矩阵",
+        "analysis": "为 llama.cpp 文档添加 OpenVINO 后端的算子支持矩阵，由测试生成，便于用户了解支持情况。",
         "impact": null,
-        "brief": "文档更新算子矩阵。",
+        "brief": "补充 OpenVINO 算子矩阵文档",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": false,
