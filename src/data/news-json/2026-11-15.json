@@ -1,0 +1,209 @@
+{
+  "date": "2026-11-15",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "vulkan: use GPU copies on UMA with uncached memory on Intel",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32024",
+      "updated": "2026-11-14T22:35:55Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Remove non-existent upstream tests from skip list",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6195",
+      "updated": "2026-11-13T14:56:58Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Return False in xpu_equal when tensor contains NaN",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5765",
+      "updated": "2026-11-13T08:15:58Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Use multi-row work-groups for short rows in vectorized LayerNorm forward",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5977",
+      "updated": "2026-11-13T05:15:02Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][MLA] Register XPUFlashAttnMLABackend for FLASH_ATTN_MLA in XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/64255",
+      "updated": "2026-11-14T16:36:14Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][XPU] Use int64 token index in the DeepSeek-V4 qnorm/RoPE kernel",
+      "url": "https://github.com/vllm-project/vllm/pull/64515",
+      "updated": "2026-11-14T11:12:57Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "sycl : optimize mtmd image processing",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32109",
+      "updated": "2026-11-14T22:35:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "docs : add OpenVINO backend to ops matrix",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32259",
+      "updated": "2026-11-14T22:33:55Z",
+      "score": 25
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "llama.cpp 为 Intel iGPU 启用 UMA 非缓存内存 GPU 拷贝",
+        "refs": [
+          "s1"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "torch-xpu-ops 修复 xpu_equal 对 NaN 的错误返回",
+        "refs": [
+          "s3"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "Intel iGPU 启用 UMA 非缓存内存 GPU 拷贝",
+        "analysis": "此前仅对 AMD 启用 slow_host_read 路径，现扩展至 Intel iGPU，因其同样存在拷贝性能问题。该改动通过使用 GPU 拷贝替代主机读取，提升 UMA 内存上的拷贝效率。",
+        "impact": "使用 Intel iGPU 且启用 UMA 的 llama.cpp 用户，拷贝性能可能提升。",
+        "brief": "Intel iGPU 拷贝路径优化，性能提升。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "清理 torch-xpu-ops 上游不存在的测试跳过项",
+        "analysis": "从 skip_list_common.py 中移除上游已删除或从未存在的测试文件条目，避免无效跳过。属于测试配置清理，不影响功能。",
+        "impact": null,
+        "brief": "清理无效测试跳过项。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "修复 xpu_equal 对含 NaN 张量的错误返回",
+        "analysis": "xpu_equal 在相同存储快速路径上无条件返回 true，导致含 NaN 的张量比较错误。现仅对整型和布尔类型返回 true，其他类型返回 !self.isnan() 结果，符合 torch.equal 语义。",
+        "impact": "使用 torch.equal 比较含 NaN 张量的 XPU 用户，结果将正确。",
+        "brief": "修复 NaN 比较错误。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "LayerNorm 前向短行使用多行工作组",
+        "analysis": "原实现每行一个工作组，当行向量数少于 SIMD 宽度时部分通道空闲。现改为多行工作组，提高短行场景下的硬件利用率，提升性能。",
+        "impact": "使用向量化 LayerNorm 前向的 XPU 用户，短行场景性能提升。",
+        "brief": "短行 LayerNorm 性能优化。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "vLLM XPU 注册 MLA FlashAttention 后端",
+        "analysis": "将 FLASH_ATTN_MLA 后端枚举注册到 XPUFlashAttnMLABackend 实现类，使 XPU 平台能够选择该后端，支持 MLA 注意力加速。",
+        "impact": "使用 vLLM 且启用 MLA 的 XPU 用户，可获得 FlashAttention 加速。",
+        "brief": "XPU 启用 MLA FlashAttention。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "修复 DeepSeek-V4 qnorm/RoPE 内核 token 索引溢出",
+        "analysis": "内核中 token_idx * num_heads * HEAD_DIM 使用 int32 计算，当步长超过 2^31 个 Q 元素时地址回绕。改为 int64 索引，避免大 token 数下的地址错误。",
+        "impact": "使用 DeepSeek-V4 且 token 数大的 XPU 用户，避免地址溢出错误。",
+        "brief": "修复 token 索引溢出。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "SYCL 优化 mtmd 图像处理支持空掩码",
+        "analysis": "为 oneDNN attention 添加空掩码支持，提升 mtmd 图像处理速度，尤其对掩码层较少的模型效果更明显。",
+        "impact": "使用 llama.cpp SYCL 后端处理 mtmd 图像的用户，速度提升。",
+        "brief": "mtmd 图像处理加速。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "llama.cpp 文档添加 OpenVINO 后端算子矩阵",
+        "analysis": "在算子支持矩阵中补充 OpenVINO 后端，便于用户查询算子支持情况。属于文档更新。",
+        "impact": null,
+        "brief": "文档更新算子矩阵。",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
