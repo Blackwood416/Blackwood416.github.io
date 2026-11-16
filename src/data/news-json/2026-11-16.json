@@ -19,6 +19,14 @@
     },
     {
       "ref": "s3",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Use 64-bit indices in cdist backward kernel to fix large-input OOB write",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6174",
+      "updated": "2026-11-16T06:43:02Z",
+      "score": 39
+    },
+    {
+      "ref": "s4",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[AOT] Do not import torch in link.py (#8806)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/88b2e82389b0a29c60d0cd61b5c1098daa40492c",
@@ -26,7 +34,7 @@
       "score": 25
     },
     {
-      "ref": "s4",
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[LowerTo2DBlockLoad] Match a row-limit bound with the index on the right (#8787)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/5ac6e5a35a31d7790a1f9d2f5b38b1e951dec345",
@@ -34,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s5",
+      "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[SGLANG] Update pin to `ab84df61dd4012979a393cf4cdfc33ab2332c77d` (#8700)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/19432c342da8b540b1f1daf10817f2878d890cea",
@@ -42,7 +50,39 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s7",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Fix xpu_profiling UT check, update llama GEMM count, and run it in PR CI",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6126",
+      "updated": "2026-11-16T01:36:40Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Kernel][XPU] Mamba2 SSD: tensor-descriptor path for _chunk_scan_fwd_kernel and _chunk_state_fwd_kernel",
+      "url": "https://github.com/vllm-project/vllm/pull/60801",
+      "updated": "2026-11-16T06:06:14Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] quick fix for lora test workspace",
+      "url": "https://github.com/vllm-project/vllm/pull/67824",
+      "updated": "2026-11-16T04:07:35Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][XPU] Apply attn_sink in the DeepSeek-V4 sparse MLA Triton kernel",
+      "url": "https://github.com/vllm-project/vllm/pull/64252",
+      "updated": "2026-11-16T03:39:12Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
       "source": "上游合入: Strata (XPU/SYCL)",
       "title": "[Engine] layer split: keep the draft head's room out of the last card's cache (from Strata-DualGPU, #642)",
       "url": "https://github.com/Niko1221/Strata/pull/4549",
@@ -50,7 +90,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s12",
       "source": "上游合入: Strata (XPU/SYCL)",
       "title": "[Engine] [SYCL] opt-in mixed-IQ3 decode optimizations on Battlemage",
       "url": "https://github.com/Niko1221/Strata/pull/4185",
@@ -58,7 +98,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s13",
       "source": "上游合入: Strata (XPU/SYCL)",
       "title": "[Engine] [SYCL] Qwen3.8-Flash-Next IQ2_XS single-B70 E2E preview",
       "url": "https://github.com/Niko1221/Strata/pull/3153",
@@ -66,7 +106,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s14",
       "source": "上游合入: Strata (XPU/SYCL)",
       "title": "[Engine] split search: price a pipelined two-stage split by its slower stage (from Strata-DualGPU, #642)",
       "url": "https://github.com/Niko1221/Strata/pull/4534",
@@ -74,7 +114,7 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s15",
       "source": "上游合入: Strata (XPU/SYCL)",
       "title": "[Engine] layer split: trim every card's dense weights on --layer-split auto too (from Strata-DualGPU, #642)",
       "url": "https://github.com/Niko1221/Strata/pull/4522",
@@ -82,7 +122,7 @@
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s16",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "[Star Citizen LIVE] Crash on startup: Vulkan device initialization fails with empty device (0.0.0) on Intel Arc iGPU (Core Ultra 7 155H)",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1618",
@@ -94,16 +134,16 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "vLLM XPU 支持 BF16 MoE LoRA，绕过 Triton 专家路径",
+        "title": "vLLM XPU 支持未量化 MoE LoRA，统一走 XpuFusedMoe 路径",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "Triton XPU 后端修复描述符 gather 偏移 i32 溢出",
+        "title": "torch-xpu-ops 修复 cdist 反向大输入越界写",
         "refs": [
-          "s2"
+          "s3"
         ]
       }
     ],
@@ -112,13 +152,13 @@
         "refs": [
           "s1"
         ],
-        "title": "XPU 支持 BF16 MoE LoRA 路由至 XpuFusedMoe",
-        "analysis": "将 LoRAExpertsMixin 混入 XPUExperts，使未量化（BF16）MoE LoRA 通过 XpuFusedMoe 的 activation_hook/output_hook 执行，替代 Triton 专家路径。",
-        "impact": "使用 vLLM XPU 后端且启用 MoE LoRA 的用户可获得更优性能。",
-        "brief": "vLLM XPU 新增 BF16 MoE LoRA 支持。",
+        "title": "XPU 支持未量化 MoE LoRA",
+        "analysis": "将 LoRAExpertsMixin 混入 XPUExperts，使 BF16 MoE LoRA 通过 XpuFusedMoe 的 activation_hook/output_hook 执行，替代 Triton experts 路径。",
+        "impact": "vLLM XPU 用户可使用未量化 MoE LoRA，获得更优性能。",
+        "brief": "XPU MoE LoRA 改用 fused 路径",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -127,10 +167,10 @@
         "refs": [
           "s2"
         ],
-        "title": "修复描述符 gather 偏移 i32 截断导致越界",
-        "analysis": "computeGatherScatterOperands 在计算 index*stride 时使用 i32，导致大偏移截断。现改为 i64 计算，避免描述符 gather/scatter 越界。",
-        "impact": "使用 Triton XPU 后端且涉及大张量 gather/scatter 的用户可能遇到错误，需更新后端。",
-        "brief": "Triton XPU 修复 gather 偏移 i32 溢出。",
+        "title": "Triton XPU 描述符 gather 偏移改用 i64",
+        "analysis": "computeGatherScatterOperands 将 stride 截断为 i32 并计算 index*stride，导致大偏移溢出。改为 i64 计算避免溢出。",
+        "impact": "修复大张量 gather/scatter 时的错误，影响 Triton XPU 后端用户。",
+        "brief": "修复 gather 偏移溢出",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -142,13 +182,13 @@
         "refs": [
           "s3"
         ],
-        "title": "AOT link.py 不再导入 torch 以加速链接",
-        "analysis": "link.py 原先为判断 XPU/CUDA 导入 triton._internal_testing，间接引入 torch 并初始化驱动。现移除该依赖，减少链接开销。",
-        "impact": "使用 Triton AOT 编译的用户链接速度提升。",
-        "brief": "Triton AOT 链接去除 torch 依赖。",
-        "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
+        "title": "cdist 反向内核改用 64 位索引",
+        "analysis": "cdist_backward_kernel_impl_func 中行索引、批索引等使用 32 位 int，大输入时溢出导致越界写。改用 64 位索引修复。",
+        "impact": "修复 torch-xpu-ops 中 cdist 反向大输入崩溃，影响使用大 batch 的用户。",
+        "brief": "修复 cdist 反向越界写",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -157,11 +197,11 @@
         "refs": [
           "s4"
         ],
-        "title": "2D 块加载边界匹配支持索引在右侧的约束",
-        "analysis": "matchBoundaryCheckMask 仅接受 slt(index, bound) 形式，但 K > offs_k 会生成 sgt(bound, index)，导致边界检查未生效。现支持两种形式。",
-        "impact": "使用 Triton XPU 后端且依赖 2D 块加载边界检查的用户可能获得正确性提升。",
-        "brief": "Triton XPU 修复 2D 块加载边界匹配。",
-        "tier": "major",
+        "title": "AOT link.py 不再导入 torch",
+        "analysis": "link.py 为判断 is_xpu/is_cuda 导入 triton._internal_testing，该导入会拉入 torch 并初始化驱动。改为不导入 torch，避免 AOT 链接时不必要的依赖。",
+        "impact": "减少 AOT 链接时的 torch 依赖，可能加快链接速度。",
+        "brief": "移除 link.py 的 torch 导入",
+        "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -172,10 +212,25 @@
         "refs": [
           "s5"
         ],
-        "title": "SGLANG 依赖 pin 更新至 ab84df6",
-        "analysis": "将 SGLANG 的 pin 更新到指定提交，以同步上游修复或特性。",
+        "title": "2D block load 匹配右索引行限制",
+        "analysis": "matchBoundaryCheckMask 只接受 slt(index, bound) 形式，而 K > offs_k 以 sgt(bound, index) 出现，导致边界检查未匹配。现在两种形式都接受。",
+        "impact": "修复 Triton XPU 2D block load 边界检查遗漏，可能提升性能。",
+        "brief": "修复 2D load 边界匹配",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "SGLANG pin 更新",
+        "analysis": "更新 SGLANG 依赖 pin 到指定 commit，关闭相关 issue。",
         "impact": null,
-        "brief": "SGLANG pin 更新。",
+        "brief": "更新 SGLANG 依赖",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": false,
@@ -185,29 +240,14 @@
       },
       {
         "refs": [
-          "s6"
-        ],
-        "title": "层拆分时预留 draft head 空间避免缓存溢出",
-        "analysis": "层拆分最后阶段运行 drafter，其 draft head 和 logits 在绑定后分配，可能超出专家缓存。现将其空间从最后一张卡的缓存中预留。",
-        "impact": "使用 Strata 双卡层拆分的用户可避免缓存溢出。",
-        "brief": "Strata 修复层拆分 draft head 缓存问题。",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s7"
         ],
-        "title": "Battlemage 上可选启用混合 IQ3 解码优化",
-        "analysis": "针对 Arc Pro B70 的原生混合 IQ3 解码路径存在重复工作，此补丁保留生产覆盖的解码优化，作为可选启用。",
-        "impact": "使用 Battlemage 且启用混合 IQ3 解码的用户可获性能提升。",
-        "brief": "Strata 为 Battlemage 添加 IQ3 解码优化。",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "xpu_profiling 测试调整并纳入 PR CI",
+        "analysis": "调整 xpu_profiling 测试，允许已知问题通过，并更新 llama GEMM 计数，同时将测试加入 PR CI。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "调整 profiling 测试并加入 CI",
+        "tier": "minor",
+        "changeType": "test_fix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -217,13 +257,13 @@
         "refs": [
           "s8"
         ],
-        "title": "Qwen3.8-Flash-Next IQ2_XS 单 B70 端到端预览",
-        "analysis": "未修改的 0.2.0-beta SYCL 引擎在单 B70 上 IQ2_XS 推理延迟较高，组合引擎预览可降低延迟。实测 32K 工作负载下客户端解码速率 67.10 tok/s。",
-        "impact": "使用 Strata SYCL 引擎且运行 Qwen3.8-Flash-Next IQ2_XS 的用户可关注预览版本。",
-        "brief": "Strata 预览 Qwen3.8 IQ2_XS 性能提升。",
+        "title": "Mamba2 SSD 内核增加张量描述符路径",
+        "analysis": "为 _chunk_scan_fwd_kernel 和 _chunk_state_fwd_kernel 增加 USE_TD 张量描述符路径，替代掩码指针算术，可能提升性能。",
+        "impact": "vLLM XPU Mamba2 用户可能获得性能提升。",
+        "brief": "Mamba2 SSD 增加 TD 路径",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -232,11 +272,11 @@
         "refs": [
           "s9"
         ],
-        "title": "流水线两阶段拆分按慢阶段定价",
-        "analysis": "--pipeline-windows 2 使两阶段重叠，但 --layer-split auto 仍按两阶段时间总和定价，导致负载不均衡。现改为按较慢阶段定价。",
-        "impact": "使用 Strata 双卡流水线拆分的用户可获得更均衡的负载。",
-        "brief": "Strata 修复流水线拆分定价。",
-        "tier": "major",
+        "title": "修复 LoRA 测试工作区",
+        "analysis": "新添加的 LoRA OLMoE 测试工作区配置不正确，快速修复。",
+        "impact": null,
+        "brief": "修复 LoRA 测试工作区",
+        "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -247,10 +287,10 @@
         "refs": [
           "s10"
         ],
-        "title": "自动层拆分时也裁剪每卡稠密权重",
-        "analysis": "此前仅在显式 --layer-split 时裁剪稠密权重，自动模式未裁剪。现自动模式也进行裁剪，减少内存占用。",
-        "impact": "使用 Strata --layer-split auto 的用户可减少内存占用。",
-        "brief": "Strata 自动层拆分也裁剪权重。",
+        "title": "DeepSeek-V4 稀疏 MLA 内核应用 attn_sink",
+        "analysis": "XPU 稀疏 MLA 路径未传递 attn_sink，导致 softmax 计算错误。修复调用点并传递参数。",
+        "impact": "修复 DeepSeek-V4 在 XPU 上的注意力计算错误。",
+        "brief": "修复 attn_sink 未应用",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -262,11 +302,86 @@
         "refs": [
           "s11"
         ],
-        "title": "Star Citizen 在 Arc iGPU 上 Vulkan 初始化失败",
-        "analysis": "报告者称在 Core Ultra 7 155H 的 Arc iGPU 上，Star Citizen 启动时 Vulkan 设备初始化失败，设备为空 (0.0.0)。已使用最新驱动。",
-        "impact": "使用 Arc iGPU 运行 Star Citizen 的用户可能遇到启动崩溃。",
-        "brief": "Star Citizen 在 Arc iGPU 上启动崩溃。",
+        "title": "层拆分时保留 draft head 空间",
+        "analysis": "层拆分最后阶段运行 drafter，draft head 和 logits 在绑定后分配，可能超出缓存。现在在缓存大小计算时预留空间。",
+        "impact": "修复 Strata 层拆分时 draft head 内存溢出问题。",
+        "brief": "修复 draft head 缓存溢出",
         "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "Battlemage 混合 IQ3 解码优化",
+        "analysis": "Arc Pro B70 原生混合 IQ3 解码路径重复工作，保留生产覆盖的优化，可能提升性能。",
+        "impact": "Strata 用户使用 Battlemage 时 IQ3 解码性能提升。",
+        "brief": "优化 Battlemage IQ3 解码",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "Qwen3.8-Flash-Next IQ2_XS 单卡预览",
+        "analysis": "组合引擎预览降低单 B70 IQ2_XS 推理延迟，实测 32K 工作负载下客户端解码率 67.10 tok/s。",
+        "impact": "Strata 用户可预览 Qwen3.8-Flash-Next IQ2_XS 性能提升。",
+        "brief": "预览 Qwen3.8 IQ2_XS 性能",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "流水线拆分按慢阶段定价",
+        "analysis": "--layer-split auto 将两阶段时间求和定价，导致流水线重叠时负载不均。改为按较慢阶段定价。",
+        "impact": "修复 Strata 流水线拆分负载均衡问题。",
+        "brief": "修复流水线拆分定价",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "自动层拆分也裁剪稠密权重",
+        "analysis": "显式 --layer-split 时裁剪稠密权重，但 --layer-split auto 未裁剪，导致内存浪费。现在 auto 模式也裁剪。",
+        "impact": "修复 Strata 自动层拆分内存浪费问题。",
+        "brief": "自动拆分裁剪权重",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s16"
+        ],
+        "title": "Star Citizen 在 Arc iGPU 启动崩溃",
+        "analysis": "报告者认为 Vulkan 设备初始化失败，设备为空 (0.0.0)，发生在 Core Ultra 7 155H 的 Arc iGPU 上。",
+        "impact": null,
+        "brief": "Star Citizen 启动崩溃报告",
+        "tier": "minor",
         "changeType": "issue_report",
         "isTrueFix": false,
         "claimOwner": "reporter",
