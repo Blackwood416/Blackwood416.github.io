@@ -1,0 +1,354 @@
+{
+  "date": "2026-11-18",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Enable Windows INT8/INT4 GEMM tests and expand INT4 coverage",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5615",
+      "updated": "2026-11-17T11:13:42Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Lower sub_group_bitcast_shuffle to SPV_INTEL_subgroup_bitcast_shuffle (#8847)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/7e3c9b2a8cd5469f4444d21f0c084cccc1f14cae",
+      "updated": "2026-11-17T22:26:51Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[LowerTo2DBlockLoad] Absorb a row-limit mask with a vacuous `>= 0` bound (#8844)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0c2428556032ad029d1f5adc2262905ace3e6654",
+      "updated": "2026-11-17T20:44:30Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[vLLM] Update `vllm` pin to remove Model Runner v1 (#8715)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/c48c7068990bda48a0c26dfd22e8cb2e739e1ba8",
+      "updated": "2026-11-17T18:39:38Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmarks] Report descriptor microbenchmark results (#8830)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9cb53a5a78edf5b564fd84695692ee820562b2e7",
+      "updated": "2026-11-17T17:18:37Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmarks] Fall back to a tensor of pointers in the GEMM post-op add-matrix benchmark when a tensor descriptor cannot be used (#8856)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/91bd3589d0c1126e1d79d2c59dc1c7c2c5916b01",
+      "updated": "2026-11-17T17:14:53Z",
+      "score": 25
+    },
+    {
+      "ref": "s7",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Implement narrow_copy.out on XPU.",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5520",
+      "updated": "2026-11-17T12:29:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Fix feature stride in sparse coalesce_values_kernel",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6120",
+      "updated": "2026-11-17T11:30:20Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Cleanup obsolete test files",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6233",
+      "updated": "2026-11-17T09:06:41Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Synchronize test files after upstream TorchScript removal",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6178",
+      "updated": "2026-11-17T08:58:13Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][batch invariant] Optimize batch-invariant collectives with sharded reductions",
+      "url": "https://github.com/vllm-project/vllm/pull/67182",
+      "updated": "2026-11-16T20:05:36Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "nix: expose a SYCL package",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31066",
+      "updated": "2026-11-17T09:04:13Z",
+      "score": 25
+    },
+    {
+      "ref": "s13",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "[SYCL] Fix FA mkl issue: a mask broadcast over heads or batches",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31536",
+      "updated": "2026-11-17T08:50:34Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Bugfix] Freeze the startup heap in XPUWorker.init_device",
+      "url": "https://github.com/vllm-project/vllm/pull/67639",
+      "updated": "2026-11-17T08:23:32Z",
+      "score": 18
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "Triton XPU 新增子组位转换洗牌指令降级",
+        "refs": [
+          "s2"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "XPU 稀疏合并内核修复特征步长错误",
+        "refs": [
+          "s8"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "llama.cpp 修复 SYCL 闪存注意力掩码越界",
+        "refs": [
+          "s13"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "子组位转换洗牌降级到 SPV_INTEL 扩展",
+        "analysis": "将 triton_gen.sub_group_bitcast_shuffle 在驱动支持时降级为 __spirv_SubgroupBitcastShuffleINTEL，否则保留原路径，以利用硬件特性提升性能。",
+        "impact": "使用该指令的 Triton 内核在支持扩展的 Intel GPU 上获得性能提升。",
+        "brief": "新增 SPV_INTEL 子组位转换洗牌降级路径",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "吸收行限制掩码中的空 >=0 边界",
+        "analysis": "修复描述符加载时因 index >= 0 与 index < shape 同时出现导致行边界无法匹配的问题，使 2D 块加载能正确吸收行限制掩码。",
+        "impact": "提升描述符块加载的匹配率和性能。",
+        "brief": "修复描述符加载行掩码匹配问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "更新 vLLM 固定版本移除 Model Runner v1",
+        "analysis": "同步上游 vLLM 移除 Model Runner v1 的变更，更新 pin 以保持兼容，对 vLLM 基准无影响。",
+        "impact": "使用 vLLM 的 Triton XPU 用户需更新依赖。",
+        "brief": "同步 vLLM 移除 Model Runner v1",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "描述符微基准测试增加报告输出",
+        "analysis": "为描述符微基准测试添加报告生成，使结果与其他基准一致，便于对比分析。",
+        "impact": null,
+        "brief": "描述符微基准测试输出报告",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "GEMM 后置加矩阵基准回退到指针张量",
+        "analysis": "当无法使用张量描述符时，GEMM 后置加矩阵基准回退到指针张量，确保基准在受限环境下仍可运行。",
+        "impact": null,
+        "brief": "GEMM 基准增加描述符不可用回退",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "启用 Windows INT8/INT4 GEMM 测试并扩展覆盖",
+        "analysis": "为 XPU 添加 INT8/INT4 GEMM 测试用例，并扩展 INT4 覆盖，修复相关测试缺失问题。",
+        "impact": "Windows 上使用 INT8/INT4 GEMM 的用户获得更全面的测试保障。",
+        "brief": "新增 XPU INT8/INT4 GEMM 测试",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "实现 XPU 上的 narrow_copy.out",
+        "analysis": "补全 XPU 上缺失的 narrow_copy.out 变体，注册操作待上游处理。",
+        "impact": "XPU 用户可使用 narrow_copy.out 操作。",
+        "brief": "新增 XPU narrow_copy.out 实现",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "修复稀疏合并内核特征步长错误",
+        "analysis": "coalesce_values_kernel 中特征维度步长计算错误，导致数据访问错位，修复后正确偏移。",
+        "impact": "修复稀疏张量合并操作的正确性问题。",
+        "brief": "修复稀疏合并特征步长",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "清理过时的测试文件",
+        "analysis": "移除已切换至上游或过时的测试文件，保持仓库整洁。",
+        "impact": null,
+        "brief": "删除过时测试文件",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "同步上游 TorchScript 移除后的测试文件",
+        "analysis": "上游移除 TorchScript API 后，同步更新测试包装器以适配。",
+        "impact": null,
+        "brief": "同步测试文件适配 TorchScript 移除",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "优化批量不变集合通信的分片归约",
+        "analysis": "对大于 4 MiB 的输入使用 all-to-all 和融合 Triton 求和，再通过 all-gather 实现 all-reduce，小输入保持原路径。",
+        "impact": "提升大输入下批量不变集合通信性能。",
+        "brief": "优化大输入集合通信性能",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "llama.cpp 新增 SYCL Nix 包",
+        "analysis": "为 llama.cpp 添加 SYCL 的 Nix 包，方便 Nix 用户使用 SYCL 后端。",
+        "impact": "Nix 用户可方便地使用 SYCL 后端。",
+        "brief": "新增 SYCL Nix 包",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "修复 SYCL 闪存注意力掩码广播越界",
+        "analysis": "MKL 闪存注意力路径在掩码广播到 heads 或 batches 时越界读取，导致 GPU 故障或 NaN，修复后正确读取。",
+        "impact": "修复 SYCL 后端闪存注意力的正确性问题。",
+        "brief": "修复 SYCL FA 掩码越界",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "冻结 XPUWorker 启动堆以修复测试失败",
+        "analysis": "修复 XPUWorker.init_device 中启动堆未冻结的问题，确保权重加载前堆已冻结，解决 nightly 测试失败。",
+        "impact": "修复 vLLM XPU 启动堆冻结问题。",
+        "brief": "修复 XPU 启动堆冻结",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
