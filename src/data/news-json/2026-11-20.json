@@ -19,6 +19,14 @@
     },
     {
       "ref": "s3",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Feat] wan2.2-s2v: Add Wan2.2-S2V-14B speech-to-video with XPU support (port of #21609)",
+      "url": "https://github.com/sgl-project/sglang/pull/43279",
+      "updated": "2026-11-20T00:55:39Z",
+      "score": 43
+    },
+    {
+      "ref": "s4",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[PyTorch] Patch Inductor's extern fallback to tolerate a choice with no timing (#8886)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/90bd83c432f7da67d6faef58bfb81d30a2ea5ef6",
@@ -26,7 +34,7 @@
       "score": 39
     },
     {
-      "ref": "s4",
+      "ref": "s5",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][UT]Convert awq-packed MoE qweight to the gptq-equivalent layout on xpu",
       "url": "https://github.com/vllm-project/vllm/pull/48552",
@@ -34,31 +42,55 @@
       "score": 39
     },
     {
-      "ref": "s5",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[PROTON] Support periodic flushing in the XPUPTI profiler (#8474)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6bd8bb4024c870dbd3c5b61e41d1fe219d2916ef",
-      "updated": "2026-11-19T17:53:10Z",
-      "score": 25
-    },
-    {
       "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[LowerTo2DBlockLoad] Absorb a column bound into `base_width` (#7196)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/33563364c429c1f2836f9316f1ae55579992fd82",
-      "updated": "2026-11-19T16:54:17Z",
+      "title": "[StageLargeFMADotsViaSLM] Choose the K tile from a register budget (#8772)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/1bdd5e6d9730334d926bff454b5851d9fbc1f859",
+      "updated": "2026-11-20T05:48:02Z",
       "score": 25
     },
     {
       "ref": "s7",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Reduce: round max work-group items down to a power of two",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6247",
-      "updated": "2026-11-18T08:17:46Z",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[CRI] Autotune 03a with num_stages=4 tiles and a 160-GRF config (#8927)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6b7ac032f2a97ba10717c1262f7cab76442f2d7a",
+      "updated": "2026-11-20T02:59:45Z",
       "score": 25
     },
     {
       "ref": "s8",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Implemention of philox key fold in tensor",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5451",
+      "updated": "2026-11-20T06:40:03Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[bot] Match any Disable issues header format in CI DISABLED queue",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6245",
+      "updated": "2026-11-20T05:25:25Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[Infra] Remove ARC bkc to infra repo",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6292",
+      "updated": "2026-11-20T02:53:16Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] quick fix for _compact_sampling_mask_xpu",
+      "url": "https://github.com/vllm-project/vllm/pull/68624",
+      "updated": "2026-11-20T05:19:05Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU] Add VLLM_XPU_SUPPORT_FP8_QUERY to control FP8 query in flash attention",
       "url": "https://github.com/vllm-project/vllm/pull/67860",
@@ -66,7 +98,15 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s13",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[PART 4] Sycl kernel porting: quantization and fused quant kernels",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/704",
+      "updated": "2026-11-20T05:23:11Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
       "source": "上游合入: llama.cpp (sycl/openvino/intel)",
       "title": "ggml-openvino: fix OpenVINO CI, minor fixes and optimizations",
       "url": "https://github.com/ggml-org/llama.cpp/pull/32590",
@@ -74,7 +114,15 @@
       "score": 25
     },
     {
-      "ref": "s10",
+      "ref": "s15",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] [XPU] compressed-tensors: Support W8A8 int8 on XPU and quantize Whisper MLP linears.",
+      "url": "https://github.com/sgl-project/sglang/pull/48353",
+      "updated": "2026-11-20T05:02:30Z",
+      "score": 25
+    },
+    {
+      "ref": "s16",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "WSL2: CopyTextureRegion into NV12 plane 1 corrupts plane 0; H.264 DecodeFrame crashes in libigd12dxva64.so",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1622",
@@ -82,7 +130,7 @@
       "score": 18
     },
     {
-      "ref": "s11",
+      "ref": "s17",
       "source": "GitHub Release: intel/compute-runtime",
       "title": "26.44.40734.10: build: igc revision update to v2.43.10",
       "url": "https://github.com/intel/compute-runtime/releases/tag/26.44.40734.10",
@@ -90,7 +138,7 @@
       "score": 15
     },
     {
-      "ref": "s12",
+      "ref": "s18",
       "source": "GitHub Release: intel/intel-graphics-compiler",
       "title": "v2.43.10:  Don&#39;t fold LSC immediate offset below the SLM pointer tag",
       "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.10",
@@ -98,7 +146,15 @@
       "score": 15
     },
     {
-      "ref": "s13",
+      "ref": "s19",
+      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
+      "title": "E2E agents for Xe-Forge  (#56)",
+      "url": "https://github.com/IntelLabs/Xe-Forge/commit/0c0dfd799974f3ecfd60dc9b9a2d37a7514758fc",
+      "updated": "2026-11-20T02:43:47Z",
+      "score": 15
+    },
+    {
+      "ref": "s20",
       "source": "Phoronix (Linux Graphics/Driver)",
       "title": "Mesa 26.3.1 Ships Fixes For Intel Jay Compiler & RADV Driver",
       "url": "https://www.phoronix.com/news/Mesa-26.3.1-Released",
@@ -110,16 +166,23 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "XPU 后端新增可配置回归门，支持基线窗口测试",
+        "title": "XPU 后端新增可配置回归门禁，支持按运行和基线窗口测试",
         "refs": [
           "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "修复 XPU 上 argmin/argmax 返回错误索引的严重问题",
+        "title": "vLLM XPU 修复 AWQ MoE 权重布局不匹配导致的测试失败",
         "refs": [
-          "s7"
+          "s5"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "llama.cpp OpenVINO 后端修复 CI 并支持 Mamba 架构",
+        "refs": [
+          "s14"
         ]
       }
     ],
@@ -128,10 +191,10 @@
         "refs": [
           "s1"
         ],
-        "title": "benchmark_monitor 新增可配置回归门",
-        "analysis": "实现了回归门评估功能，支持可配置的改进锁定、每夜运行和基线窗口测试，属于基准监控系列的第 3 部分。",
-        "impact": "影响使用 benchmark_monitor 的开发者，可配置回归检测策略。",
-        "brief": "回归门支持基线窗口测试",
+        "title": "benchmark_monitor 回归门禁支持可配置改进锁定",
+        "analysis": "这是回归门禁系列的第 3 部分，基于前序提交，新增可配置的改进锁定、按运行和基线窗口测试功能，用于自动化检测性能回归。",
+        "impact": "使用 benchmark_monitor 的开发者可配置更灵活的回归检测策略。",
+        "brief": "回归门禁新增可配置改进锁定与基线窗口测试。",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
@@ -144,9 +207,9 @@
           "s2"
         ],
         "title": "后端 Python 文件支持独立打包加载",
-        "analysis": "通过将相对导入替换为绝对导入，使后端 Python 文件在独立打包时也能正常加载，不影响树内使用。",
-        "impact": "影响独立打包后端的用户，需重新打包。",
-        "brief": "后端 Python 文件独立加载",
+        "analysis": "通过将相对导入改为独立包形式，使后端 Python 文件在脱离 triton.backends.intel 命名空间时也能正常加载，便于单独分发。",
+        "impact": "需要独立打包 XPU 后端的用户或工具链。",
+        "brief": "后端 Python 文件可独立于 triton 包加载。",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
@@ -158,13 +221,13 @@
         "refs": [
           "s3"
         ],
-        "title": "修复 Inductor 布局冲突回退 KeyError",
-        "analysis": "添加 PyTorch 补丁，使 Inductor 的布局冲突回退在无计时选择时不再抛出 KeyError，避免崩溃。",
-        "impact": "影响使用 Inductor 的 PyTorch 用户，修复潜在崩溃。",
-        "brief": "Inductor 回退不再 KeyError",
+        "title": "SGLang 新增 Wan2.2-S2V 语音转视频 XPU 支持",
+        "analysis": "将 Wan2.2-S2V-14B 语音转视频模型移植到 sglang-diffusion，并针对 XPU 适配，同时减少对共享文件的改动以保持其他模型行为不变。",
+        "impact": "使用 SGLang 的 XPU 用户可运行 Wan2.2-S2V 模型。",
+        "brief": "SGLang 支持 Wan2.2-S2V 语音转视频模型。",
         "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -173,10 +236,10 @@
         "refs": [
           "s4"
         ],
-        "title": "修复 XPU 上 AWQ MoE 权重布局转换",
-        "analysis": "修复 test_awq_load 中因权重布局假设错误导致的 RuntimeError，将 AWQ 打包的 MoE 权重转换为 GPTQ 等效布局。",
-        "impact": "影响使用 AWQ 量化 MoE 模型的 XPU 用户，修复加载错误。",
-        "brief": "AWQ MoE 权重布局修复",
+        "title": "修复 Inductor 布局冲突回退时 KeyError",
+        "analysis": "当 MultiTemplateBuffer 发生布局冲突时，Inductor 的 extern fallback 会因缺少 timing 信息而抛出 KeyError，此补丁使其容忍无 timing 的选择，避免崩溃。",
+        "impact": "使用 PyTorch Inductor 且遇到布局冲突的 XPU 用户。",
+        "brief": "Inductor 布局冲突回退不再抛 KeyError。",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -188,40 +251,10 @@
         "refs": [
           "s5"
         ],
-        "title": "XPUPTI 分析器支持周期刷新模式",
-        "analysis": "XpuptiProfiler 之前拒绝周期刷新模式，现支持记录处理阶段并刷新完成阶段，完善分析器功能。",
-        "impact": "影响使用 PROTON 分析器的开发者，新增周期刷新支持。",
-        "brief": "XPUPTI 支持周期刷新",
-        "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s6"
-        ],
-        "title": "2D 块加载吸收列边界到 base_width",
-        "analysis": "将内存连续维度的边界检查吸收为 2D 块消息的 base_width，而非逐元素掩码，优化代码生成。",
-        "impact": "影响使用 2D 块加载的 Triton 内核，可能提升性能。",
-        "brief": "2D 块加载优化边界处理",
-        "tier": "minor",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s7"
-        ],
-        "title": "修复 XPU 上 argmin/argmax 返回错误索引",
-        "analysis": "Reduce 配置将最大工作组项数向下取整为 2 的幂，修复了 Intel Arc B390 上 float32 输入 argmin/argmax 返回错误索引的问题。",
-        "impact": "影响在 XPU 上使用 argmin/argmax 的用户，修复正确性问题。",
-        "brief": "argmin/argmax 索引修复",
+        "title": "修复 AWQ MoE 权重布局不匹配导致的测试失败",
+        "analysis": "process_weights_xpu 假设 GPTQ K-packed nibble 布局，但 AWQ 权重为不同布局，导致 ptr_A.size(1) 不匹配。修复为将 AWQ 权重转换为 GPTQ 等效布局。",
+        "impact": "vLLM XPU 上使用 AWQ 量化 MoE 模型的用户。",
+        "brief": "AWQ MoE 权重转换为 GPTQ 布局以修复测试。",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -231,13 +264,43 @@
       },
       {
         "refs": [
+          "s6"
+        ],
+        "title": "根据寄存器预算选择 K tile 大小",
+        "analysis": "原先 K tile 仅按 A 操作数大小设定，导致 FMA 降低时寄存器溢出。现根据寄存器预算动态选择 K tile，避免过大。",
+        "impact": "使用 StageLargeFMADotsViaSLM 的 Triton 编译用户，可能提升性能。",
+        "brief": "K tile 大小根据寄存器预算调整。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "CRI 教程 03a 自动调优配置更新",
+        "analysis": "为 CRI 教程 03a 更新自动调优列表，新增 num_stages=4 的 tile 变体、128x128 tile 和 160-GRF 配置，并移除两个旧配置。",
+        "impact": "使用 CRI 教程 03a 的开发者。",
+        "brief": "CRI 教程自动调优配置调整。",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
           "s8"
         ],
-        "title": "新增环境变量控制 XPU FP8 查询",
-        "analysis": "添加 VLLM_XPU_SUPPORT_FP8_QUERY 环境变量，允许在 XPU 上启用 FP8 查询，以支持全 FP8 注意力。",
-        "impact": "影响使用 FP8 KV 缓存的 XPU 用户，可启用 FP8 查询。",
-        "brief": "XPU FP8 查询可配置",
-        "tier": "minor",
+        "title": "实现 philox key fold 的 tensor 重载",
+        "analysis": "为 torch-xpu-ops 添加 _philox_key_fold_in.Tensor 的 XPU 实现，复用已有的 Philox fold 逻辑，解决 issue #4062。",
+        "impact": "使用 philox 随机数生成的 PyTorch XPU 用户。",
+        "brief": "XPU 实现 philox key fold tensor 重载。",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -248,12 +311,12 @@
         "refs": [
           "s9"
         ],
-        "title": "OpenVINO 后端修复 CI 并优化",
-        "analysis": "修复 OpenVINO CI 支持 f16 SCALE 和 f16/bf16 TRI，将 GPU KV 长度向上取整为 2 的幂，修复 LFM2 和 DSpark 推测解码，并添加 Mamba 架构支持。",
-        "impact": "影响使用 OpenVINO 后端的 llama.cpp 用户，修复 CI 和功能。",
-        "brief": "OpenVINO 后端修复与优化",
+        "title": "CI 禁用队列解析兼容新格式",
+        "analysis": "CI 禁用队列的 watcher 从 2026-11-12 起改用 markdown 表格格式，但解析器仍按旧格式分割，导致新批次解析为空。此修复使解析器兼容新格式。",
+        "impact": "维护 torch-xpu-ops CI 的开发者。",
+        "brief": "CI 禁用队列解析适配新格式。",
         "tier": "minor",
-        "changeType": "bugfix",
+        "changeType": "ci",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -263,10 +326,100 @@
         "refs": [
           "s10"
         ],
-        "title": "WSL2 下 NV12 复制和 H.264 解码崩溃",
-        "analysis": "报告者认为在 WSL2 下 CopyTextureRegion 到 NV12 plane 1 会损坏 plane 0，且 H.264 解码在 libigd12dxva64.so 中崩溃，使用 Mesa 25.2.8 d3d12 VA-API 驱动。",
-        "impact": "影响 WSL2 下使用 NV12 纹理复制和 H.264 解码的用户，需等待驱动修复。",
-        "brief": "WSL2 驱动问题报告",
+        "title": "移除 ARC BKC 到 infra 仓库",
+        "analysis": "将 ARC BKC 从当前仓库移除，迁移到 infra 仓库，属于基础设施调整。",
+        "impact": null,
+        "brief": "ARC BKC 迁移至 infra 仓库。",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "快速修复 _compact_sampling_mask_xpu 仅支持 float32",
+        "analysis": "当前 compact_sampling_mask 内核仅接受 float32 logits，导致测试失败。此提交为快速修复，属于测试规避，根因未解决。",
+        "impact": "vLLM XPU 上使用非 float32 logits 的用户。",
+        "brief": "快速修复采样掩码内核类型限制。",
+        "tier": "major",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "新增环境变量控制 FP8 query 量化",
+        "analysis": "XPU 上 flash_attn_supports_quant_query_input() 始终返回 False，导致即使有 FP8 KV cache 也不量化 query。新增 VLLM_XPU_SUPPORT_FP8_QUERY 环境变量，允许用户启用 FP8 query 以利用 Xe3p 内核的全 FP8 注意力。",
+        "impact": "使用 FP8 KV cache 的 vLLM XPU 用户可启用全 FP8 注意力。",
+        "brief": "新增环境变量启用 FP8 query 量化。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "SYCL 内核移植：量化与融合量化内核",
+        "analysis": "将内部 csrc/quantization/ 和融合 norm/act-quant 内核移植到 SYCL，缩减二进制大小，并为 Xe3P 添加内联汇编快速路径，支持 per_token_group fp8/mxfp8/mxfp4 等。",
+        "impact": "使用 vllm-xpu-kernels 的量化功能用户。",
+        "brief": "量化内核 SYCL 移植并优化。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s14"
+        ],
+        "title": "OpenVINO 后端修复 CI 并支持 Mamba 架构",
+        "analysis": "修复 OpenVINO CI 问题，支持 f16 SCALE 和 f16/bf16 TRI，将 GPU KV 长度向上取整到 2 的幂，修复 LFM2 和 DSpark 推测解码，并添加 Mamba 架构的 CPU/GPU 支持。",
+        "impact": "使用 llama.cpp OpenVINO 后端的用户，特别是 Mamba 模型。",
+        "brief": "OpenVINO 后端修复并支持 Mamba。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s15"
+        ],
+        "title": "XPU 支持 W8A8 int8 压缩张量",
+        "analysis": "为 compressed-tensors 添加 XPU 上的 W8A8 int8 支持，并量化 Whisper MLP 线性层，使 whisper-large-v3-turbo-quantized.w8a8 可在 XPU 上服务。",
+        "impact": "使用 W8A8 量化 Whisper 模型的 XPU 用户。",
+        "brief": "XPU 支持 W8A8 int8 压缩张量。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s16"
+        ],
+        "title": "WSL2 下 NV12 复制和 H.264 解码崩溃问题",
+        "analysis": "报告者称在 WSL2 下，CopyTextureRegion 到 NV12 plane 1 会损坏 plane 0，且 H.264 DecodeFrame 在 libigd12dxva64.so 中崩溃。报告者认为这是驱动问题，但未确认根因。",
+        "impact": "WSL2 下使用 Mesa d3d12 VA-API 驱动的用户。",
+        "brief": "WSL2 下 NV12 复制损坏和解码崩溃。",
         "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
@@ -276,12 +429,12 @@
       },
       {
         "refs": [
-          "s11"
+          "s17"
         ],
         "title": "compute-runtime 26.44.40734.10 发布",
         "analysis": "更新 IGC 版本至 v2.43.10，属于常规驱动更新。",
-        "impact": "影响使用 compute-runtime 的用户，建议更新。",
-        "brief": "compute-runtime 更新",
+        "impact": "使用 Intel compute-runtime 的用户。",
+        "brief": "compute-runtime 更新至 26.44.40734.10。",
         "tier": "minor",
         "changeType": "driver_update",
         "isTrueFix": false,
@@ -291,12 +444,12 @@
       },
       {
         "refs": [
-          "s12"
+          "s18"
         ],
         "title": "IGC 修复 SLM 指针标签折叠问题",
-        "analysis": "修复 LSC 立即偏移折叠时可能清除 SLM 指针标签的问题，确保边界检查正确。",
-        "impact": "影响使用 SLM 的 GPU 程序，修复潜在错误。",
-        "brief": "IGC 修复 SLM 偏移折叠",
+        "analysis": "SLM 指针可能携带 VALID_LOCAL_HIGH_BITS 标签，硬件在加立即数前检查 A32 寄存器偏移，若偏移为负则不能折叠立即数。此修复避免标签被借位清除。",
+        "impact": "使用 IGC 编译的 Intel GPU 用户，可能影响 SLM 相关代码。",
+        "brief": "IGC 修复 SLM 立即数折叠。",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -306,12 +459,27 @@
       },
       {
         "refs": [
-          "s13"
+          "s19"
         ],
-        "title": "Mesa 26.3.1 发布修复 Intel Jay 编译器",
+        "title": "Xe-Forge 新增端到端代理",
+        "analysis": "为 Xe-Forge 添加 vllm 前端、vllm 和 sglang 提取、opencv 导入等，并修复硬编码变量和数据类型支持，属于功能增强。",
+        "impact": "使用 Xe-Forge 的开发者。",
+        "brief": "Xe-Forge 新增端到端代理。",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s20"
+        ],
+        "title": "Mesa 26.3.1 发布，修复 Intel Jay 编译器",
         "analysis": "Mesa 26.3.1 作为首个点版本，包含对 Intel Jay 编译器和 RADV 驱动的修复。",
-        "impact": "影响使用 Mesa 26.3 的用户，建议更新。",
-        "brief": "Mesa 26.3.1 发布",
+        "impact": "使用 Mesa 26.3 系列的 Linux 用户。",
+        "brief": "Mesa 26.3.1 发布。",
         "tier": "minor",
         "changeType": "driver_update",
         "isTrueFix": false,
