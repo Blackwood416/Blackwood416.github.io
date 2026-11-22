@@ -54,14 +54,15 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "llama.cpp SYCL 融合算子与向量化提升 Qwen3 推理性能",
+        "title": "llama.cpp SYCL 融合算子与量化重排显著提速",
         "refs": [
-          "s1"
+          "s1",
+          "s5"
         ]
       },
       {
         "status": "Merged",
-        "title": "Triton XPU 改用官方内置函数获取 XeCore ID",
+        "title": "Triton XPU 改用官方内置函数获取硬件 ID",
         "refs": [
           "s2"
         ]
@@ -72,13 +73,13 @@
         "refs": [
           "s1"
         ],
-        "title": "融合 ADD、RMS_NORM、MUL 并向量化 RMS norm",
-        "analysis": "将连续的 RMS norm 向量化，并融合 ADD、RMS_NORM、MUL 操作以减少内核启动和内存访问。在 Qwen3.8-27B Q3_K_P 模型上，启用 -fa on 等参数后，推理速度相比基线有提升。",
-        "impact": "使用 SYCL 后端的 llama.cpp 用户，尤其是运行 Qwen3 系列模型的用户，可获得推理性能提升。",
-        "brief": "融合算子并向量化，提升 Qwen3 推理速度",
+        "title": "融合 ADD/RMS_NORM/MUL 并向量化 RMS",
+        "analysis": "将连续 RMS norm 向量化，并融合 ADD、RMS_NORM、MUL 三个算子，减少内核启动和内存往返。在 Qwen3.8-27B Q3_K_P 模型上，-fa on -ctk q4_0 -ctv q4_0 -b 1024 -ub 1024 配置下吞吐提升显著（具体数值见 PR）。",
+        "impact": "使用 SYCL 后端的 llama.cpp 用户，尤其是运行 Qwen 系列模型的，可获得推理性能提升。",
+        "brief": "融合算子并向量化，提升 SYCL 推理吞吐",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -87,12 +88,12 @@
         "refs": [
           "s2"
         ],
-        "title": "用 intel_get_slice_id 替换 IGC 内置函数",
-        "analysis": "将 Triton XPU 后端中用于获取 XeCore ID 的 IGC 内部内置函数替换为公开的 intel_get_slice_id 和 intel_get_dual_subslice_id，以适配新的编译器接口并提高可维护性。",
-        "impact": "使用 Triton XPU 后端的开发者，需确保其 IGC 版本支持这些新内置函数。",
-        "brief": "替换 XeCore ID 获取方式，适配新接口",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "Triton XPU 改用官方内置函数获取硬件 ID",
+        "analysis": "将 `tl.extra.intel.smid` 和 Profile 中使用的 IGC 内部内置函数 `__builtin_IB_slice_id` / `__builtin_IB_dual_subslice_id` 替换为公开的 `intel_get_slice_id` / `intel_get_dual_subslice_id`，以适配 IGC 接口变更并提高可维护性。",
+        "impact": "依赖 Triton XPU 后端的开发者，需更新到包含此提交的版本以保持兼容。",
+        "brief": "替换 IGC 内部内置函数为公开 API",
+        "tier": "minor",
+        "changeType": "sync",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -102,13 +103,13 @@
         "refs": [
           "s3"
         ],
-        "title": "基准测试忽略缺失结果计算几何平均",
-        "analysis": "在 flex-attention 自定义掩码基准中，OneDNN 不支持 PagedNoop 掩码导致返回 0，scipy.stats.gmean 计算时会将 0 视为无效，导致结果偏差。此改动在计算几何平均时忽略缺失（零）结果，属于测试调整，根因未解决。",
+        "title": "基准测试忽略缺失结果计算几何均值",
+        "analysis": "在 flex-attention 自定义掩码基准中，OneDNN 不支持 `PagedNoop` 掩码导致返回 0，`scipy.stats.gmean` 计算几何均值时受零值影响。此提交忽略缺失（零）结果，避免基准统计失真。",
         "impact": null,
-        "brief": "基准测试忽略零结果，避免几何平均偏差",
+        "brief": "修复基准统计中零值干扰",
         "tier": "minor",
         "changeType": "test_fix",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -117,13 +118,13 @@
         "refs": [
           "s4"
         ],
-        "title": "限制 CONV_TRANSPOSE_1D 输入迭代范围",
-        "analysis": "通过限制每个输出只读取其对应的输入范围（i*s0 <= idx < i*s0 + K），减少了不必要的内存访问，提升了 SYCL 后端 CONV_TRANSPOSE_1D 的性能。在 Arc Pro B70 上测试，性能有提升。",
-        "impact": "使用 SYCL 后端且涉及转置卷积的 llama.cpp 用户，可获得性能提升。",
-        "brief": "限制输入迭代范围，提升转置卷积性能",
+        "title": "SYCL 限制 CONV_TRANSPOSE_1D 输入迭代范围",
+        "analysis": "通过限制每个输出只读取满足 `i*s0 <= idx < i*s0 + K` 的输入，保持原有升序访问，减少无效内存访问。在 Arc Pro B70 上使用 oneAPI 2026.1 测试，`test-backend-ops perf` 性能有提升。",
+        "impact": "使用 SYCL 后端且涉及 CONV_TRANSPOSE_1D 的 llama.cpp 用户，可获得性能改善。",
+        "brief": "限制输入迭代范围，提升卷积转置性能",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -132,13 +133,13 @@
         "refs": [
           "s5"
         ],
-        "title": "添加 IQ4_NL 和 IQ4_XS 权重重排",
-        "analysis": "为 IQ4_NL 和 IQ4_XS 量化权重添加重排逻辑，以优化使用这些权重的模型性能。在 Intel Arc B70 上测试，MUL_MAT 性能有显著提升。",
-        "impact": "使用 IQ4_NL 或 IQ4_XS 量化权重的 llama.cpp SYCL 用户，可获得性能提升。",
-        "brief": "添加 IQ4 权重重排，优化 MUL_MAT 性能",
+        "title": "SYCL 添加 IQ4_NL 和 IQ4_XS 权重重排",
+        "analysis": "为 IQ4_NL 和 IQ4_XS 量化格式添加权重重排，显著优化使用 IQ4 模型权重时的性能。在 Intel Arc B70 上测试 `test-backend-ops perf -b SYCL0 -o MUL_MAT`，m=4096 等配置下性能提升明显。",
+        "impact": "使用 IQ4 量化模型的 SYCL 用户，推理性能将大幅提升。",
+        "brief": "IQ4 权重重排，显著提升推理性能",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -147,13 +148,13 @@
         "refs": [
           "s6"
         ],
-        "title": "gated_delta_net 内核改为列分块",
-        "analysis": "将 gated_delta_net 内核从每个 warp 处理 1 个状态列扩展到 4 个，每个 warp 加载一次 token 的 q/k 并在 4 列间共享，减少了重复加载，提升了小规模启动的性能。",
-        "impact": "使用 gated_delta_net 模型的 llama.cpp SYCL 用户，可获得性能提升。",
-        "brief": "列分块扩展，共享 q/k 加载提升性能",
+        "title": "SYCL 列块化 gated_delta_net 内核",
+        "analysis": "将 gated_delta_net 内核从每个 warp 处理 1 个状态列扩展到 4 个，每个 warp 加载一次 token 的 q/k 并在 4 列间共享，减少重复加载，提升小规模启动时的效率。",
+        "impact": "使用 SYCL 后端且运行 gated_delta_net 模型的用户，可获得性能提升。",
+        "brief": "列块化内核，减少 q/k 重复加载",
         "tier": "major",
         "changeType": "feature",
-        "isTrueFix": true,
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
