@@ -1,0 +1,163 @@
+{
+  "date": "2026-11-23",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[RemoveLayoutConversions] Cost broadcast loads by distinct addresses (#8888)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8843be51e7665060ebbcb0683eda483363c94b85",
+      "updated": "2026-11-22T14:14:56Z",
+      "score": 25
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Fold tl.trans of a computed tile into its producers (#8786)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/f4d938312c17df6b34b06ec22e53c5bac5e96510",
+      "updated": "2026-11-22T12:18:59Z",
+      "score": 25
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[LowerTo2DBlockLoad] Lower DescriptorLoadOp to LoadOp when 2D block IO cannot be used (#7167)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a562cdc789557eeb5526cb2882c2639c01b5ca9a",
+      "updated": "2026-11-22T09:06:16Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[BlockIO] Write narrow-row 2D block stores back through L1 on BMG (#8660)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8807954eccc74b2e43952f353f4d7f30d4b75b90",
+      "updated": "2026-11-22T08:22:47Z",
+      "score": 25
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Fix the packed 'other' of masked integer loads with a negative constant (#8893)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0ebac8d774e2a95061a6c6993ac6d005f7aec7dc",
+      "updated": "2026-11-22T07:58:00Z",
+      "score": 25
+    },
+    {
+      "ref": "s6",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "Satisfactory crashes seconds after launch even before getting to the title screen",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1627",
+      "updated": "2026-11-22T12:01:21Z",
+      "score": 18
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "Triton XPU 修复注意力反向传播中 trans 折叠，提升性能",
+        "refs": [
+          "s2"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "BMG 窄行 2D 块存储改走 L1，修复写绕过性能问题",
+        "refs": [
+          "s4"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "广播加载按不同地址计成本",
+        "analysis": "在 RemoveLayoutConversions 中，对广播加载（如 GEMM epilogue 中 bias 加载）按不同地址数计算成本，避免误判为昂贵操作而阻止布局转换。",
+        "impact": "影响 GEMM epilogue 优化，可能提升含 bias 的矩阵乘性能。",
+        "brief": "广播加载成本按不同地址计算",
+        "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "折叠 tl.trans 到生产者，修复注意力反向传播",
+        "analysis": "将计算 tile 的 tl.trans 折叠到其生产者，使 dot(trans(p), do) 等模式中操作数 A 可直接使用，修复 #8634。",
+        "impact": "提升注意力反向传播性能，相关用户可受益。",
+        "brief": "trans 折叠修复注意力反向传播",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "无法用 2D 块 IO 时降级 DescriptorLoadOp",
+        "analysis": "LowerTo2DBlockLoad 后，若 descriptor_load 无法转为 2D block load，则降级为普通 LoadOp，保证正确性。",
+        "impact": "确保所有 descriptor_load 在无法使用 2D 块 IO 时仍能正确执行。",
+        "brief": "descriptor_load 降级为普通 load",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s4"
+        ],
+        "title": "BMG 窄行 2D 块存储改走 L1",
+        "analysis": "BMG 驱动默认 L1 写绕过，导致 8x16 块存储每 32B 行单独写 L2。通过标记此类存储走 L1，修复 #8247。",
+        "impact": "提升 BMG 上窄行 2D 块存储性能，影响相关用户。",
+        "brief": "窄行块存储走 L1 修复写绕过",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "修复掩码整数加载负常量 other 打包",
+        "analysis": "修复掩码整数加载中 other 为负常量时的打包问题，确保正确性。",
+        "impact": "影响掩码整数加载的正确性，相关用户需更新。",
+        "brief": "修复负常量 other 打包",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s6"
+        ],
+        "title": "Satisfactory 启动即崩溃问题报告",
+        "analysis": "用户报告 Satisfactory 在启动后数秒内崩溃，即使未到标题画面。已确认使用最新驱动，游戏为正版且无 mod。",
+        "impact": "影响 Satisfactory 玩家，需等待驱动或游戏更新。",
+        "brief": "Satisfactory 启动崩溃待查",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      }
+    ]
+  }
+}
