@@ -4,13 +4,37 @@
     {
       "ref": "s1",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[benchmark_monitor] S2b: golden-vector corpus for the regression gate (#8852)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/cedc6ececd43284719184b8dcde080d30b953f80",
+      "updated": "2026-11-23T05:09:00Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Add nvl-s & cri to default Linux AOT targets",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6246",
+      "updated": "2026-11-23T05:31:18Z",
+      "score": 43
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Benchmarks] Add a TorchInductor GEMM benchmark (#8748)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/590d4ba7750d1a78d224cd77637aad8919d5591d",
+      "updated": "2026-11-23T01:41:43Z",
+      "score": 25
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[RemoveLayoutConversions] Cost broadcast loads by distinct addresses (#8888)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8843be51e7665060ebbcb0683eda483363c94b85",
       "updated": "2026-11-22T14:14:56Z",
       "score": 25
     },
     {
-      "ref": "s2",
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Fold tl.trans of a computed tile into its producers (#8786)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/f4d938312c17df6b34b06ec22e53c5bac5e96510",
@@ -18,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s3",
+      "ref": "s6",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[LowerTo2DBlockLoad] Lower DescriptorLoadOp to LoadOp when 2D block IO cannot be used (#7167)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/a562cdc789557eeb5526cb2882c2639c01b5ca9a",
@@ -26,27 +50,51 @@
       "score": 25
     },
     {
-      "ref": "s4",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[BlockIO] Write narrow-row 2D block stores back through L1 on BMG (#8660)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/8807954eccc74b2e43952f353f4d7f30d4b75b90",
-      "updated": "2026-11-22T08:22:47Z",
+      "ref": "s7",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[sycl-free-function] Refactor UpSampleTrilinear3d by free function",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5264",
+      "updated": "2026-11-23T02:28:31Z",
       "score": 25
     },
     {
-      "ref": "s5",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[Intel] Fix the packed 'other' of masked integer loads with a negative constant (#8893)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0ebac8d774e2a95061a6c6993ac6d005f7aec7dc",
-      "updated": "2026-11-22T07:58:00Z",
+      "ref": "s8",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] add modelopt_mxfp8 quantization format",
+      "url": "https://github.com/vllm-project/vllm/pull/68858",
+      "updated": "2026-11-23T04:22:10Z",
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s9",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][Doc] Add vllm-xpu-kernels find-links to wheel install commands",
+      "url": "https://github.com/vllm-project/vllm/pull/68626",
+      "updated": "2026-11-23T03:57:40Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][XPU] Honor user block size for sliding-window layers on XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/68108",
+      "updated": "2026-11-23T02:40:49Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][CI] revert skipped cases v1/worker",
+      "url": "https://github.com/vllm-project/vllm/pull/68618",
+      "updated": "2026-11-23T06:26:54Z",
+      "score": 19
+    },
+    {
+      "ref": "s12",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
       "title": "Satisfactory crashes seconds after launch even before getting to the title screen",
       "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1627",
-      "updated": "2026-11-22T12:01:21Z",
+      "updated": "2026-11-23T03:31:23Z",
       "score": 18
     }
   ],
@@ -54,16 +102,16 @@
     "overview": [
       {
         "status": "Merged",
-        "title": "Triton XPU 修复注意力反向传播中 trans 折叠，提升性能",
+        "title": "Triton XPU 新增回归门禁的黄金向量语料库",
         "refs": [
-          "s2"
+          "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "BMG 窄行 2D 块存储改走 L1，修复写绕过性能问题",
+        "title": "torch-xpu-ops 默认 AOT 目标新增 NVL-S 与 CRI",
         "refs": [
-          "s4"
+          "s2"
         ]
       }
     ],
@@ -72,13 +120,13 @@
         "refs": [
           "s1"
         ],
-        "title": "广播加载按不同地址计成本",
-        "analysis": "在 RemoveLayoutConversions 中，对广播加载（如 GEMM epilogue 中 bias 加载）按不同地址数计算成本，避免误判为昂贵操作而阻止布局转换。",
-        "impact": "影响 GEMM epilogue 优化，可能提升含 bias 的矩阵乘性能。",
-        "brief": "广播加载成本按不同地址计算",
-        "tier": "minor",
+        "title": "新增回归门禁黄金向量语料库",
+        "analysis": "作为 benchmark_monitor 系列第 4 部分，为回归门禁引入 golden-vector 语料库，用于基准测试的回归检测。该语料库基于已合并的前序部分构建，确保门禁能稳定识别性能退化。",
+        "impact": "影响 Triton XPU 基准测试的维护者，需确保语料库与门禁逻辑正确集成。",
+        "brief": "为回归门禁添加黄金向量语料库。",
+        "tier": "major",
         "changeType": "feature",
-        "isTrueFix": false,
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -87,10 +135,10 @@
         "refs": [
           "s2"
         ],
-        "title": "折叠 tl.trans 到生产者，修复注意力反向传播",
-        "analysis": "将计算 tile 的 tl.trans 折叠到其生产者，使 dot(trans(p), do) 等模式中操作数 A 可直接使用，修复 #8634。",
-        "impact": "提升注意力反向传播性能，相关用户可受益。",
-        "brief": "trans 折叠修复注意力反向传播",
+        "title": "默认 AOT 目标新增 NVL-S 与 CRI",
+        "analysis": "扩展 Linux 默认 AOT 目标列表，加入 NVL-S 和 CRI，使未指定 TORCH_XPU_ARCH_LIST 的构建默认生成这些架构的原生二进制。Windows 目标保持不变。",
+        "impact": "影响 torch-xpu-ops 的 Linux 用户，默认构建将包含更多架构支持。",
+        "brief": "Linux 默认 AOT 目标新增 NVL-S 与 CRI。",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": true,
@@ -102,12 +150,12 @@
         "refs": [
           "s3"
         ],
-        "title": "无法用 2D 块 IO 时降级 DescriptorLoadOp",
-        "analysis": "LowerTo2DBlockLoad 后，若 descriptor_load 无法转为 2D block load，则降级为普通 LoadOp，保证正确性。",
-        "impact": "确保所有 descriptor_load 在无法使用 2D 块 IO 时仍能正确执行。",
-        "brief": "descriptor_load 降级为普通 load",
-        "tier": "minor",
-        "changeType": "bugfix",
+        "title": "新增 TorchInductor GEMM 基准测试",
+        "analysis": "添加 gemm_inductor_benchmark.py，运行 34 个 FP16 GEMM，对比 Inductor 的 Triton GEMM 与 ATen 的性能，覆盖 ATen only、Triton+ATen、Triton only 等模式。用于识别 Inductor 中 Triton GEMM 慢于 ATen 的场景。",
+        "impact": "影响 Triton XPU 性能优化人员，提供基准测试工具以定位性能差距。",
+        "brief": "新增 TorchInductor GEMM 基准测试脚本。",
+        "tier": "major",
+        "changeType": "feature",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -117,10 +165,10 @@
         "refs": [
           "s4"
         ],
-        "title": "BMG 窄行 2D 块存储改走 L1",
-        "analysis": "BMG 驱动默认 L1 写绕过，导致 8x16 块存储每 32B 行单独写 L2。通过标记此类存储走 L1，修复 #8247。",
-        "impact": "提升 BMG 上窄行 2D 块存储性能，影响相关用户。",
-        "brief": "窄行块存储走 L1 修复写绕过",
+        "title": "广播加载按不同地址计成本",
+        "analysis": "在 RemoveLayoutConversions 中，对广播加载按不同地址计数成本。GEMM epilogue 中 addmm bias 使用 strides (0,1) 时，通过 BLOCK_M x BLOCK_N 指针张量重复一行地址，isExpensiveLoadOrStore 现在能更准确评估此类加载的成本。",
+        "impact": "影响 Triton XPU 的布局转换优化，可能改善 GEMM epilogue 的性能。",
+        "brief": "广播加载成本计算更精确。",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -132,11 +180,11 @@
         "refs": [
           "s5"
         ],
-        "title": "修复掩码整数加载负常量 other 打包",
-        "analysis": "修复掩码整数加载中 other 为负常量时的打包问题，确保正确性。",
-        "impact": "影响掩码整数加载的正确性，相关用户需更新。",
-        "brief": "修复负常量 other 打包",
-        "tier": "minor",
+        "title": "折叠计算 tile 的 tl.trans 到生产者",
+        "analysis": "修复 #8634，将计算 tile 的 tl.trans 折叠到其生产者中，如 attention backward 中 dot(trans(p), do) 和 dot(trans(ds), q) 场景，避免不必要的转置操作。",
+        "impact": "影响 Triton XPU 的 attention backward 性能，减少转置开销。",
+        "brief": "折叠 tl.trans 到生产者以优化 attention。",
+        "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -147,11 +195,101 @@
         "refs": [
           "s6"
         ],
-        "title": "Satisfactory 启动即崩溃问题报告",
-        "analysis": "用户报告 Satisfactory 在启动后数秒内崩溃，即使未到标题画面。已确认使用最新驱动，游戏为正版且无 mod。",
-        "impact": "影响 Satisfactory 玩家，需等待驱动或游戏更新。",
-        "brief": "Satisfactory 启动崩溃待查",
+        "title": "无法用 2D block IO 时降级 DescriptorLoadOp",
+        "analysis": "在 LowerTo2DBlockLoad 中，当 tt.descriptor_load 无法转换为 ttig.2d_block_load 时，将其降级为 tt.load，确保所有加载都能正确 lower。",
+        "impact": "影响 Triton XPU 的代码生成，确保 2D block load 不可用时仍能正确执行。",
+        "brief": "DescriptorLoadOp 降级为 LoadOp 以保正确性。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s7"
+        ],
+        "title": "UpSampleTrilinear3d 重构为自由函数",
+        "analysis": "将 UpSampleTrilinear3d 重构为 SYCL 自由函数，测试通过，属于代码结构优化，不影响功能。",
+        "impact": null,
+        "brief": "UpSampleTrilinear3d 重构为自由函数。",
         "tier": "minor",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "vLLM XPU 支持 modelopt_mxfp8 量化格式",
+        "analysis": "为 vLLM XPU 添加 modelopt_mxfp8 量化格式，使其能正确分发到对应 XPU 内核。Linear 部分用 Qwen3-0.6B-MXFP8 验证，MoE 部分用单元测试验证。",
+        "impact": "影响 vLLM XPU 用户，支持新的量化格式。",
+        "brief": "vLLM XPU 新增 modelopt_mxfp8 量化支持。",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "vLLM XPU 安装文档补充 find-links",
+        "analysis": "修正 vLLM XPU 的 wheel 安装命令，添加 --find-links 指向 vllm-xpu-kernels，否则 uv 会回退到 PyPI 上的 CUDA vllm wheel。",
+        "impact": "影响 vLLM XPU 用户，确保正确安装 XPU 内核包。",
+        "brief": "vLLM XPU 安装文档补充 find-links。",
+        "tier": "minor",
+        "changeType": "doc",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "XPU 滑动窗口层尊重用户 block size",
+        "analysis": "修复 XPU 上滑动窗口层 KV cache 配置，使 --block-size 参数生效。此前用户指定 block_size=16 未被尊重，现在已修复。",
+        "impact": "影响 vLLM XPU 用户，滑动窗口层现在能按用户指定 block size 运行。",
+        "brief": "XPU 滑动窗口层尊重用户 block size。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "恢复 v1/worker 被跳过的测试用例",
+        "analysis": "Intel GPU CI 中 V1 Executor + Worker 作业失败，涉及 v1/worker/test_mrope_prompt_embeds.py 等用例，现恢复这些被跳过的用例。属于测试调整，根因未解决。",
+        "impact": null,
+        "brief": "恢复 v1/worker 被跳过的测试用例。",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "Satisfactory 启动后数秒崩溃",
+        "analysis": "报告者称 Satisfactory 在启动后数秒内崩溃，即使未到标题画面。已使用最新驱动，游戏为正版且无 mod。报告者认为可能与驱动或游戏兼容性有关，但根因未确认。",
+        "impact": "影响 Intel GPU 用户运行 Satisfactory，需等待进一步调查。",
+        "brief": "Satisfactory 启动崩溃问题报告。",
+        "tier": "major",
         "changeType": "issue_report",
         "isTrueFix": false,
         "claimOwner": "reporter",
