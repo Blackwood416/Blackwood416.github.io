@@ -1,0 +1,249 @@
+{
+  "date": "2026-11-24",
+  "sources": [
+    {
+      "ref": "s1",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[20/N] Synchronize test files with upstream generalization changes",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6311",
+      "updated": "2026-11-23T13:16:48Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "bot: commit a requested test-only change when the issue no longer reproduces",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6272",
+      "updated": "2026-11-23T08:13:25Z",
+      "score": 43
+    },
+    {
+      "ref": "s3",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Reland the remaining upstream scan commits (#8962)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0991913986f84a5a9e4c07a14b1d5b7b4ee41ab8",
+      "updated": "2026-11-23T19:48:00Z",
+      "score": 39
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Reapply \"[BACKEND] Support signed shuffle distances for reverse scans (#12191)\"",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/66b7a27387bfac06d996ede793c543c9ff0aea58",
+      "updated": "2026-11-23T12:32:12Z",
+      "score": 39
+    },
+    {
+      "ref": "s5",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Reapply \"[BACKEND] Skip lane-local scan carry shuffles (#12186)\"",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/6ae1eec17b08dc1616ecfb1b219571b32f6904f7",
+      "updated": "2026-11-23T12:32:12Z",
+      "score": 39
+    },
+    {
+      "ref": "s6",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Reapply \"[BACKEND] Fix CTA split on small shapes (#12658)\"",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/3c94e3aa44b08d727550488f0f58e81dd6e577aa",
+      "updated": "2026-11-23T12:32:12Z",
+      "score": 39
+    },
+    {
+      "ref": "s7",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Reapply \"[NVIDIA] Reuse shuffle-up bounds predicates in full-warp scans (#12642)\"",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/440534953ffaa6bdb2cb06c49f6861eb7b6ecf5b",
+      "updated": "2026-11-23T12:32:12Z",
+      "score": 39
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "test_layer_norm_fast_path_forward_float32: Avoid inaccurate AVX2 CPU layer_norm as reference on Windows",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6133",
+      "updated": "2026-11-23T08:25:51Z",
+      "score": 39
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Use fmax/fmin for floating XPU maximum/minimum to match CUDA signed zero",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6252",
+      "updated": "2026-11-23T09:41:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s10",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[Bugfix][Kernel] Restrict `TRITON_ATTN` tensor-descriptor path to XPU",
+      "url": "https://github.com/vllm-project/vllm/pull/68521",
+      "updated": "2026-11-23T21:35:27Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "ggml-openvino: CI fixes, new model support, fixes and improvements.",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32861",
+      "updated": "2026-11-23T14:29:20Z",
+      "score": 25
+    },
+    {
+      "ref": "s12",
+      "source": "GitHub Release: intel/intel-graphics-compiler",
+      "title": "v2.43.11:  Use local size for enqueued local size in stack calls",
+      "url": "https://github.com/intel/intel-graphics-compiler/releases/tag/v2.43.11",
+      "updated": "2026-11-23T13:33:42.000Z",
+      "score": 15
+    }
+  ],
+  "output": {
+    "overview": [
+      {
+        "status": "Merged",
+        "title": "Triton XPU 重新合入上游 scan 相关提交，修复反向扫描与 CTA 分割问题",
+        "refs": [
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "torch-xpu-ops 同步上游测试文件，测试覆盖显著增加",
+        "refs": [
+          "s1"
+        ]
+      }
+    ],
+    "items": [
+      {
+        "refs": [
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7"
+        ],
+        "title": "重新合入上游 scan 相关提交",
+        "analysis": "此前因回归回退的 4 个上游 scan 提交被重新合入，包括支持有符号 shuffle 距离的反向扫描、跳过 lane-local scan carry shuffle、修复小形状下的 CTA 分割，以及复用 shuffle-up 边界谓词。这些提交共同完善了 Triton 在 Intel GPU 上的 scan 实现。",
+        "impact": "使用 Triton scan 操作的 XPU 用户将获得更正确的反向扫描和更优的小形状性能。",
+        "brief": "重新合入 4 个上游 scan 提交，修复反向扫描与 CTA 分割",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "同步上游测试文件，覆盖增加",
+        "analysis": "将 test_expanded_weights.py 切换为上游版本，删除本地覆盖，测试从 228 项增至 381 项（325 通过，48 跳过，8 取消选择）。这是上游化工作的一部分，提升了测试覆盖。",
+        "impact": "torch-xpu-ops 的测试覆盖增加，但属于测试同步，不影响运行时行为。",
+        "brief": "测试文件同步上游，覆盖从 228 增至 381",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "机器人保留回归测试而非丢弃",
+        "analysis": "当问题不再复现时，机器人现在保留请求的更改作为回归测试，而不是丢弃，并走正常修复流程导出补丁。这避免了之前更改丢失的情况。",
+        "impact": "torch-xpu-ops 的测试流程更稳健，防止回归测试被意外删除。",
+        "brief": "机器人保留回归测试，避免更改丢失",
+        "tier": "minor",
+        "changeType": "ci",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s8"
+        ],
+        "title": "Windows 上避免不准确的 CPU 参考",
+        "analysis": "test_layer_norm_fast_path_forward_float32 在 Windows BMG 上失败，根因是 CPU 参考实现（AVX2 向量化 layer_norm）在 norm 较大时不准确，而非 XPU 内核问题。因此改用更准确的参考。",
+        "impact": "Windows 上该测试不再因 CPU 参考不准确而失败。",
+        "brief": "Windows 测试改用准确参考，避免误报",
+        "tier": "minor",
+        "changeType": "test_fix",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s9"
+        ],
+        "title": "XPU maximum/minimum 对齐 CUDA 符号零",
+        "analysis": "XPU eager 的 torch.maximum/minimum 现在使用 fmax/fmin，使 max(-0, +0) 返回 +0，min(-0, +0) 返回 -0，与 CUDA eager 和 Triton 一致。修复了符号零不一致问题。",
+        "impact": "使用 torch.maximum/minimum 的 XPU 用户将获得与 CUDA 一致的符号零行为。",
+        "brief": "XPU maximum/minimum 符号零行为对齐 CUDA",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s10"
+        ],
+        "title": "vLLM 限制 TRITON_ATTN 张量描述符路径到 XPU",
+        "analysis": "在 CUDA 上，张量描述符路径存在 bug 且比 CUDA 默认路径慢，因此将其限制为仅 XPU 使用。这是对 CUDA 路径的规避。",
+        "impact": "CUDA 用户将不再受张量描述符路径 bug 影响，XPU 用户不受影响。",
+        "brief": "TRITON_ATTN 张量描述符路径仅限 XPU",
+        "tier": "major",
+        "changeType": "workaround",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s11"
+        ],
+        "title": "llama.cpp OpenVINO 后端多项修复",
+        "analysis": "修复 OpenVINO 自托管 CI 中的 28 个 ADD_RMS_NORM_MUL 和 2 个 GDN padded_v 失败，新增 Muse-Glimmer-30B DFlash 推测解码支持，以及多项改进。",
+        "impact": "OpenVINO 后端用户获得更稳定的 CI 和新的模型支持。",
+        "brief": "OpenVINO 后端 CI 修复与新模型支持",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s12"
+        ],
+        "title": "IGC 修复栈调用中本地大小加载",
+        "analysis": "在栈调用中，get_enqueued_local_size 从隐式参数缓冲区偏移 0x80 加载，但旧版 NEO（<25.31）结构体只有 0x70 字节，导致 PVC 上加载到跨线程数据。修复为使用本地大小。",
+        "impact": "使用旧版 NEO 的 PVC 用户将获得正确的本地大小，避免数据错误。",
+        "brief": "IGC 修复栈调用本地大小加载问题",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      }
+    ]
+  }
+}
