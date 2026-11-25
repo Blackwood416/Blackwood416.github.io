@@ -19,19 +19,19 @@
     },
     {
       "ref": "s3",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Fix Bessel accuracy",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6332",
-      "updated": "2026-11-24T08:47:47Z",
-      "score": 43
-    },
-    {
-      "ref": "s4",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][Qwen3.5] Support sequence parallelism with pipeline parallelism",
       "url": "https://github.com/vllm-project/vllm/pull/69314",
       "updated": "2026-11-24T08:37:10Z",
       "score": 43
+    },
+    {
+      "ref": "s4",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "[Intel] Decode fp4 with integer operations instead of a table lookup (#8952)",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/4b87c080f0dbca198237ab9f294bb207fb359405",
+      "updated": "2026-11-25T06:07:16Z",
+      "score": 25
     },
     {
       "ref": "s5",
@@ -67,14 +67,22 @@
     },
     {
       "ref": "s9",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[Intel] Pipeline tt.dot_scaled K loops and load their scales in the DPAS scale layout (#8958)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/0a17f80c0cf3dc19af2eec168d918076260314cb",
-      "updated": "2026-11-24T15:11:10Z",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Fix sleep kernel build fail with multi AOT targets",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6384",
+      "updated": "2026-11-25T07:11:10Z",
       "score": 25
     },
     {
       "ref": "s10",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[bot] Bot review gate: request reviewers only once the PR is ready",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6304",
+      "updated": "2026-11-25T07:01:49Z",
+      "score": 25
+    },
+    {
+      "ref": "s11",
       "source": "上游合入: intel/torch-xpu-ops",
       "title": "[sycl-free-function] Refactor DilatedMaxPool2d by free function",
       "url": "https://github.com/intel/torch-xpu-ops/pull/5319",
@@ -82,31 +90,47 @@
       "score": 25
     },
     {
-      "ref": "s11",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "[sycl-free-function] Refactor MultiLabelMarginLossKernels by free function",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/5502",
-      "updated": "2026-11-24T13:30:06Z",
-      "score": 25
-    },
-    {
       "ref": "s12",
       "source": "上游合入: vLLM (upstream XPU)",
-      "title": "[Recipes][XPU] Add validated 8192-token context defaults for some Qwen, Nemotron-3-Nano,  and GPT-OSS models on Arc Pro B60/B70",
-      "url": "https://github.com/vllm-project/vllm/pull/68901",
-      "updated": "2026-11-24T14:07:40Z",
+      "title": "[Kernel][XPU] Tensor-descriptor Q loads in Triton MLA decode attention",
+      "url": "https://github.com/vllm-project/vllm/pull/64881",
+      "updated": "2026-11-25T06:39:13Z",
       "score": 25
     },
     {
       "ref": "s13",
       "source": "上游合入: vLLM (upstream XPU)",
-      "title": "[XPU] Implement stateless_init_device_torch_dist_pg for XPU",
-      "url": "https://github.com/vllm-project/vllm/pull/57196",
-      "updated": "2026-11-24T09:47:39Z",
+      "title": "[XPU] Enable XPU graph mode for 6 recipes",
+      "url": "https://github.com/vllm-project/vllm/pull/69605",
+      "updated": "2026-11-25T05:05:02Z",
       "score": 25
     },
     {
       "ref": "s14",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU] add spec decode UT",
+      "url": "https://github.com/vllm-project/vllm/pull/69653",
+      "updated": "2026-11-25T05:00:00Z",
+      "score": 25
+    },
+    {
+      "ref": "s15",
+      "source": "上游合入: vLLM (upstream XPU)",
+      "title": "[XPU][LoRA] Support MXFP4 MoE LoRA via XpuFusedMoe hooks",
+      "url": "https://github.com/vllm-project/vllm/pull/62631",
+      "updated": "2026-11-25T04:29:03Z",
+      "score": 25
+    },
+    {
+      "ref": "s16",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[XPU] Add paged_decode kernel config for head_size=512, qgroup=16, pa…",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/713",
+      "updated": "2026-11-25T05:32:22Z",
+      "score": 25
+    },
+    {
+      "ref": "s17",
       "source": "上游合入: vllm-xpu-kernels",
       "title": "[PART 5] Sycl kernel porting: RoPE and DeepSeek V4 kernels",
       "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/709",
@@ -114,7 +138,7 @@
       "score": 25
     },
     {
-      "ref": "s15",
+      "ref": "s18",
       "source": "上游合入: vllm-xpu-kernels",
       "title": "[GDN] Export internal prefill checkpoints from SYCL GDN kernels",
       "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/705",
@@ -122,7 +146,23 @@
       "score": 25
     },
     {
-      "ref": "s16",
+      "ref": "s19",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "[SYCL] F8 e4m3 initial support SET_ROWS, CPY, ADD, MUL_MAT, MUL_MAT_ID",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31871",
+      "updated": "2026-11-25T07:35:20Z",
+      "score": 25
+    },
+    {
+      "ref": "s20",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "SYCL : ROLL op handles permuted source",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31799",
+      "updated": "2026-11-25T07:29:05Z",
+      "score": 25
+    },
+    {
+      "ref": "s21",
       "source": "上游合入: bitsandbytes (XPU)",
       "title": "Fix XPU `quantize_4bit` returning padded tensors that violate the op contract",
       "url": "https://github.com/bitsandbytes-foundation/bitsandbytes/pull/2099",
@@ -130,76 +170,51 @@
       "score": 25
     },
     {
-      "ref": "s17",
+      "ref": "s22",
       "source": "上游合入: bitsandbytes (XPU)",
       "title": "Support `skip_zeros` in the XPU Triton optimizer kernels",
       "url": "https://github.com/bitsandbytes-foundation/bitsandbytes/pull/2097",
       "updated": "2026-11-24T22:14:49Z",
       "score": 25
-    },
-    {
-      "ref": "s18",
-      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
-      "title": "DirectX Crash (DXGI_ERROR_DEVICE_HUNG) and Driver Mismatch on Intel Arc A530M & Intel UHD Graphics",
-      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1629",
-      "updated": "2026-11-24T13:50:42Z",
-      "score": 18
-    },
-    {
-      "ref": "s19",
-      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
-      "title": "Project Wingman Crashes on launch/causes system wide issues afterward",
-      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1628",
-      "updated": "2026-11-24T08:05:27Z",
-      "score": 18
     }
   ],
   "output": {
     "overview": [
       {
         "status": "Merged",
-        "title": "torch-xpu-ops 同步上游测试，覆盖显著增加",
+        "title": "Triton XPU 用整数运算替代查表解码 FP4，提升性能",
         "refs": [
-          "s1",
-          "s2"
+          "s4"
         ]
       },
       {
         "status": "Merged",
-        "title": "Triton XPU 修复 dot_scaled 编译与收敛写问题",
+        "title": "vLLM XPU 支持 Qwen3.5 序列并行与流水线并行组合",
         "refs": [
-          "s5",
-          "s6"
+          "s3"
+        ]
+      },
+      {
+        "status": "Merged",
+        "title": "torch-xpu-ops 测试文件同步上游，覆盖增加",
+        "refs": [
+          "s1",
+          "s2"
         ]
       }
     ],
     "items": [
       {
         "refs": [
-          "s1"
+          "s4"
         ],
-        "title": "同步 packed_sequence 测试至上游",
-        "analysis": "上游泛化后，本地覆盖测试可切换为直接执行上游文件，测试数从 13 增至 16 通过、2 跳过。属于测试同步，无功能变更。",
-        "impact": null,
-        "brief": "测试同步，覆盖增加",
-        "tier": "minor",
-        "changeType": "sync",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s2"
-        ],
-        "title": "同步 fake_tensor 测试至上游",
-        "analysis": "上游泛化后，本地 fake_tensor 测试副本过时，改为直接运行上游文件，关闭多个相关 issue。属于测试同步，无功能变更。",
-        "impact": null,
-        "brief": "测试同步，关闭多个 issue",
-        "tier": "minor",
-        "changeType": "sync",
-        "isTrueFix": false,
+        "title": "FP4 解码改用整数运算替代查表",
+        "analysis": "在无 e2m1 转换内建指令的目标（BMG、PVC、LNL 等）上，原实现通过常量向量查表解码 FP4，每 lane 动态索引导致性能开销。改为整数运算直接计算，消除查表依赖。",
+        "impact": "使用 FP4 数据类型的 Triton 内核在相关 Intel GPU 上性能提升。",
+        "brief": "FP4 解码性能优化",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -208,25 +223,10 @@
         "refs": [
           "s3"
         ],
-        "title": "修复 Bessel 函数精度",
-        "analysis": "更新 MathExtensions.h 中 Bessel 多项式累加器初始化值，对齐 CUDA 的修复，解决精度问题。",
-        "impact": "使用 Bessel 函数的 XPU 用户获得精度提升。",
-        "brief": "对齐 CUDA 修复 Bessel 精度",
-        "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s4"
-        ],
-        "title": "XPU Qwen3.5 支持序列并行与流水并行",
-        "analysis": "为 XPU Qwen3.5 MoE 启用序列并行与流水并行组合，镜像 NVIDIA 的改动，提升多卡扩展性。",
-        "impact": "XPU 上使用 Qwen3.5 且 PP>1 的用户可获得 SP 支持。",
-        "brief": "Qwen3.5 XPU 支持 SP+PP",
+        "title": "Qwen3.5 XPU 支持序列并行与流水线并行组合",
+        "analysis": "镜像 NVIDIA 的 #66866 改动，使 XPU 上的 Qwen3.5 MoE 在流水线并行（PP>1）时保持序列并行（SP）启用，此前可能被禁用。",
+        "impact": "使用 Qwen3.5 模型且配置 PP>1 的 vLLM XPU 用户可获得 SP 带来的性能收益。",
+        "brief": "XPU 上 SP 与 PP 可同时启用",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -236,11 +236,27 @@
       },
       {
         "refs": [
+          "s1",
+          "s2"
+        ],
+        "title": "torch-xpu-ops 测试文件同步上游泛化改动",
+        "analysis": "上游 PyTorch 泛化改动后，本地测试文件可替换为直接执行上游文件。test_packed_sequence.py 从 13 个测试增至 16 个通过；test_fake_tensor.py 直接运行上游版本，关闭多个过期本地副本相关 issue。",
+        "impact": "测试覆盖增加，本地维护成本降低。",
+        "brief": "测试文件同步上游，覆盖增加",
+        "tier": "minor",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
           "s5"
         ],
-        "title": "分解不支持的 dot_scaled 缩放",
-        "analysis": "当 tl.dot_scaled 使用 e2m1 双端和 E4M3 缩放（NVFP4）时，CRI 在 K=64 编译失败，通过分解为 DPAS 可接受的缩放格式解决。",
-        "impact": "使用 NVFP4 格式的 Triton 用户获得编译支持。",
+        "title": "分解块缩放 DPAS 不支持的 dot_scaled",
+        "analysis": "当 tl.dot_scaled 两侧为 e2m1、缩放为 E4M3 且每 16 元素一个缩放（NVFP4）时，CRI 上 K=64 编译失败。通过分解该操作，使块缩放 DPAS 无法处理的情况得以编译。",
+        "impact": "修复 NVFP4 格式在 Triton XPU 上的编译失败。",
         "brief": "修复 NVFP4 dot_scaled 编译失败",
         "tier": "major",
         "changeType": "bugfix",
@@ -253,10 +269,10 @@
         "refs": [
           "s6"
         ],
-        "title": "将 block_write 建模为收敛写",
-        "analysis": "triton_gen.sub_group_block_write 声明了 [MemRead] 属性，但实际是写操作，建模为收敛写以支持 descriptor scatter 的正确降级。",
-        "impact": "修复 descriptor scatter 相关功能，影响使用该特性的用户。",
-        "brief": "修正 block_write 内存属性",
+        "title": "将 sub_group_block_write 建模为收敛写",
+        "analysis": "原生描述符 scatter 将 ttig.descriptor_scatter 降低为子组块写，但 triton_gen.sub_group_block_write 声明了 [MemRead] 属性，导致内存依赖分析错误。改为收敛写后，正确反映内存语义。",
+        "impact": "修复描述符 scatter 在 TritonGEN 上的正确性问题。",
+        "brief": "修复描述符 scatter 内存语义",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -268,10 +284,10 @@
         "refs": [
           "s7"
         ],
-        "title": "RVL 避免移动 dot 操作数越过写",
-        "analysis": "ReduceVariableLiveness 的 moveOperand 克隆循环前的 dot 操作数加载到循环内，但可能越过写操作导致错误，修复为不移动。",
-        "impact": "修复 RVL 优化导致的潜在错误，影响使用该优化的 Triton 用户。",
-        "brief": "修复 RVL 移动操作数越写问题",
+        "title": "RVL 避免将循环前 dot 操作数移过写操作",
+        "analysis": "ReduceVariableLiveness 的 moveOperand 会将循环前的 dot 操作数加载克隆到循环内首次使用处，但若该加载与写操作之间存在依赖，移动可能导致错误。此修复阻止这种移动。",
+        "impact": "修复 Triton 编译器中 RVL 优化导致的潜在错误。",
+        "brief": "修复 RVL 优化移动操作数错误",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -284,9 +300,9 @@
           "s8"
         ],
         "title": "添加无溢出 flex attention 反向配置",
-        "analysis": "flex attention 因果基准仅自动调优 4-warp 反向配置，在 D_HEAD=128 时全部溢出，添加无溢出配置以改善性能。",
-        "impact": "基准测试用户可获得更好的 flex attention 反向性能。",
-        "brief": "添加无溢出 flex attention 配置",
+        "analysis": "flex attention 因果基准仅自动调优 4-warp 反向配置，在 D_HEAD=128 时全部溢出。新增无溢出配置，即使自动 256-GRF 重建后仍溢出，提供替代方案。",
+        "impact": "flex attention 反向基准性能提升，减少溢出。",
+        "brief": "新增无溢出反向配置",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
@@ -298,13 +314,13 @@
         "refs": [
           "s9"
         ],
-        "title": "流水化 dot_scaled K 循环并加载缩放",
-        "analysis": "在 CRI 上，fp8 GEMM 的 K 循环使用原生 tl.dot_scaled 时，缩放加载未按 DPAS 布局，通过流水化 K 循环并加载缩放解决。",
-        "impact": "改善 fp8 GEMM 在 CRI 上的性能。",
-        "brief": "优化 dot_scaled K 循环缩放加载",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
+        "title": "修复多 AOT 目标下 sleep 内核构建失败",
+        "analysis": "sleep 内核构建时排除了 'pvc'，当 AOT_TARGETS 包含多个目标（如 'pvc,bmg'）时导致 PVC 构建失败。修复确保 sleep 内核包含在构建中。",
+        "impact": "修复 torch-xpu-ops 在多 AOT 目标配置下的构建问题。",
+        "brief": "修复多 AOT 目标构建失败",
+        "tier": "minor",
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -313,12 +329,12 @@
         "refs": [
           "s10"
         ],
-        "title": "重构 DilatedMaxPool2d 为自由函数",
-        "analysis": "将 DilatedMaxPool2d 内核重构为自由函数，统一命名后缀，本地测试通过。属于代码重构，无功能变更。",
-        "impact": null,
-        "brief": "重构 DilatedMaxPool2d 内核",
+        "title": "机器人审查门控仅在 PR 就绪时请求审查者",
+        "analysis": "改进 bot 审查流程，仅在 PR 达到 'ready for review' 状态时通知审查者，避免过早打扰。",
+        "impact": "维护者审查流程更高效。",
+        "brief": "优化 bot 审查通知时机",
         "tier": "minor",
-        "changeType": "feature",
+        "changeType": "ci",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -328,10 +344,10 @@
         "refs": [
           "s11"
         ],
-        "title": "重构 MultiLabelMarginLoss 内核",
-        "analysis": "将 MultiLabelMarginLossKernels 重构为自由函数，统一命名后缀，本地测试通过。属于代码重构，无功能变更。",
+        "title": "DilatedMaxPool2d 重构为自由函数",
+        "analysis": "将 DilatedMaxPool2d 内核重构为自由函数，统一命名后缀 '_kernel_impl'，本地测试通过。",
         "impact": null,
-        "brief": "重构 MultiLabelMarginLoss 内核",
+        "brief": "DilatedMaxPool2d 代码重构",
         "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
@@ -343,11 +359,11 @@
         "refs": [
           "s12"
         ],
-        "title": "为 Arc Pro 添加 8192 上下文默认值",
-        "analysis": "为 10 个模型配方添加 --max-model-len 8192 默认值，对齐 Intel Arc Pro B60/B70 的文档配置。",
-        "impact": "使用这些模型配方的用户获得默认上下文长度。",
-        "brief": "添加 Arc Pro 上下文默认值",
-        "tier": "minor",
+        "title": "Triton MLA 解码注意力使用张量描述符加载 Q",
+        "analysis": "在 Intel XPU 上，TRITON_MLA decode 的 _fwd_grouped_kernel_stage1 对 576 宽 MLA tile（kv_lora_rank 512 + qk_rope_head_dim 64）改用张量描述符加载 Q 和 Q-PE，替代掩码指针加载。",
+        "impact": "MLA 解码注意力性能提升。",
+        "brief": "MLA 解码使用张量描述符",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -358,10 +374,10 @@
         "refs": [
           "s13"
         ],
-        "title": "XPU 实现 stateless 分布式初始化",
-        "analysis": "为 XPU 实现 stateless_init_device_torch_dist_pg，使非 gloo 后端能正确初始化分布式进程组。",
-        "impact": "XPU 上使用非 gloo 后端的 vLLM 用户获得支持。",
-        "brief": "XPU 支持 stateless 分布式初始化",
+        "title": "XPU 图模式启用 6 个配方",
+        "analysis": "移植 recipes#1269，移除 Intel XPU（Arc Pro B60/B70）配置中的 --enforce-eager，使这些配方使用 torch.compile + XPU 图模式。",
+        "impact": "相关配方在 XPU 上获得图模式性能提升。",
+        "brief": "6 个配方启用 XPU 图模式",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -373,12 +389,12 @@
         "refs": [
           "s14"
         ],
-        "title": "移植 RoPE 和 DeepSeek V4 内核",
-        "analysis": "移植 rotary_embedding、fused_qk_norm_rope 等 SYCL 内核，新增 fused_rope_norm_store_kv_fp8 操作，面向 CRI 优化。",
-        "impact": "vLLM XPU 用户获得新内核支持。",
-        "brief": "移植 RoPE 和 DeepSeek V4 内核",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "XPU 启用更多 spec 解码单元测试",
+        "analysis": "移除 cuda 限制和硬编码，使 test_suffix_speculator.py 等 spec 解码测试在 XPU 上运行，共 25 个测试用例通过。",
+        "impact": "spec 解码功能在 XPU 上的测试覆盖增加。",
+        "brief": "XPU 启用 spec 解码测试",
+        "tier": "minor",
+        "changeType": "test_fix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -388,11 +404,11 @@
         "refs": [
           "s15"
         ],
-        "title": "导出 GDN 预填充检查点",
-        "analysis": "从 SYCL GDN 内核导出内部预填充检查点，便于调试和验证。",
-        "impact": null,
-        "brief": "导出 GDN 预填充检查点",
-        "tier": "minor",
+        "title": "XPU 支持 MXFP4 MoE LoRA",
+        "analysis": "通过 XpuFusedMoe.apply 的新 activation_hook/output_hook 应用 w13/w2 LoRA 增量，支持 gpt-oss 的 MXFP4 MoE 后端 LoRA。依赖 vllm-xpu-kernels#648。",
+        "impact": "XPU 上 MXFP4 MoE 模型可使用 LoRA 微调。",
+        "brief": "MXFP4 MoE LoRA 支持",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -403,13 +419,13 @@
         "refs": [
           "s16"
         ],
-        "title": "修复 XPU quantize_4bit 形状违规",
-        "analysis": "XPU 上 quantize_4bit 在输入元素数非倍数时返回形状与 register_fake 不一致的张量，修复以符合操作契约。",
-        "impact": "使用 quantize_4bit 的 XPU 用户获得正确形状。",
-        "brief": "修复 quantize_4bit 形状问题",
+        "title": "添加 head_size=512 的 paged_decode 内核配置",
+        "analysis": "为 XPU paged-decode 内核添加缺失的配置：head_size=512, qgroup=16, page_size=64, 非因果/非局部/非下沉。",
+        "impact": "支持 head_size=512 的模型在 XPU 上使用 paged decode。",
+        "brief": "新增 paged_decode 配置",
         "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -418,10 +434,10 @@
         "refs": [
           "s17"
         ],
-        "title": "XPU 优化器支持 skip_zeros",
-        "analysis": "CUDA 优化器支持 skip_zeros 但 XPU 抛 NotImplementedError，通过 Triton 实现以匹配 CUDA 行为。",
-        "impact": "XPU 上使用 skip_zeros 的用户获得支持。",
-        "brief": "XPU 优化器支持 skip_zeros",
+        "title": "SYCL 内核移植：RoPE 和 DeepSeek V4",
+        "analysis": "移植 rotary_embedding（CRI 重写）、fused_qk_norm_rope（多 head 每子组，全旋转 NeoX 交织路径），新增 fused_rope_norm_store_kv_fp8 操作（QK-norm + RoPE + KV 缓存写 + fp8 Q 量化）。",
+        "impact": "DeepSeek V4 相关内核在 XPU 上可用。",
+        "brief": "移植 RoPE 和 DeepSeek V4 内核",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -433,30 +449,75 @@
         "refs": [
           "s18"
         ],
-        "title": "Arc A530M 驱动崩溃报告",
-        "analysis": "用户报告 DirectX 崩溃 (DXGI_ERROR_DEVICE_HUNG) 和驱动不匹配问题，涉及 Arc A530M 和 UHD 显卡。",
-        "impact": "受影响的用户可能需要更新驱动或等待修复。",
-        "brief": "Arc A530M 驱动崩溃报告",
+        "title": "SYCL GDN 内核导出内部 prefill 检查点",
+        "analysis": "从 SYCL GDN 内核导出内部 prefill 检查点，便于调试和验证。",
+        "impact": null,
+        "brief": "导出 prefill 检查点",
         "tier": "minor",
-        "changeType": "issue_report",
+        "changeType": "feature",
         "isTrueFix": false,
-        "claimOwner": "reporter",
-        "rootCauseConfirmed": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s19"
         ],
-        "title": "Project Wingman 启动崩溃报告",
-        "analysis": "用户报告 Project Wingman 启动时崩溃并导致系统问题，使用最新驱动。",
-        "impact": "受影响的用户可能需要等待驱动修复。",
-        "brief": "Project Wingman 启动崩溃报告",
-        "tier": "minor",
-        "changeType": "issue_report",
+        "title": "SYCL 初步支持 FP8 e4m3",
+        "analysis": "为 SYCL 后端添加 OCP FP8 E4M3 的初始支持，覆盖 SET_ROWS、CPY、ADD、MUL_MAT、MUL_MAT_ID 操作，但不声称完全符合规范。",
+        "impact": "llama.cpp 在 SYCL 设备上可使用 FP8 模型。",
+        "brief": "SYCL 支持 FP8 e4m3",
+        "tier": "major",
+        "changeType": "feature",
         "isTrueFix": false,
-        "claimOwner": "reporter",
-        "rootCauseConfirmed": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s20"
+        ],
+        "title": "SYCL ROLL 操作支持置换源",
+        "analysis": "为 ROLL 操作添加对置换源的支持，现在两个 ROLL 测试用例均通过。",
+        "impact": "修复 ROLL 操作在置换输入上的正确性。",
+        "brief": "ROLL 支持置换源",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s21"
+        ],
+        "title": "修复 XPU quantize_4bit 返回填充张量违反契约",
+        "analysis": "XPU 上 quantize_4bit 在输入元素数非倍数时返回形状与 register_fake 声明不符的填充张量，违反操作契约。修复使其与 CPU/CUDA 后端一致。",
+        "impact": "修复 bitsandbytes XPU 量化操作的形状一致性。",
+        "brief": "修复 quantize_4bit 形状契约",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s22"
+        ],
+        "title": "XPU Triton 优化器内核支持 skip_zeros",
+        "analysis": "CUDA 优化器内核支持 skip_zeros，但 XPU 抛出 NotImplementedError。由于 Triton 无每 lane 提前退出，实现时需在更新前处理零值。",
+        "impact": "XPU 优化器内核功能与 CUDA 对齐。",
+        "brief": "XPU 优化器支持 skip_zeros",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       }
     ]
