@@ -3,6 +3,14 @@
   "sources": [
     {
       "ref": "s1",
+      "source": "GitHub Release: IntelLabs/Xe-Forge",
+      "title": "v0.5.0",
+      "url": "https://github.com/IntelLabs/X-Forge/releases/tag/v0.5.0",
+      "updated": "2026-11-26T02:32:04.000Z",
+      "score": 48
+    },
+    {
+      "ref": "s2",
       "source": "上游合入: intel/torch-xpu-ops",
       "title": "[23/N] Synchronize test files with upstream generalization changes.",
       "url": "https://github.com/intel/torch-xpu-ops/pull/6356",
@@ -10,7 +18,7 @@
       "score": 43
     },
     {
-      "ref": "s2",
+      "ref": "s3",
       "source": "GitHub Release: MistVVK/XeStrata",
       "title": "XeStrata xe0.2.20-1",
       "url": "https://github.com/MistVVK/XeStrata/releases/tag/xe0.2.20-1",
@@ -18,7 +26,7 @@
       "score": 30
     },
     {
-      "ref": "s3",
+      "ref": "s4",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Use 2D block stores for masked pointer stores whose mask bound isn't a multiple of the tile width (#8940)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/27af418b74e4bfe38b6c6153c169fff6422162f5",
@@ -26,7 +34,7 @@
       "score": 25
     },
     {
-      "ref": "s4",
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Declare the FP4 DPAS feature in the dot_scaled scale-format lit test (#8995)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/e4ba34458dd67faa2668ee389c5004761864e22b",
@@ -34,7 +42,7 @@
       "score": 25
     },
     {
-      "ref": "s5",
+      "ref": "s6",
       "source": "MistVVK/XeStrata (Commit/Patch)",
       "title": "Windows: CUTLASS の int8 の積のホスト側も DLL の C ランタイム（/MD）で組む",
       "url": "https://github.com/MistVVK/XeStrata/commit/649b3522d6b89f9a01590bd32e81d2dab2f3512e",
@@ -42,7 +50,7 @@
       "score": 25
     },
     {
-      "ref": "s6",
+      "ref": "s7",
       "source": "MistVVK/XeStrata (Commit/Patch)",
       "title": "パッケージ: Windows 7z のエンジンに zstd のヘッダーを全部渡す（zstd.h は zstd_errors.h を読む）",
       "url": "https://github.com/MistVVK/XeStrata/commit/f20d832dda60d4fdd768dcb008e846b68b57da4d",
@@ -50,7 +58,7 @@
       "score": 25
     },
     {
-      "ref": "s7",
+      "ref": "s8",
       "source": "MistVVK/XeStrata (Commit/Patch)",
       "title": "パッケージ: CUTLASS の uint128 を移植版の実装にする（contrib の clang に _umul128/_udiv128 が無い）",
       "url": "https://github.com/MistVVK/XeStrata/commit/25be7460c4be9be3387716de5c2f41cfba0f3ee0",
@@ -58,7 +66,7 @@
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s9",
       "source": "MistVVK/XeStrata (Commit/Patch)",
       "title": "パッケージ: Windows 7z の AMD デバイスリンクに --no-dependent-libraries を渡す",
       "url": "https://github.com/MistVVK/XeStrata/commit/1d4d631f7f9cb5acb6987e39636351c3d0bf6664",
@@ -66,7 +74,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s10",
       "source": "MistVVK/XeStrata (Commit/Patch)",
       "title": "setup: Level Zero が GPU の一覧を止めたら、外して 1 度だけ数え直す（#41）",
       "url": "https://github.com/MistVVK/XeStrata/commit/7f39d78838a83edc77780eef5c6cdb36d59669d9",
@@ -74,39 +82,39 @@
       "score": 25
     },
     {
-      "ref": "s10",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Add XPU support for _philox_randint_",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6294",
-      "updated": "2026-11-25T15:28:56Z",
-      "score": 25
-    },
-    {
       "ref": "s11",
       "source": "上游合入: intel/torch-xpu-ops",
-      "title": "[sycl-free-function] Refactor MultiLabelMarginLossKernels by free function",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/5502",
-      "updated": "2026-11-24T13:30:06Z",
+      "title": "[sycl-free-function] Refactor AdaptiveMaxPooling2dKernels by free function",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/5270",
+      "updated": "2026-11-26T08:18:01Z",
       "score": 25
     },
     {
       "ref": "s12",
       "source": "上游合入: intel/torch-xpu-ops",
-      "title": "migrate TensorFactories kernels to sycl free function (#148)",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/5209",
-      "updated": "2026-11-24T13:25:25Z",
+      "title": "Set up the oneAPI env for the test_xpu UT step",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6251",
+      "updated": "2026-11-26T07:24:44Z",
       "score": 25
     },
     {
       "ref": "s13",
       "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Register hash_tensor.out for XPU backend",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6153",
-      "updated": "2026-11-24T12:47:05Z",
+      "title": "Support integral dtypes in dot_xpu",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6046",
+      "updated": "2026-11-26T02:56:33Z",
       "score": 25
     },
     {
       "ref": "s14",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[skills] Document non-power-of-two kernel max work-group size",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6370",
+      "updated": "2026-11-26T01:12:17Z",
+      "score": 25
+    },
+    {
+      "ref": "s15",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU][LoRA] Use dense GEMM for single-adapter prefill batches",
       "url": "https://github.com/vllm-project/vllm/pull/66752",
@@ -114,7 +122,7 @@
       "score": 25
     },
     {
-      "ref": "s15",
+      "ref": "s16",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[XPU] Flatten N-D input in XPU W8A16 FP8 linear kernel",
       "url": "https://github.com/vllm-project/vllm/pull/68308",
@@ -122,7 +130,7 @@
       "score": 25
     },
     {
-      "ref": "s16",
+      "ref": "s17",
       "source": "上游合入: vLLM (upstream XPU)",
       "title": "[Perf][XPU] Run the fp32 lm_head through torch.mm(out_dtype=float32) on XPU",
       "url": "https://github.com/vllm-project/vllm/pull/69186",
@@ -130,132 +138,79 @@
       "score": 25
     },
     {
-      "ref": "s17",
-      "source": "上游合入: vLLM (upstream XPU)",
-      "title": "[Recipes][XPU] Add validated 8192-token context defaults for some Qwen, Nemotron-3-Nano,  and GPT-OSS models on Arc Pro B60/B70",
-      "url": "https://github.com/vllm-project/vllm/pull/68901",
-      "updated": "2026-11-24T14:07:40Z",
-      "score": 25
-    },
-    {
       "ref": "s18",
-      "source": "上游合入: vLLM (upstream XPU)",
-      "title": "[XPU] Implement stateless_init_device_torch_dist_pg for XPU",
-      "url": "https://github.com/vllm-project/vllm/pull/57196",
-      "updated": "2026-11-24T09:47:39Z",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "Support bf16/fp16 in compact_sampling_mask",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/707",
+      "updated": "2026-11-26T08:35:27Z",
       "score": 25
     },
     {
       "ref": "s19",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "Add VMM ops for growable device buffers",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/692",
+      "updated": "2026-11-26T02:38:45Z",
+      "score": 25
+    },
+    {
+      "ref": "s20",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "[SYCL] update linux refer doc",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32583",
+      "updated": "2026-11-26T05:41:33Z",
+      "score": 25
+    },
+    {
+      "ref": "s21",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "sycl: add gated delta net ESIMD kernel",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/31762",
+      "updated": "2026-11-26T02:38:30Z",
+      "score": 25
+    },
+    {
+      "ref": "s22",
       "source": "上游合入: llama.cpp (sycl/openvino/intel)",
       "title": "ggml-openvino: fix CI op tests and improve KV cache decode",
       "url": "https://github.com/ggml-org/llama.cpp/pull/33002",
       "updated": "2026-11-25T15:53:59Z",
       "score": 25
-    },
-    {
-      "ref": "s20",
-      "source": "上游合入: bitsandbytes (XPU)",
-      "title": "Remove unused import-time NF4/FP4 tables allocated on XPU",
-      "url": "https://github.com/bitsandbytes-foundation/bitsandbytes/pull/2156",
-      "updated": "2026-11-25T20:32:19Z",
-      "score": 25
-    },
-    {
-      "ref": "s21",
-      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
-      "title": "Add host's wall times sum over the rows",
-      "url": "https://github.com/IntelLabs/Xe-Forge/commit/a0764c9544f7a598c20003f86fd15d7b3d3c06fa",
-      "updated": "2026-11-25T21:13:07Z",
-      "score": 15
-    },
-    {
-      "ref": "s22",
-      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
-      "title": "Update cpu contract",
-      "url": "https://github.com/IntelLabs/Xe-Forge/commit/b13dc6e4d4f588d7c7cc152726493552965da0ad",
-      "updated": "2026-11-24T22:06:43Z",
-      "score": 15
     }
   ],
   "output": {
     "overview": [
       {
         "status": "Merged",
-        "title": "vLLM XPU LoRA 单适配器预填充改用稠密 GEMM，性能提升约 40%",
+        "title": "vLLM XPU 单适配器 LoRA 预填充改用稠密 GEMM，性能提升约 40%",
         "refs": [
-          "s14"
+          "s15"
         ]
       },
       {
         "status": "Merged",
-        "title": "torch-xpu-ops 新增 XPU 支持 _philox_randint_ 无状态 RNG",
+        "title": "Triton XPU 用 2D 块存储优化掩码指针存储，提升 GEMM 尾块性能",
         "refs": [
-          "s10"
+          "s4"
         ]
       },
       {
         "status": "Merged",
-        "title": "XeStrata 发布 xe0.2.20-1，修复 Intel GPU 编译器误编译问题",
+        "title": "torch-xpu-ops 支持整数点积，修复 1-D 张量 matmul 报错",
         "refs": [
-          "s2"
+          "s13"
         ]
       }
     ],
     "items": [
       {
         "refs": [
-          "s14"
+          "s15"
         ],
-        "title": "XPU LoRA 单适配器预填充改用稠密 GEMM",
+        "title": "单适配器 LoRA 预填充改用稠密 GEMM",
         "analysis": "在 XPU 上，当预填充批次使用单个适配器时，将 LoRA 线性层从逐 token 的 BGMV 改为稠密 GEMM，利用默认编译和图模式，在 Qwen 模型上实现约 40% 的加速。",
-        "impact": "使用 vLLM XPU 且 LoRA 单适配器预填充的用户可受益，需更新到包含此提交的版本。",
-        "brief": "XPU LoRA 预填充性能提升约 40%",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s10"
-        ],
-        "title": "XPU 支持 _philox_randint_ 无状态 RNG",
-        "analysis": "为 XPU 后端添加 _philox_randint_ 支持，并调整共享的 Philox 分布基础设施以匹配上游的 sample_func 接口，属于功能扩展。",
-        "impact": "使用 PyTorch 无状态 RNG 的 XPU 用户可调用该函数。",
-        "brief": "XPU 新增无状态 RNG 支持",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s2"
-        ],
-        "title": "XeStrata 发布 xe0.2.20-1 修复 Intel GPU 编译器误编译",
-        "analysis": "XeStrata 是一个旨在替代 ChatGPT 的本地运行模型项目，支持 Intel Arc B 系列、Lunar Lake 和 Panther Lake。此版本针对 Linux 上 IGC 2.27-2.30 误编译部分 GPU 代码的问题提供了规避方案。",
-        "impact": "使用 XeStrata 且受影响的 Intel GPU 用户应更新到该版本。",
-        "brief": "XeStrata 修复 Intel GPU 编译器误编译",
-        "tier": "major",
-        "changeType": "workaround",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
-          "s3"
-        ],
-        "title": "Triton XPU 使用 2D 块存储优化掩码指针存储",
-        "analysis": "当 GEMM epilogue 的边界掩码（row < M, col < N）不满足 tile 宽度倍数时，改用 2D 块存储，避免低效的逐元素存储，提升性能。",
-        "impact": "使用 Triton XPU 且 GEMM epilogue 带边界掩码的代码可受益。",
-        "brief": "Triton XPU 优化掩码存储",
+        "impact": "使用 vLLM XPU 且启用 LoRA 的用户，预填充性能将显著提升。",
+        "brief": "XPU LoRA 预填充提速约 40%",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -267,10 +222,70 @@
         "refs": [
           "s4"
         ],
-        "title": "Triton XPU 声明 FP4 DPAS 特性",
-        "analysis": "在 dot_scaled 的 lit 测试中声明 FP4 DPAS 特性，修复 #8994，使 E2M1 操作数能使用原生 DPAS，属于测试修复。",
+        "title": "掩码指针存储改用 2D 块存储",
+        "analysis": "GEMM 尾块在边界掩码下存储结果时，若掩码边界不是 tile 宽度的倍数，指针存储无法成为 2D 块存储。此改动使这类掩码指针存储使用 2D 块存储，提升尾块写入效率。",
+        "impact": "使用 Triton XPU 编译 GEMM 内核的用户，尾块性能可能提升。",
+        "brief": "优化 GEMM 尾块掩码存储",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s13"
+        ],
+        "title": "dot_xpu 支持整数数据类型",
+        "analysis": "dot_xpu 将所有数据类型转发给 dot_xpu_mkl，而 oneMKL BLAS 仅支持浮点/复数，导致整数输入抛出 NotImplementedError。此改动为整数点积提供支持，修复 1-D 张量 matmul 路由到 aten::dot 时的错误。",
+        "impact": "使用 torch-xpu-ops 进行整数点积或 1-D matmul 的用户，不再遇到 NotImplementedError。",
+        "brief": "修复整数点积报错",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s1"
+        ],
+        "title": "Xe-Forge v0.5.0 发布",
+        "analysis": "Xe-Forge 发布 v0.5.0，包含将弃用的块指针替换为张量描述符、修复 spec_to_roofline_csv 的 flop 公式、新增端到端代理以及 CPU 主机优化流水线（默认使用 perf 分析器）。",
+        "impact": "使用 Xe-Forge 进行性能分析和优化的用户，可升级到 v0.5.0 获得新功能和修复。",
+        "brief": "Xe-Forge 发布 v0.5.0",
+        "tier": "major",
+        "changeType": "feature",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s3"
+        ],
+        "title": "XeStrata 发布 xe0.2.20-1",
+        "analysis": "XeStrata 是一个本地运行的 ChatGPT 替代品，发布 xe0.2.20-1。警告 Intel Arc B 系列、Lunar Lake 和 Panther Lake 在 Linux 上，IGC 2.27-2.30 会错误编译部分 GPU 代码，XeStrata 会绕过受影响的优化。",
+        "impact": "使用 XeStrata 且受影响的 Intel GPU 用户，需注意此版本包含规避措施。",
+        "brief": "XeStrata 发布新版本",
+        "tier": "major",
+        "changeType": "release",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s5"
+        ],
+        "title": "FP4 DPAS 特性在 lit 测试中声明",
+        "analysis": "修复 #8994，在 dot_scaled scale-format lit 测试中声明 FP4 DPAS 特性，使 #8883 能正确拒绝不支持该特性的模块。",
         "impact": null,
-        "brief": "Triton XPU 测试修复 FP4 DPAS 声明",
+        "brief": "修复 FP4 DPAS 测试声明",
         "tier": "minor",
         "changeType": "test_fix",
         "isTrueFix": true,
@@ -280,27 +295,12 @@
       },
       {
         "refs": [
-          "s5"
-        ],
-        "title": "XeStrata Windows 构建修复 CUTLASS int8 主机侧运行时",
-        "analysis": "修复 Windows 上 CUTLASS int8 乘法主机侧编译时未使用 DLL 运行时（/MD）导致链接失败的问题，属于构建修复。",
-        "impact": null,
-        "brief": "XeStrata Windows 构建修复",
-        "tier": "minor",
-        "changeType": "bugfix",
-        "isTrueFix": true,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s6"
         ],
-        "title": "XeStrata 修复 Windows 7z 引擎 zstd 头文件缺失",
-        "analysis": "修复 Windows 7z 引擎编译时因缺少 zstd_errors.h 导致的文件未找到错误，属于构建修复。",
+        "title": "Windows 构建修复 CUTLASS int8 主机端运行时",
+        "analysis": "i8_gemm_cutlass_host.obj 通过 add_custom_command 直接调用 clang，未继承 CMake 的 DLL 运行时标志，导致链接失败。此改动确保主机端也使用 DLL 的 C 运行时（/MD）。",
         "impact": null,
-        "brief": "XeStrata 修复 zstd 头文件缺失",
+        "brief": "修复 Windows CUTLASS int8 链接",
         "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -312,10 +312,10 @@
         "refs": [
           "s7"
         ],
-        "title": "XeStrata 移植 CUTLASS uint128 实现",
-        "analysis": "由于 contrib clang 缺少 _umul128/_udiv128，将 CUTLASS 的 uint128 改为移植实现，修复编译失败，属于构建修复。",
+        "title": "Windows 7z 引擎传递全部 zstd 头文件",
+        "analysis": "之前只放置了 zstd.h，导致 zstd_errors.h 找不到。此改动将 zstd 的所有头文件传递给 7z 引擎，修复编译错误。",
         "impact": null,
-        "brief": "XeStrata 移植 uint128 实现",
+        "brief": "修复 zstd 头文件缺失",
         "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -327,10 +327,10 @@
         "refs": [
           "s8"
         ],
-        "title": "XeStrata Windows 7z AMD 设备链接添加 --no-dependent-libraries",
-        "analysis": "修复 Windows 7z 引擎 AMD 设备链接时因 MSVC 头文件 pragma comment 导致的问题，添加 --no-dependent-libraries 参数，属于构建修复。",
+        "title": "CUTLASS uint128 改用移植实现",
+        "analysis": "contrib 的 clang 缺少 _umul128/_udiv128，导致 CUTLASS 的 uint128 在 MSVC 分支编译失败。此改动在配置后、构建前替换为移植实现。",
         "impact": null,
-        "brief": "XeStrata 修复 AMD 设备链接",
+        "brief": "修复 CUTLASS uint128 编译",
         "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -342,10 +342,10 @@
         "refs": [
           "s9"
         ],
-        "title": "XeStrata 修复 Level Zero 设备枚举失败",
-        "analysis": "当 Level Zero 后端返回 UR_RESULT_ERROR_UNINITIALIZED 时，移除该后端并重新枚举 GPU，修复 RTX 2060 笔记本上设备列表失败的问题，属于 bugfix。",
+        "title": "Windows 7z AMD 设备链接禁用依赖库",
+        "analysis": "SYCL 设备代码链接时，MSVC 头文件的 #pragma comment(lib, msvcrt) 会进入设备对象，导致问题。此改动在 AMD 设备链接时传递 --no-dependent-libraries 以避免。",
         "impact": null,
-        "brief": "XeStrata 修复设备枚举失败",
+        "brief": "修复 AMD 设备链接问题",
         "tier": "minor",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -355,15 +355,15 @@
       },
       {
         "refs": [
-          "s1"
+          "s10"
         ],
-        "title": "torch-xpu-ops 同步上游泛化测试文件",
-        "analysis": "上游泛化后，test_multigpu.py 可直接运行，移除本地副本，属于测试同步。",
+        "title": "Level Zero 设备枚举失败时重试",
+        "analysis": "在 RTX 2060 的 Windows 笔记本上，Level Zero 后端返回 UR_RESULT_ERROR_UNINITIALIZED，导致 CUDA GPU 未被计数。此改动在 Level Zero 停止枚举时，移除并重新计数一次。",
         "impact": null,
-        "brief": "torch-xpu-ops 测试同步",
+        "brief": "修复 Level Zero 枚举失败",
         "tier": "minor",
-        "changeType": "sync",
-        "isTrueFix": false,
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -372,12 +372,12 @@
         "refs": [
           "s11"
         ],
-        "title": "torch-xpu-ops 重构 MultiLabelMarginLoss 内核为自由函数",
-        "analysis": "将 MultiLabelMarginLoss 内核重构为自由函数，并统一命名后缀，属于代码重构。",
+        "title": "AdaptiveMaxPooling2d 内核重构为自由函数",
+        "analysis": "将 AdaptiveMaxPooling2dKernels 重构为自由函数，并统一内核函数命名后缀为 _kernel_impl，本地 UT 通过。",
         "impact": null,
-        "brief": "torch-xpu-ops 内核重构",
+        "brief": "重构 AdaptiveMaxPooling2d 内核",
         "tier": "minor",
-        "changeType": "feature",
+        "changeType": "refactor",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -387,12 +387,12 @@
         "refs": [
           "s12"
         ],
-        "title": "torch-xpu-ops 迁移 TensorFactories 内核到自由函数",
-        "analysis": "将 TensorFactories 内核迁移到 SYCL 自由函数，测试通过，属于代码重构。",
+        "title": "Windows UT 步骤设置 oneAPI 环境",
+        "analysis": "test_xpu_pluggable_allocator 因缺少 icx 和 SYCL_HOME 而失败，此改动在 Windows UT 步骤中设置 oneAPI 环境，部分修复 #2463。",
         "impact": null,
-        "brief": "torch-xpu-ops 内核迁移",
+        "brief": "修复 Windows UT 环境",
         "tier": "minor",
-        "changeType": "feature",
+        "changeType": "ci",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -400,14 +400,14 @@
       },
       {
         "refs": [
-          "s13"
+          "s14"
         ],
-        "title": "torch-xpu-ops 注册 hash_tensor.out 到 XPU",
-        "analysis": "实现 xor_sum_kernel 支持 torch.hash_tensor，处理整型、浮点和布尔类型，属于功能扩展。",
-        "impact": "XPU 用户可使用 torch.hash_tensor。",
-        "brief": "XPU 支持 hash_tensor",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "文档记录非 2 的幂最大工作组大小",
+        "analysis": "PTL 上每个内核的最大工作组大小可为 768/640，导致基于其的减半树归约出错。此改动在文档中记录该规则，并添加审查清单项。",
+        "impact": null,
+        "brief": "文档补充工作组大小规则",
+        "tier": "minor",
+        "changeType": "doc",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -415,12 +415,12 @@
       },
       {
         "refs": [
-          "s15"
+          "s16"
         ],
-        "title": "vLLM XPU 修复 W8A16 FP8 线性层输入展平",
-        "analysis": "XPU W8A16 FP8 线性核直接覆盖 apply_weights，绕过了基类的 2D 展平逻辑，导致 N-D 输入处理错误，此提交添加展平逻辑，属于 bugfix。",
-        "impact": "使用 vLLM XPU 且输入非 2D 的 FP8 线性层用户可受益。",
-        "brief": "vLLM XPU 修复 FP8 线性层输入",
+        "title": "XPU W8A16 FP8 线性内核展平 N-D 输入",
+        "analysis": "XPUW8A16FP8LinearKernel 直接覆盖 apply_weights，绕过了基类的 2D 展平/反展平逻辑，导致 N-D 输入处理错误。此改动在 XPU 内核中展平 N-D 输入。",
+        "impact": "使用 vLLM XPU 且输入为 N-D 的 FP8 线性层用户，将获得正确结果。",
+        "brief": "修复 XPU FP8 线性层 N-D 输入",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -430,28 +430,13 @@
       },
       {
         "refs": [
-          "s16"
-        ],
-        "title": "vLLM XPU 启用 fp32 lm_head 的 torch.mm 快速路径",
-        "analysis": "将 CUDA/ROCm 上 fp32 lm_head 的 torch.mm(out_dtype=float32) 快速路径扩展到 XPU，避免每次解码时额外的数据类型转换，提升性能。",
-        "impact": "使用 vLLM XPU 且 lm_head 为 fp32 的用户可受益。",
-        "brief": "vLLM XPU 优化 fp32 lm_head",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s17"
         ],
-        "title": "vLLM 为 Arc Pro B60/B70 添加 8192 上下文默认值",
-        "analysis": "为 10 个模型配方添加 --max-model-len 8192 的默认值，与 Intel Arc Pro B60/B70 的文档配置对齐，属于配置调整。",
-        "impact": "使用这些模型配方的用户将获得更合适的上下文长度默认值。",
-        "brief": "vLLM 添加 Arc Pro 上下文默认值",
-        "tier": "minor",
+        "title": "XPU 上 fp32 lm_head 使用 torch.mm 加速",
+        "analysis": "LogitsProcessor 的 fp32 快速路径仅对 CUDA/ROCm 启用，XPU 上每个解码步都回退到慢路径。此改动在 XPU 上启用 torch.mm(out_dtype=float32) 快速路径。",
+        "impact": "使用 vLLM XPU 且 lm_head 为 fp32 的用户，解码性能将提升。",
+        "brief": "XPU fp32 lm_head 加速",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -462,11 +447,11 @@
         "refs": [
           "s18"
         ],
-        "title": "vLLM XPU 实现 stateless_init_device_torch_dist_pg",
-        "analysis": "为 XPU 平台实现 stateless_init_device_torch_dist_pg，使分布式进程组初始化支持 XPU，属于功能扩展。",
-        "impact": "使用 vLLM XPU 分布式推理的用户可受益。",
-        "brief": "vLLM XPU 支持分布式初始化",
-        "tier": "major",
+        "title": "compact_sampling_mask 支持 bf16/fp16",
+        "analysis": "为 compact_sampling_mask 添加 bf16/fp16 支持，扩展其适用数据类型。",
+        "impact": null,
+        "brief": "扩展采样掩码数据类型",
+        "tier": "minor",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -477,13 +462,13 @@
         "refs": [
           "s19"
         ],
-        "title": "llama.cpp OpenVINO 修复 CI 测试并改进 KV cache 解码",
-        "analysis": "修复 FILL 和 GDN 缓存融合测试，改进 SOFTPLUS 精度，并提升 GPU 解码性能，属于 bugfix 和性能优化。",
-        "impact": "使用 llama.cpp OpenVINO 后端的用户可受益。",
-        "brief": "llama.cpp OpenVINO 修复与优化",
+        "title": "添加 VMM 操作支持可增长设备缓冲区",
+        "analysis": "添加虚拟内存管理（VMM）操作，镜像 CUDA cuMem*，用于 vLLM 的可扩展 KV 缓存，在 XPU 上预留地址范围并映射物理内存。",
+        "impact": "使用 vLLM XPU 可扩展 KV 缓存的用户，将获得底层支持。",
+        "brief": "XPU 添加 VMM 操作",
         "tier": "major",
-        "changeType": "bugfix",
-        "isTrueFix": true,
+        "changeType": "feature",
+        "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -492,12 +477,12 @@
         "refs": [
           "s20"
         ],
-        "title": "bitsandbytes XPU 移除未使用的 NF4/FP4 表",
-        "analysis": "移除导入时未使用的 NF4/FP4 表，节省 XPU 内存，属于代码清理。",
+        "title": "更新 SYCL Linux 参考文档",
+        "analysis": "更新 SYCL 构建参考文档，修复过时内容，使用户能清晰阅读。",
         "impact": null,
-        "brief": "bitsandbytes 节省 XPU 内存",
+        "brief": "更新 SYCL 文档",
         "tier": "minor",
-        "changeType": "feature",
+        "changeType": "doc",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -507,11 +492,11 @@
         "refs": [
           "s21"
         ],
-        "title": "Xe-Forge 添加主机墙钟时间行求和",
-        "analysis": "在 Xe-Forge 中添加主机墙钟时间的行求和功能，属于功能增强。",
-        "impact": null,
-        "brief": "Xe-Forge 添加时间求和",
-        "tier": "minor",
+        "title": "新增 gated delta net ESIMD 内核",
+        "analysis": "为 gated delta net 添加 ESIMD 内核，目前仅支持 S_v=128 和 kda=0，在 Qwen3.8-27B 推理基准上相比基础版本有性能提升。",
+        "impact": "使用 llama.cpp SYCL 且运行 gated delta net 模型的用户，可能获得性能提升。",
+        "brief": "新增 ESIMD 内核",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
@@ -522,10 +507,25 @@
         "refs": [
           "s22"
         ],
-        "title": "Xe-Forge 更新 CPU 契约",
-        "analysis": "更新 CPU 契约，可能涉及接口或行为调整，属于同步更新。",
+        "title": "ggml-openvino 修复 CI 测试并改进 KV 缓存解码",
+        "analysis": "修复 FILL 和 GDN 缓存融合测试，保留缓冲区内容并写回消费节点；修复 SOFTPLUS 精度；改进 GPU 解码性能。",
+        "impact": "使用 llama.cpp OpenVINO 后端的用户，解码性能可能提升。",
+        "brief": "修复 OpenVINO 测试并优化解码",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "同步上游泛化测试文件",
+        "analysis": "上游泛化后，可直接运行 test/test_multigpu.py 而无需本地副本，此改动同步测试文件并关闭相关 issue。",
         "impact": null,
-        "brief": "Xe-Forge 更新 CPU 契约",
+        "brief": "同步多 GPU 测试文件",
         "tier": "minor",
         "changeType": "sync",
         "isTrueFix": false,
