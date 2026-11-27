@@ -4,13 +4,21 @@
     {
       "ref": "s1",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
+      "title": "Adapt Intel backend to upstream Membar rewrite and include trimming",
+      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/74c268314038de3ae35582487fd71e9350f014a9",
+      "updated": "2026-11-25T09:57:10Z",
+      "score": 43
+    },
+    {
+      "ref": "s2",
+      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Keep sub-group transpose SLM rows dword-aligned for 8/16-bit types (#8911)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/7435e64436d4e612d8c95f1c09ecf85a52757f80",
       "updated": "2026-11-26T22:09:21Z",
       "score": 25
     },
     {
-      "ref": "s2",
+      "ref": "s3",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Block loads for a GEMM operand scaled by a loaded vector (#8938)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/9d90f68ae2fd8a31fd9b6ccbc61a84fec92972af",
@@ -18,7 +26,7 @@
       "score": 25
     },
     {
-      "ref": "s3",
+      "ref": "s4",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Lower descriptor scatters to sub-group block writes (#8984)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/751f8425e572cfab433f0806bdd988b50034b4ad",
@@ -26,19 +34,11 @@
       "score": 25
     },
     {
-      "ref": "s4",
+      "ref": "s5",
       "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
       "title": "[Intel] Skip the scratch allocator setup in XPULauncher when no scratch is needed (#8334 slowdown seen in #8981) (#9013)",
       "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/782564eeb7032d1081c4cd5e95b8114f8e4895b0",
       "updated": "2026-11-26T13:00:27Z",
-      "score": 25
-    },
-    {
-      "ref": "s5",
-      "source": "intel/intel-xpu-backend-for-triton (Commit/Patch)",
-      "title": "[Build] Link python3.dll (Python3::SABIModule) for TRITON_STABLE_ABI builds on Windows (#9004)",
-      "url": "https://github.com/intel/intel-xpu-backend-for-triton/commit/b2ee5eeba8f3b3f455c9d5033606eca514b6bc26",
-      "updated": "2026-11-26T09:06:08Z",
       "score": 25
     },
     {
@@ -52,13 +52,29 @@
     {
       "ref": "s7",
       "source": "上游合入: intel/torch-xpu-ops",
+      "title": "Let bot review and ut-check run on fork PRs",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6417",
+      "updated": "2026-11-27T08:10:45Z",
+      "score": 25
+    },
+    {
+      "ref": "s8",
+      "source": "上游合入: intel/torch-xpu-ops",
+      "title": "[bot] Finish reviews that use sub-agents and say why a review did not finish",
+      "url": "https://github.com/intel/torch-xpu-ops/pull/6389",
+      "updated": "2026-11-27T05:32:53Z",
+      "score": 25
+    },
+    {
+      "ref": "s9",
+      "source": "上游合入: intel/torch-xpu-ops",
       "title": "Select multinomial CDF dtype like CUDA",
       "url": "https://github.com/intel/torch-xpu-ops/pull/6312",
       "updated": "2026-11-26T14:53:50Z",
       "score": 25
     },
     {
-      "ref": "s8",
+      "ref": "s10",
       "source": "上游合入: intel/torch-xpu-ops",
       "title": "[cleanup] remove `__ubsan_ignore_float_divide_by_zero__`",
       "url": "https://github.com/intel/torch-xpu-ops/pull/6354",
@@ -66,7 +82,7 @@
       "score": 25
     },
     {
-      "ref": "s9",
+      "ref": "s11",
       "source": "上游合入: intel/torch-xpu-ops",
       "title": "[sycl-free-function] Refactor IndexKernelUtils by free function",
       "url": "https://github.com/intel/torch-xpu-ops/pull/5494",
@@ -74,15 +90,39 @@
       "score": 25
     },
     {
-      "ref": "s10",
-      "source": "上游合入: intel/torch-xpu-ops",
-      "title": "Add XPU support for _philox_randint_",
-      "url": "https://github.com/intel/torch-xpu-ops/pull/6294",
-      "updated": "2026-11-25T15:28:56Z",
+      "ref": "s12",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[MoE] Expose XpuFusedMoe.prepack_weights() instead of prepacking in __init__",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/718",
+      "updated": "2026-11-27T06:36:55Z",
       "score": 25
     },
     {
-      "ref": "s11",
+      "ref": "s13",
+      "source": "上游合入: vllm-xpu-kernels",
+      "title": "[XPU] Restrict fused shared MoE decode to BMG",
+      "url": "https://github.com/vllm-project/vllm-xpu-kernels/pull/714",
+      "updated": "2026-11-27T06:36:01Z",
+      "score": 25
+    },
+    {
+      "ref": "s14",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "[sycl] XMX enablement 0/4 - Fix Q6_K precision",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/32726",
+      "updated": "2026-11-27T03:01:42Z",
+      "score": 25
+    },
+    {
+      "ref": "s15",
+      "source": "上游合入: llama.cpp (sycl/openvino/intel)",
+      "title": "ggml-openvino: CI op-test fixes and NPU improvements",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/33088",
+      "updated": "2026-11-27T02:26:56Z",
+      "score": 25
+    },
+    {
+      "ref": "s16",
       "source": "上游合入: llama.cpp (sycl/openvino/intel)",
       "title": "sycl: route BMG D=256 single-query decode to the FA vector kernel",
       "url": "https://github.com/ggml-org/llama.cpp/pull/30606",
@@ -90,69 +130,44 @@
       "score": 25
     },
     {
-      "ref": "s12",
-      "source": "上游合入: bitsandbytes (XPU)",
-      "title": "Remove unused import-time NF4/FP4 tables allocated on XPU",
-      "url": "https://github.com/bitsandbytes-foundation/bitsandbytes/pull/2156",
-      "updated": "2026-11-25T20:32:19Z",
+      "ref": "s17",
+      "source": "上游合入: SGLang (XPU)",
+      "title": "[Fix] xpu: fall back to core API when Sysman memory query is unavailable",
+      "url": "https://github.com/sgl-project/sglang/pull/52060",
+      "updated": "2026-11-27T05:07:08Z",
       "score": 25
     },
     {
-      "ref": "s13",
+      "ref": "s18",
       "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
-      "title": "Guild Wars 2 - PC freezes on max graphics settings (Arc A750)",
-      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1633",
-      "updated": "2026-11-26T17:08:50Z",
+      "title": "Intel Graphics Software crashes (0xc0000005 in coreclr.dll) when opening Processor or Settings tab on i5-12400F",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1634",
+      "updated": "2026-11-27T07:34:18Z",
       "score": 18
     },
     {
-      "ref": "s14",
-      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
-      "title": "Fix copilot comment",
-      "url": "https://github.com/IntelLabs/X-Forge/commit/e99cf59207c07a893e7bcca671b5e18cc0b0fe6e",
-      "updated": "2026-11-26T00:44:52Z",
-      "score": 15
-    },
-    {
-      "ref": "s15",
-      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
-      "title": "Rename Xe-Forge to X-Forge",
-      "url": "https://github.com/IntelLabs/X-Forge/commit/26dcbac91266e3d640c4aebb244a4150bffd37a9",
-      "updated": "2026-11-26T00:16:50Z",
-      "score": 15
-    },
-    {
-      "ref": "s16",
-      "source": "IntelLabs/Xe-Forge (Commit/Patch)",
-      "title": "Add host's wall times sum over the rows",
-      "url": "https://github.com/IntelLabs/X-Forge/commit/a0764c9544f7a598c20003f86fd15d7b3d3c06fa",
-      "updated": "2026-11-25T21:13:07Z",
-      "score": 15
+      "ref": "s19",
+      "source": "Intel 官方社区驱动追踪 (新提交 Issue)",
+      "title": "Guild Wars 2 - PC freezes on max graphics settings (Arc A750)",
+      "url": "https://github.com/IGCIT/Intel-GPU-Community-Issue-Tracker-IGCIT/issues/1633",
+      "updated": "2026-11-27T08:01:07Z",
+      "score": 18
     }
   ],
   "output": {
     "overview": [
       {
         "status": "Merged",
-        "title": "Triton XPU 修复 fp8 点积错位与 GEMM 缩放向量加载，并优化描述符散射",
+        "title": "Intel Triton 后端适配上游 Membar 重写，保持屏障放置不变",
         "refs": [
-          "s1",
-          "s2",
-          "s3"
+          "s1"
         ]
       },
       {
         "status": "Merged",
-        "title": "XPULauncher 跳过无 scratch 分配器设置，降低启动开销",
+        "title": "修复 fp8 点积在 CRI 上的错误结果，SLM 行对齐",
         "refs": [
-          "s4"
-        ]
-      },
-      {
-        "status": "Merged",
-        "title": "torch-xpu-ops 对齐 multinomial CDF 类型，修复大类别采样偏差",
-        "refs": [
-          "s7"
+          "s2"
         ]
       }
     ],
@@ -161,10 +176,25 @@
         "refs": [
           "s1"
         ],
-        "title": "修复 fp8 点积在 CRI 上结果错误",
-        "analysis": "fp8 e4m3 点积的 A 操作数从寄存器中的打包 E2M1 半字节解包后，当 warp 拥有 16 行时，子组转置的 SLM 行未保持 dword 对齐，导致错误结果。通过保持 SLM 行 dword 对齐修复。",
-        "impact": "使用 fp8 点积的 Triton 内核在 Intel 显卡上结果正确性受影响，需更新后端。",
-        "brief": "修复 fp8 点积在 CRI 上的错误结果",
+        "title": "适配上游 Membar 重写并保留贪心分析",
+        "analysis": "上游 #12752 用 cut solver 替换 ModuleMembarAnalysis，Intel 后端保留贪心分析的副本（类似 AMD），避免屏障放置变化，防止性能回退。",
+        "impact": "Intel Triton 后端用户，确保屏障优化行为与之前一致。",
+        "brief": "保留贪心分析，屏障放置不变。",
+        "tier": "major",
+        "changeType": "sync",
+        "isTrueFix": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s2"
+        ],
+        "title": "修复 fp8 点积在 CRI 上的错误结果",
+        "analysis": "fp8 e4m3 tl.dot 的 A 操作数从打包的 E2M1 半字节解包到寄存器，在 CRI 上当 warp 拥有 16 行时结果错误。原因是子组转置 SLM 行未按 dword 对齐，修复后对齐。",
+        "impact": "使用 fp8 点积的 Intel GPU 用户，修复正确性问题。",
+        "brief": "SLM 行对齐修复 fp8 点积错误。",
         "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
@@ -174,27 +204,12 @@
       },
       {
         "refs": [
-          "s2"
-        ],
-        "title": "GEMM 操作数按向量缩放时启用块加载",
-        "analysis": "当 GEMM 操作数按行乘以从内存读取的小向量（如 `A @ (beta[:, None] * V)`）时，未使用 Intel GPU 的快速内存指令。通过将缩放向量加载为块，使操作数能使用块加载指令，提升性能。",
-        "impact": "使用此类缩放模式的 GEMM 内核在 Intel GPU 上性能提升。",
-        "brief": "GEMM 缩放向量加载优化",
-        "tier": "major",
-        "changeType": "feature",
-        "isTrueFix": false,
-        "claimOwner": "maintainer",
-        "rootCauseConfirmed": true,
-        "threadId": null
-      },
-      {
-        "refs": [
           "s3"
         ],
-        "title": "描述符散射降级为子组块写",
-        "analysis": "`ttig.descriptor_scatter` 没有 lowering，导致非连续 `tt.descriptor_scatter` 展开为低效代码。通过将其降级为子组块写，利用硬件块写指令提升性能。",
-        "impact": "使用非连续描述符散射的 Triton 内核在 Intel GPU 上性能提升。",
-        "brief": "描述符散射优化为块写",
+        "title": "GEMM 操作数按向量缩放时启用块加载",
+        "analysis": "GEMM 操作数按行由内存中的小向量缩放（如 A @ (beta[:, None] * V)）时，Intel GPU 上未使用快速内存指令。通过块加载优化，提升此类 GEMM 性能。",
+        "impact": "使用此类缩放 GEMM 的 Intel GPU 用户，性能提升。",
+        "brief": "块加载优化缩放 GEMM。",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -206,10 +221,10 @@
         "refs": [
           "s4"
         ],
-        "title": "XPULauncher 跳过无 scratch 分配器设置",
-        "analysis": "`XPULauncher.__call__` 在每次内核启动时定义两个闭包并查询 scratch 分配器，即使不需要 scratch 也执行，造成启动开销。通过跳过不必要的设置，减少启动延迟。",
-        "impact": "使用 Triton XPU 后端的用户内核启动延迟降低。",
-        "brief": "减少内核启动开销",
+        "title": "描述符散射降级为子组块写入",
+        "analysis": "ttig.descriptor_scatter 没有降级，导致非连续散射扩展为逐元素操作。现在降级为子组块写入，提升性能。",
+        "impact": "使用描述符散射的 Intel GPU 用户，性能提升。",
+        "brief": "散射降级为块写入。",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -221,11 +236,11 @@
         "refs": [
           "s5"
         ],
-        "title": "Windows 稳定 ABI 构建链接 python3.dll",
-        "analysis": "`TRITON_STABLE_ABI=ON` 在 Windows 上构建 `cp312-abi3` wheel，但 `libtriton.pyd`/`libproton.pyd` 仍导入 `python312.dll`，导致 ABI 不稳定。通过链接 `Python3::SABIModule` 修复。",
-        "impact": "Windows 上使用稳定 ABI 的 Triton 用户受益，构建产物更符合 ABI 规范。",
-        "brief": "修复 Windows 稳定 ABI 构建链接问题",
-        "tier": "minor",
+        "title": "XPULauncher 无 scratch 时跳过分配器设置",
+        "analysis": "XPULauncher.__call__ 每次启动都定义闭包并查询 scratch 分配器，即使不需要。跳过设置可减少启动开销，修复 #8981 中的性能下降。",
+        "impact": "使用 vLLM XPU 后端的用户，启动性能提升。",
+        "brief": "跳过无用的 scratch 分配器设置。",
+        "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -236,10 +251,10 @@
         "refs": [
           "s6"
         ],
-        "title": "Xe 驱动引入 PCIe 功能级重置",
-        "analysis": "Linux 7.5 的 drm-xe-next 拉取请求为 Intel Xe 驱动添加 PCIe Function Level Reset (FLR) 支持，用于设备重置和恢复。",
-        "impact": "使用 Intel Xe 显卡的 Linux 用户可获得更可靠的设备重置能力。",
-        "brief": "Xe 驱动支持 FLR",
+        "title": "Xe 驱动引入 PCIe 功能级重置支持",
+        "analysis": "Linux 7.5 的 drm-xe-next 拉取请求为 Intel Xe 驱动添加 PCIe FLR 支持，增强设备重置能力。",
+        "impact": "使用 Intel Xe 驱动的 Linux 用户，设备重置功能增强。",
+        "brief": "Xe 驱动支持 FLR。",
         "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
@@ -251,12 +266,12 @@
         "refs": [
           "s7"
         ],
-        "title": "multinomial CDF 类型对齐 CUDA",
-        "analysis": "带替换采样时，CDF 以输入 dtype 构建，但随机数用 float 均匀分布，导致超过 2^24 类别时部分类别无桶，half 精度下累加溢出。通过对齐 CUDA 的 CDF 类型选择修复。",
-        "impact": "使用 torch.multinomial 的 XPU 用户在大类别或半精度场景下结果正确性提升。",
-        "brief": "修复 multinomial 采样偏差",
-        "tier": "major",
-        "changeType": "bugfix",
+        "title": "修复 fork PR 上 bot 审查和 UT 检查被跳过",
+        "analysis": "claude-code-action 默认 allow_fork_prs 为 false，导致 fork PR 上 bot 审查和 UT 检查静默跳过。修复后允许运行。",
+        "impact": "torch-xpu-ops 的 fork PR 贡献者，CI 检查正常。",
+        "brief": "修复 fork PR 的 CI 跳过。",
+        "tier": "minor",
+        "changeType": "ci",
         "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -266,13 +281,13 @@
         "refs": [
           "s8"
         ],
-        "title": "移除 UBSan 忽略浮点除零属性",
-        "analysis": "清理代码，移除 `__ubsan_ignore_float_divide_by_zero__` 属性，该属性可能掩盖未定义行为。",
-        "impact": null,
-        "brief": "清理 UBSan 忽略属性",
+        "title": "修复 bot 审查子代理未完成的问题",
+        "analysis": "bot 审查在子代理后台运行时停止于第一条结果消息，导致重复发布“仍在运行”且无发现。修复后等待子代理完成并说明原因。",
+        "impact": "torch-xpu-ops 的 PR 审查流程，减少误导性评论。",
+        "brief": "修复 bot 审查子代理问题。",
         "tier": "minor",
-        "changeType": "cleanup",
-        "isTrueFix": false,
+        "changeType": "ci",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -281,13 +296,13 @@
         "refs": [
           "s9"
         ],
-        "title": "重构 IndexKernelUtils 为自由函数",
-        "analysis": "将 IndexKernelUtils 重构为自由函数，重命名内核函数为 `_kernel_impl` 后缀，本地通过 UT。",
-        "impact": null,
-        "brief": "重构索引内核工具",
-        "tier": "minor",
-        "changeType": "refactor",
-        "isTrueFix": false,
+        "title": "multinomial CDF 数据类型与 CUDA 对齐",
+        "analysis": "有放回采样在输入 dtype 中构建 CDF 并绘制 float 均匀数，导致超过 2^24 类别时部分类别无桶，half 下累加溢出。修复为与 CUDA 一致的数据类型选择。",
+        "impact": "使用 torch-xpu-ops 的采样用户，修复正确性问题。",
+        "brief": "修复 multinomial 采样精度问题。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
         "threadId": null
@@ -296,12 +311,12 @@
         "refs": [
           "s10"
         ],
-        "title": "XPU 支持 _philox_randint_",
-        "analysis": "为 XPU 添加无状态 RNG `_philox_randint_` 支持，并调整共享 Philox 分布基础设施以匹配上游的 `sample_func`/`p` 接口。",
-        "impact": "XPU 用户可使用 `_philox_randint_` 进行无状态随机数生成。",
-        "brief": "XPU 支持 _philox_randint_",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "移除 UBSan 忽略浮点除零的宏",
+        "analysis": "清理代码，移除 __ubsan_ignore_float_divide_by_zero__ 宏，与上游讨论一致。",
+        "impact": null,
+        "brief": "清理 UBSan 忽略宏。",
+        "tier": "minor",
+        "changeType": "cleanup",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -311,12 +326,12 @@
         "refs": [
           "s11"
         ],
-        "title": "Battlemage 单查询解码路由到 FA 向量内核",
-        "analysis": "在 Battlemage GPU 上，head dim 256 的掩码单查询解码，FA 向量内核比默认的 GQA 优化 tile 配置更快（832 vs 1150 us）。通过路由到向量内核提升性能。",
-        "impact": "使用 llama.cpp 在 Battlemage 上单查询解码的用户性能提升。",
-        "brief": "BMG 单查询解码性能优化",
-        "tier": "major",
-        "changeType": "feature",
+        "title": "重构 IndexKernelUtils 为自由函数",
+        "analysis": "将 IndexKernelUtils 重构为自由函数，并统一内核函数命名后缀为 _kernel_impl，本地 UT 通过。",
+        "impact": null,
+        "brief": "重构索引内核工具。",
+        "tier": "minor",
+        "changeType": "refactor",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -326,12 +341,12 @@
         "refs": [
           "s12"
         ],
-        "title": "移除 XPU 上 NF4/FP4 表导入时分配",
-        "analysis": "移除无用代码，避免在导入时在 XPU 上分配 NF4/FP4 表，节省显存。",
-        "impact": "使用 bitsandbytes 的 XPU 用户显存占用减少。",
-        "brief": "节省 XPU 显存",
+        "title": "MoE 预打包权重改为显式调用",
+        "analysis": "将 XpuFusedMoe 的权重预打包从 __init__ 中移出，暴露 prepack_weights() 方法，便于控制预打包时机。",
+        "impact": "使用 vLLM XPU MoE 的用户，需调整调用方式。",
+        "brief": "MoE 预打包改为显式调用。",
         "tier": "minor",
-        "changeType": "cleanup",
+        "changeType": "refactor",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -341,26 +356,26 @@
         "refs": [
           "s13"
         ],
-        "title": "Arc A750 最高画质下游戏冻结",
-        "analysis": "报告者称在 Arc A750 上运行《激战2》最高画质时 PC 冻结，已使用最新驱动。",
-        "impact": "Arc A750 用户可能遇到游戏冻结，需关注驱动更新。",
-        "brief": "Arc A750 游戏冻结问题",
-        "tier": "major",
-        "changeType": "issue_report",
+        "title": "限制 fused shared MoE decode 到 BMG",
+        "analysis": "fused shared MoE decode 在非 BMG 设备上导致测试失败，因此限制其设备范围为 BMG。",
+        "impact": "使用 vLLM XPU 的非 BMG 用户，该功能不可用。",
+        "brief": "限制 MoE decode 到 BMG。",
+        "tier": "minor",
+        "changeType": "workaround",
         "isTrueFix": false,
-        "claimOwner": "reporter",
-        "rootCauseConfirmed": false,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
         "threadId": null
       },
       {
         "refs": [
           "s14"
         ],
-        "title": "修复 copilot 评论",
-        "analysis": "修复 Xe-Forge 中的 copilot 评论问题。",
-        "impact": null,
-        "brief": "修复 copilot 评论",
-        "tier": "minor",
+        "title": "修复 Q6_K 精度问题",
+        "analysis": "XMX 在线反量化系列补丁的第一部分，修复 Q6_K 反量化使用原生类型而非 f32 导致的精度问题。",
+        "impact": "使用 llama.cpp SYCL 后端的用户，Q6_K 精度提升。",
+        "brief": "修复 Q6_K 反量化精度。",
+        "tier": "major",
         "changeType": "bugfix",
         "isTrueFix": true,
         "claimOwner": "maintainer",
@@ -371,12 +386,12 @@
         "refs": [
           "s15"
         ],
-        "title": "Xe-Forge 更名为 X-Forge",
-        "analysis": "将项目 Xe-Forge 重命名为 X-Forge。",
-        "impact": "项目名称变更，用户需更新引用。",
-        "brief": "项目更名",
+        "title": "OpenVINO 后端 CI 测试修复和 NPU 改进",
+        "analysis": "修复多个融合操作的 CI 测试问题，并改进 NPU 支持。",
+        "impact": null,
+        "brief": "OpenVINO 后端测试和 NPU 改进。",
         "tier": "minor",
-        "changeType": "refactor",
+        "changeType": "test_fix",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
@@ -386,15 +401,60 @@
         "refs": [
           "s16"
         ],
-        "title": "添加主机墙钟时间行求和",
-        "analysis": "在 Xe-Forge 中添加主机墙钟时间的行求和功能。",
-        "impact": null,
-        "brief": "添加墙钟时间求和",
-        "tier": "minor",
+        "title": "BMG D=256 单查询解码路由到 FA 向量内核",
+        "analysis": "在 Battlemage 上，head dim 256 的掩码单查询解码，FA 向量内核比默认 GQA 优化 tile 配置更快（832 vs 1150 us），因此路由到向量内核。",
+        "impact": "使用 BMG 的 llama.cpp 用户，单查询解码性能提升。",
+        "brief": "BMG 单查询解码性能优化。",
+        "tier": "major",
         "changeType": "feature",
         "isTrueFix": false,
         "claimOwner": "maintainer",
         "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s17"
+        ],
+        "title": "Sysman 不可用时回退到核心 API",
+        "analysis": "WSL2 GPU-PV 下 paravirtualized 驱动不暴露 Level Zero Sysman 接口，导致 get_xpu_memory_capacity() 失败。回退到核心 API 解决。",
+        "impact": "SGLang XPU 用户在 WSL2 下可正常获取内存容量。",
+        "brief": "Sysman 不可用时回退。",
+        "tier": "major",
+        "changeType": "bugfix",
+        "isTrueFix": true,
+        "claimOwner": "maintainer",
+        "rootCauseConfirmed": true,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s18"
+        ],
+        "title": "Intel Graphics Software 崩溃问题报告",
+        "analysis": "用户报告在 i5-12400F 和 Arc A580 上打开 Processor 或 Settings 标签时，Intel Graphics Software 崩溃（0xc0000005 in coreclr.dll）。",
+        "impact": "Intel Graphics Software 用户，等待驱动更新。",
+        "brief": "IGS 崩溃问题报告。",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
+        "threadId": null
+      },
+      {
+        "refs": [
+          "s19"
+        ],
+        "title": "Guild Wars 2 最高画质下 PC 冻结问题报告",
+        "analysis": "用户报告在 Arc A750 上运行 Guild Wars 2 最高画质时 PC 冻结，使用最新驱动。",
+        "impact": "Arc A750 用户，等待驱动更新。",
+        "brief": "GW2 最高画质冻结问题。",
+        "tier": "minor",
+        "changeType": "issue_report",
+        "isTrueFix": false,
+        "claimOwner": "reporter",
+        "rootCauseConfirmed": false,
         "threadId": null
       }
     ]
